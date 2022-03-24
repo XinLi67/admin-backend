@@ -51,7 +51,7 @@ func SignupEmailExist(data interface{}, c *gin.Context) map[string][]string {
 type SignupRequest struct {
 	DepartmentId uint64 `json:"department_id" valid:"department_id"`
 	GuardName    string `json:"guard_name" valid:"guard_name" `
-	UserName     string `json:"username" valid:"username"`
+	Username     string `json:"username" valid:"username"`
 	Name         string `json:"name" valid:"name"`
 	Gender       uint64 `json:"gender" valid:"gender"`
 	Email        string `json:"email"`

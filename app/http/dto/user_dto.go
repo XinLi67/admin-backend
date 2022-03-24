@@ -18,7 +18,7 @@ func UserDTOFromModel(data *user.User) *UserDTO {
 	return &UserDTO{
 		ID:           data.ID,
 		DepartmentId: data.DepartmentId,
-		UserName:     data.UserName,
+		UserName:     data.Username,
 		Name:         data.Name,
 		Gender:       data.Gender,
 		Email:        data.Email,
@@ -34,7 +34,7 @@ func UserDTOFromModelList(data []user.User, total int64) interface{} {
 		users[i] = UserDTO{
 			ID:           v.ID,
 			DepartmentId: v.DepartmentId,
-			UserName:     v.UserName,
+			UserName:     v.Username,
 			Name:         v.Name,
 			Gender:       v.Gender,
 			Email:        v.Email,

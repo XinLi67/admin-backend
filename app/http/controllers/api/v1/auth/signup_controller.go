@@ -52,7 +52,7 @@ func (sc *SignupController) Signup(c *gin.Context) {
 	userModel := user.User{
 		DepartmentId: request.DepartmentId,
 		GuardName:    request.GuardName,
-		UserName:     request.UserName,
+		Username:     request.Username,
 		Name:         request.Name,
 		Gender:       request.Gender,
 		Email:        request.Email,

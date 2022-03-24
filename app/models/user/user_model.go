@@ -12,7 +12,7 @@ type User struct {
 
 	DepartmentId uint64 `gorm:"column:department_id"`
 	GuardName    string `gorm:"column:guard_name"`
-	UserName     string `gorm:"column:username"`
+	Username     string `gorm:"column:username"`
 	Name         string `gorm:"column:name"`
 	Gender       uint64 `gorm:"column:gender"`
 	Email        string `gorm:"column:email"`
