@@ -12,7 +12,7 @@ type LoginByPasswordRequest struct {
 	CaptchaAnswer string `json:"captcha_answer,omitempty" valid:"captcha_answer"`
 
 	GuardName string `valid:"guard_name" json:"guard_name"`
-	LoginID   string `valid:"login_id" json:"login_id"`
+	Username  string `valid:"username" json:"username"`
 	Password  string `valid:"password" json:"password,omitempty"`
 }
 
@@ -20,19 +20,19 @@ type LoginByPasswordRequest struct {
 func LoginByPassword(data interface{}, c *gin.Context) map[string][]string {
 
 	rules := govalidator.MapData{
-		"gurad_name":     []string{"required", "min:3"},
-		"login_id":       []string{"required", "min:3"},
+		"guard_name":     []string{"required", "min:3"},
+		"username":       []string{"required", "min:3"},
 		"password":       []string{"required", "min:6"},
 		"captcha_id":     []string{"required"},
 		"captcha_answer": []string{"required", "digits:6"},
 	}
 	messages := govalidator.MapData{
-		"gurad_name": []string{
+		"guard_name": []string{
 			"required: 项目代码为必填项",
 			"min: 项目代码长度需大于 3",
 		},
-		"login_id": []string{
-			"required:登录 ID 为必填项，支持手机号、邮箱和用户名",
+		"username": []string{
+			"required: 用户名为必填项，支持手机号、邮箱和用户名",
 			"min:登录 ID 长度需大于 3",
 		},
 		"password": []string{

@@ -35,6 +35,15 @@ func RegisterAPIRoutes(r *gin.Engine) {
 			authGroup.POST("/signup", middlewares.GuestJWT(), suc.Signup)
 			authGroup.POST("/signup/phone/exist", middlewares.GuestJWT(), middlewares.LimitPerRoute("60-H"), suc.IsPhoneExist)
 			authGroup.POST("/signup/email/exist", middlewares.GuestJWT(), middlewares.LimitPerRoute("60-H"), suc.IsEmailExist)
+
+			lgc := new(auth.LoginController)
+			authGroup.POST("/login", middlewares.GuestJWT(), lgc.LoginByPassword)
+
+			// 发送验证码
+			vcc := new(auth.VerifyCodeController)
+			// 图片验证码
+			authGroup.POST("/verify-codes/captcha", middlewares.LimitPerRoute("50-H"), vcc.ShowCaptcha)
+
 		}
 
 		uc := new(controllers.UsersController)

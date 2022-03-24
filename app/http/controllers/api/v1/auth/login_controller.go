@@ -24,10 +24,10 @@ func (lc *LoginController) LoginByPassword(c *gin.Context) {
 	}
 
 	// 2. 尝试登录
-	user, err := auth.Attempt(request.LoginID, request.Password)
+	user, err := auth.Attempt(request.Username, request.Password)
 	if err != nil {
 		// 失败，显示错误提示
-		response.Unauthorized(c, "登录失败")
+		response.Unauthorized(c, err.Error())
 
 	} else {
 		token := jwt.NewJWT().IssueToken(user.GetStringID(), user.Name, request.GuardName)
