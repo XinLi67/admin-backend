@@ -32,9 +32,20 @@ func (lc *LoginController) LoginByPassword(c *gin.Context) {
 	} else {
 		token := jwt.NewJWT().IssueToken(user.GetStringID(), user.Name, request.GuardName)
 		response.JSON(c, gin.H{
-			"token": token,
+			"data": map[string]string{
+				"token": token,
+			},
 		})
 	}
+}
+
+func (lc *LoginController) Logout(c *gin.Context) {
+	err := jwt.NewJWT().JoinBlackList(c)
+	if err != nil {
+		response.Abort500(c)
+	}
+
+	response.Success(c)
 }
 
 // RefreshToken 刷新 Access Token

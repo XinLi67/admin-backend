@@ -2,12 +2,18 @@
 package helpers
 
 import (
+	"crypto/md5"
 	"crypto/rand"
+	"encoding/hex"
+	"errors"
 	"fmt"
 	"io"
 	mathrand "math/rand"
 	"reflect"
+	"strings"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 // Empty 类似于 PHP 的 empty() 函数
@@ -72,4 +78,23 @@ func RandomString(length int) string {
 		b[i] = letters[mathrand.Intn(len(letters))]
 	}
 	return string(b)
+}
+
+func MD5(str []byte, b ...byte) string {
+	h := md5.New()
+	h.Write(str)
+	return hex.EncodeToString(h.Sum(b))
+}
+
+func GetTokenFromHeader(c *gin.Context) (string, error) {
+	authHeader := c.Request.Header.Get("Authorization")
+	if authHeader == "" {
+		return "", errors.New("需要认证才能访问！")
+	}
+	// 按空格分割
+	parts := strings.SplitN(authHeader, " ", 2)
+	if !(len(parts) == 2 && parts[0] == "Bearer") {
+		return "", errors.New("请求头中 Authorization 格式有误")
+	}
+	return parts[1], nil
 }

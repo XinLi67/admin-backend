@@ -7,6 +7,7 @@ import (
 	"gohub/pkg/config"
 	"gohub/pkg/jwt"
 	"gohub/pkg/response"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -20,6 +21,14 @@ func AuthJWT() gin.HandlerFunc {
 		// JWT 解析失败，有错误发生
 		if err != nil {
 			response.Unauthorized(c, fmt.Sprintf("请查看 %v 相关的接口认证文档", config.GetString("app.name")))
+			return
+		}
+
+		authHeader := c.Request.Header.Get("Authorization")
+		parts := strings.SplitN(authHeader, " ", 2)
+		token := parts[1]
+		if jwt.NewJWT().IsInBlacklist(token) {
+			response.Unauthorized(c, "令牌已失效！")
 			return
 		}
 

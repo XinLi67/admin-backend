@@ -6,7 +6,9 @@ import (
 	"gohub/routes"
 	"net/http"
 	"strings"
+	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -28,6 +30,17 @@ func registerGlobalMiddleWare(router *gin.Engine) {
 		middlewares.Logger(),
 		middlewares.Recovery(),
 		middlewares.ForceUA(),
+		cors.New(cors.Config{
+			AllowOrigins:     []string{"*"},                                                           // 允许的前端地址
+			AllowMethods:     []string{"PUT", "GET", "DELETE", "POST", "PATCH", "OPTIONS"},            //允许的方法
+			AllowHeaders:     []string{"Content-Type,AccessToken,X-CSRF-Token, Authorization, Token"}, //添加的header
+			ExposeHeaders:    []string{"Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type"},
+			AllowCredentials: true,
+			AllowOriginFunc: func(origin string) bool {
+				return origin == "*" // 允许的前端地址
+			},
+			MaxAge: 12 * time.Hour,
+		}),
 	)
 }
 

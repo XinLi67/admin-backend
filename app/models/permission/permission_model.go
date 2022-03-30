@@ -9,13 +9,13 @@ import (
 type Permission struct {
 	models.BaseModel
 
-	PermissionGroupId uint64 `gorm:"column:permission_group_id"`
-	Name              string `gorm:"column:name"`
-	Icon              string `gorm:"column:icon"`
-	GuardName         string `gorm:"column:guard_name"`
-	DisplayName       string `gorm:"column:display_name"`
-	Description       string `gorm:"column:description"`
-	Sequence          uint64 `gorm:"column:sequence"`
+	PermissionGroupId uint64 `gorm:"column:permission_group_id" json:"permission_group_id"`
+	Name              string `gorm:"column:name" json:"name"`
+	Icon              string `gorm:"column:icon" json:"icon"`
+	GuardName         string `gorm:"column:guard_name" json:"guard_name"`
+	DisplayName       string `gorm:"column:display_name" json:"display_name"`
+	Description       string `gorm:"column:description" json:"description"`
+	Sequence          uint64 `gorm:"column:sequence" json:"sequence"`
 
 	models.CommonTimestampsField
 }

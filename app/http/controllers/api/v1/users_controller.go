@@ -2,6 +2,7 @@ package v1
 
 import (
 	"gohub/app/models/user"
+	"gohub/app/policies"
 	"gohub/app/requests"
 	"gohub/pkg/auth"
 	"gohub/pkg/config"
@@ -33,6 +34,93 @@ func (ctrl *UsersController) Index(c *gin.Context) {
 		"data":  data,
 		"pager": pager,
 	})
+}
+
+// 查看用户详情
+func (ctrl *UsersController) Show(c *gin.Context) {
+	userModel := user.Get(c.Param("id"))
+	if userModel.ID == 0 {
+		response.Abort404(c)
+		return
+	}
+	response.Data(c, userModel)
+}
+
+func (ctrl *UsersController) Store(c *gin.Context) {
+
+	request := requests.UserCreateRequest{}
+	if ok := requests.Validate(c, &request, requests.UserCreate); !ok {
+		return
+	}
+
+	userModel := user.User{
+		DepartmentId: request.DepartmentId,
+		Username:     request.Username,
+		Name:         request.Name,
+		Gender:       request.Gender,
+		Email:        request.Email,
+		Phone:        request.Phone,
+		Avatar:       request.Avatar,
+		Status:       request.Status,
+	}
+
+	userModel.Create()
+	if userModel.ID > 0 {
+		response.Created(c, userModel)
+	} else {
+		response.Abort500(c, "创建失败，请稍后尝试~")
+	}
+}
+
+func (ctrl *UsersController) Update(c *gin.Context) {
+
+	userModel := user.Get(c.Param("id"))
+	if userModel.ID == 0 {
+		response.Abort404(c)
+		return
+	}
+
+	if ok := policies.CanModifyUser(c, userModel); !ok {
+		response.Abort403(c)
+		return
+	}
+
+	request := requests.UserUpdateProfileRequest{}
+	if ok := requests.Validate(c, &request, requests.UserUpdateProfile); !ok {
+		return
+	}
+
+	userModel.Email = request.Email
+	userModel.Phone = request.Phone
+	userModel.Name = request.Name
+	rowsAffected := userModel.Save()
+	if rowsAffected > 0 {
+		response.Data(c, userModel)
+	} else {
+		response.Abort500(c, "更新失败，请稍后尝试~")
+	}
+}
+
+func (ctrl *UsersController) Delete(c *gin.Context) {
+
+	userModel := user.Get(c.Param("id"))
+	if userModel.ID == 0 {
+		response.Abort404(c)
+		return
+	}
+
+	if ok := policies.CanModifyUser(c, userModel); !ok {
+		response.Abort403(c)
+		return
+	}
+
+	rowsAffected := userModel.Delete()
+	if rowsAffected > 0 {
+		response.Success(c)
+		return
+	}
+
+	response.Abort500(c, "删除失败，请稍后尝试~")
 }
 
 func (ctrl *UsersController) UpdateProfile(c *gin.Context) {

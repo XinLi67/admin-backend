@@ -1,12 +1,12 @@
-//Package role 模型
-package role
+//Package channel 模型
+package channel
 
 import (
 	"gohub/app/models"
 	"gohub/pkg/database"
 )
 
-type Role struct {
+type Channel struct {
 	models.BaseModel
 
 	Name        string `gorm:"column:name" json:"name"`
@@ -16,16 +16,16 @@ type Role struct {
 	models.CommonTimestampsField
 }
 
-func (role *Role) Create() {
-	database.DB.Create(&role)
+func (channel *Channel) Create() {
+	database.DB.Create(&channel)
 }
 
-func (role *Role) Save() (rowsAffected int64) {
-	result := database.DB.Save(&role)
+func (channel *Channel) Save() (rowsAffected int64) {
+	result := database.DB.Save(&channel)
 	return result.RowsAffected
 }
 
-func (role *Role) Delete() (rowsAffected int64) {
-	result := database.DB.Delete(&role)
+func (channel *Channel) Delete() (rowsAffected int64) {
+	result := database.DB.Delete(&channel)
 	return result.RowsAffected
 }

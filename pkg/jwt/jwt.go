@@ -2,10 +2,14 @@
 package jwt
 
 import (
+	"context"
 	"errors"
 	"gohub/pkg/app"
 	"gohub/pkg/config"
+	"gohub/pkg/helpers"
 	"gohub/pkg/logger"
+	"gohub/pkg/redis"
+	"strconv"
 	"strings"
 	"time"
 
@@ -30,6 +34,9 @@ type JWT struct {
 
 	// 刷新 Token 的最大过期时间
 	MaxRefresh time.Duration
+
+	// 黑名单宽限时间（秒）
+	JwtBlacklistGracePeriod int64 `mapstructure:"jwt_blacklist_grace_period" json:"jwt_blacklist_grace_period" yaml:"jwt_blacklist_grace_period"`
 }
 
 // JWTCustomClaims 自定义载荷
@@ -53,8 +60,9 @@ type JWTCustomClaims struct {
 
 func NewJWT() *JWT {
 	return &JWT{
-		SignKey:    []byte(config.GetString("app.key")),
-		MaxRefresh: time.Duration(config.GetInt64("jwt.max_refresh_time")) * time.Minute,
+		SignKey:                 []byte(config.GetString("app.key")),
+		MaxRefresh:              time.Duration(config.GetInt64("jwt.max_refresh_time")) * time.Minute,
+		JwtBlacklistGracePeriod: config.GetInt64("jwt.jwt_blacklist_grace_period"),
 	}
 }
 
@@ -195,4 +203,52 @@ func (jwt *JWT) getTokenFromHeader(c *gin.Context) (string, error) {
 		return "", ErrHeaderMalformed
 	}
 	return parts[1], nil
+}
+
+// 获取黑名单缓存 key
+func (jwt *JWT) getBlackListKey(tokenStr string) string {
+	return "jwt_black_list:" + helpers.MD5([]byte(tokenStr))
+}
+
+// JoinBlackList token 加入黑名单
+func (jwt *JWT) JoinBlackList(c *gin.Context) (err error) {
+	// 1. 从 Header 里获取 token
+	tokenString, parseErr := jwt.getTokenFromHeader(c)
+	if parseErr != nil {
+		return parseErr
+	}
+
+	// 2. 调用 jwt 库解析用户传参的 Token
+	token, err := jwt.parseTokenString(tokenString)
+
+	// 3. 解析出错，未报错证明是合法的 Token（甚至未到过期时间）
+	if err != nil {
+		validationErr, ok := err.(*jwtpkg.ValidationError)
+		// 满足 refresh 的条件：只是单一的报错 ValidationErrorExpired
+		if !ok || validationErr.Errors != jwtpkg.ValidationErrorExpired {
+			return err
+		}
+	}
+
+	// 4. 解析 JWTCustomClaims 的数据
+	claims := token.Claims.(*JWTCustomClaims)
+	nowUnix := time.Now().Unix()
+	timer := time.Duration(claims.ExpiresAt-nowUnix) * time.Second
+	// 将 token 剩余时间设置为缓存有效期，并将当前时间作为缓存 value 值
+	err = redis.Redis.Client.SetNX(context.Background(), jwt.getBlackListKey(token.Raw), nowUnix, timer).Err()
+	return
+}
+
+// IsInBlacklist token 是否在黑名单中
+func (jwt *JWT) IsInBlacklist(tokenStr string) bool {
+	joinUnixStr, _ := redis.Redis.Client.Get(context.Background(), jwt.getBlackListKey(tokenStr)).Result()
+	joinUnix, err := strconv.ParseInt(joinUnixStr, 10, 64)
+	if joinUnixStr == "" || err != nil {
+		return false
+	}
+	// JwtBlacklistGracePeriod 为黑名单宽限时间，避免并发请求失效
+	if time.Now().Unix()-joinUnix < jwt.JwtBlacklistGracePeriod {
+		return false
+	}
+	return true
 }

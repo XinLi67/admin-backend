@@ -9,6 +9,57 @@ import (
 	"github.com/thedevsaddam/govalidator"
 )
 
+type UserCreateRequest struct {
+	DepartmentId uint64 `json:"department_id" valid:"department_id"`
+	GuardName    string `json:"guard_name" valid:"guard_name" `
+	Username     string `json:"username" valid:"username"`
+	Name         string `json:"name" valid:"name"`
+	Gender       uint64 `json:"gender" valid:"gender"`
+	Email        string `json:"email"`
+	Phone        string `json:"phone"`
+	Avatar       string `json:"avatar"`
+	Status       uint64 `json:"status;omitempty"`
+}
+
+func UserCreate(data interface{}, c *gin.Context) map[string][]string {
+
+	rules := govalidator.MapData{
+		"department_id": []string{"required", "exists:departments,id"},
+		"guard_name":    []string{"required"},
+		"username":      []string{"required", "alpha_num", "between:3,20", "not_exists:users,username"},
+		"name":          []string{"required", "min:2"},
+		"gender":        []string{"required", "in:1,2"},
+	}
+
+	messages := govalidator.MapData{
+		"department_id": []string{
+			"required: 部门为必填项，参数名称 department_id",
+			"exists: 部门信息不存在",
+		},
+		"guard_name": []string{
+			"required: 项目为必填项，参数名称 guard_name",
+		},
+		"username": []string{
+			"required: 用户名为必填项",
+			"alpha_num: 用户名格式错误，只允许数字和英文",
+			"between: 用户名长度需在 3~20 之间",
+			"not_exists: 用户名已被占用",
+		},
+		"name": []string{
+			"required: 姓名为必填项",
+			"min: 姓名长度需大于 2",
+		},
+		"gender": []string{
+			"required: 性别为必填项",
+			"in: 性别只能是男或女",
+		},
+	}
+
+	errs := validate(data, rules, messages)
+
+	return errs
+}
+
 type UserUpdateProfileRequest struct {
 	Name  string `valid:"name" json:"name"`
 	Email string `valid:"email" json:"email"`

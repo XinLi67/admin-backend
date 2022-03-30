@@ -18,10 +18,19 @@ func init() {
 			{
 				ParentId:       0,
 				Icon:           "Orange",
-				Uri:            "/didshboard",
+				Uri:            "/dashboard",
 				IsLink:         false,
 				PermissionName: "",
 				Name:           "仪表盘",
+				GuardName:      "admin",
+				Sequence:       0,
+			}, {
+				ParentId:       0,
+				Icon:           "Orange",
+				Uri:            "/channel",
+				IsLink:         false,
+				PermissionName: "",
+				Name:           "渠道管理",
 				GuardName:      "admin",
 				Sequence:       0,
 			}, {
@@ -57,14 +66,13 @@ func init() {
 				Name:           "用户管理",
 				GuardName:      "admin",
 				Sequence:       0,
-			},
-			{
+			}, {
 				ParentId:       systemMenu.ID,
 				Icon:           "",
-				Uri:            "/admin-user",
+				Uri:            "/department",
 				IsLink:         false,
 				PermissionName: "",
-				Name:           "用户管理",
+				Name:           "部门管理",
 				GuardName:      "admin",
 				Sequence:       0,
 			},

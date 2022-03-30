@@ -7,7 +7,7 @@ func init() {
 		return map[string]interface{}{
 
 			// 验证码的长度
-			"code_length": config.Env("VERIFY_CODE_LENGTH", 6),
+			"code_length": config.Env("VERIFY_CODE_LENGTH", 4),
 
 			// 过期时间，单位是分钟
 			"expire_time": config.Env("VERIFY_CODE_EXPIRE", 15),

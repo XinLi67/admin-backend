@@ -9,8 +9,8 @@ import (
 type PermissionGroup struct {
 	models.BaseModel
 
-	Name        string
-	Description string
+	Name        string `gorm:"column:name" json:"name"`
+	Description string `gorm:"column:description" json:"description"`
 
 	models.CommonTimestampsField
 }

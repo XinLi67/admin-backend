@@ -21,6 +21,7 @@ func init() {
 		mypermission := permission_group.GetByName("权限")
 		permissionGroup := permission_group.GetByName("权限组")
 		menu := permission_group.GetByName("菜单")
+		common := permission_group.GetByName("公共")
 
 		permissions := []permission.Permission{
 			{
@@ -231,6 +232,67 @@ func init() {
 				Name:              "permission-group.all",
 				GuardName:         "admin",
 				DisplayName:       "所有权限组",
+				Icon:              "",
+			}, {
+				PermissionGroupId: common.ID,
+				Name:              "channel.index",
+				GuardName:         "admin",
+				DisplayName:       "渠道列表",
+				Icon:              "",
+			}, {
+				PermissionGroupId: common.ID,
+				Name:              "channel.show",
+				GuardName:         "admin",
+				DisplayName:       "渠道详情",
+				Icon:              "",
+			}, {
+				PermissionGroupId: common.ID,
+				Name:              "channel.store",
+				GuardName:         "admin",
+				DisplayName:       "新建渠道",
+				Icon:              "",
+			}, {
+				PermissionGroupId: common.ID,
+				Name:              "channel.update",
+				GuardName:         "admin",
+				DisplayName:       "更新渠道",
+				Icon:              "",
+			}, {
+				PermissionGroupId: common.ID,
+				Name:              "channel.destroy",
+				GuardName:         "admin",
+				DisplayName:       "删除渠道",
+				Icon:              "",
+			},
+			{
+				PermissionGroupId: common.ID,
+				Name:              "department.index",
+				GuardName:         "admin",
+				DisplayName:       "部门列表",
+				Icon:              "",
+			}, {
+				PermissionGroupId: common.ID,
+				Name:              "department.show",
+				GuardName:         "admin",
+				DisplayName:       "部门详情",
+				Icon:              "",
+			}, {
+				PermissionGroupId: common.ID,
+				Name:              "department.store",
+				GuardName:         "admin",
+				DisplayName:       "新建部门",
+				Icon:              "",
+			}, {
+				PermissionGroupId: common.ID,
+				Name:              "department.update",
+				GuardName:         "admin",
+				DisplayName:       "更新部门",
+				Icon:              "",
+			}, {
+				PermissionGroupId: common.ID,
+				Name:              "department.destroy",
+				GuardName:         "admin",
+				DisplayName:       "删除部门",
 				Icon:              "",
 			},
 		}

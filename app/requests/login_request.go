@@ -24,7 +24,7 @@ func LoginByPassword(data interface{}, c *gin.Context) map[string][]string {
 		"username":       []string{"required", "min:3"},
 		"password":       []string{"required", "min:6"},
 		"captcha_id":     []string{"required"},
-		"captcha_answer": []string{"required", "digits:6"},
+		"captcha_answer": []string{"required", "digits:4"},
 	}
 	messages := govalidator.MapData{
 		"guard_name": []string{

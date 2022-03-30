@@ -35,6 +35,10 @@ func init() {
 				Name:        "菜单",
 				Description: "",
 			},
+			{
+				Name:        "公共",
+				Description: "",
+			},
 		}
 
 		result := db.Table("permission_groups").Create(&permissionGroups)

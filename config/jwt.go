@@ -15,6 +15,9 @@ func init() {
 			// 允许刷新时间，单位分钟，86400 为两个月，从 Token 的签名时间算起
 			"max_refresh_time": config.Env("JWT_MAX_REFRESH_TIME", 86400),
 
+			// 黑名单宽恕时间
+			"jwt_blacklist_grace_period": config.Env("JWT_BLACKLIST_GRACE_PERIOD", 1),
+
 			// debug 模式下的过期时间，方便本地开发调试
 			"debug_expire_time": 86400,
 		}
