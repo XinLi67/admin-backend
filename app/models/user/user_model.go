@@ -3,6 +3,7 @@ package user
 
 import (
 	"gohub/app/models"
+	"gohub/app/models/department"
 	"gohub/pkg/database"
 	"gohub/pkg/hash"
 )
@@ -20,6 +21,8 @@ type User struct {
 	Avatar       string `gorm:"column:avatar" json:"avatar"`
 	Password     string `gorm:"column:password" json:"-"`
 	Status       uint64 `gorm:"column:status" json:"status"`
+
+	Department department.Department `json:"department"`
 
 	models.CommonTimestampsField
 }

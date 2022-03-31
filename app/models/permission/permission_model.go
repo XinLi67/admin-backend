@@ -3,6 +3,7 @@ package permission
 
 import (
 	"gohub/app/models"
+	"gohub/app/models/permission_group"
 	"gohub/pkg/database"
 )
 
@@ -16,6 +17,8 @@ type Permission struct {
 	DisplayName       string `gorm:"column:display_name" json:"display_name"`
 	Description       string `gorm:"column:description" json:"description"`
 	Sequence          uint64 `gorm:"column:sequence" json:"sequence"`
+
+	PermissionGroup permission_group.PermissionGroup `json:"group"`
 
 	models.CommonTimestampsField
 }

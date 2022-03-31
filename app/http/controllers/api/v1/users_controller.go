@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"gohub/app/http/assemblies"
 	"gohub/app/models/user"
 	"gohub/app/policies"
 	"gohub/app/requests"
@@ -30,8 +31,11 @@ func (ctrl *UsersController) Index(c *gin.Context) {
 	}
 
 	data, pager := user.Paginate(c, 0)
+
+	users := assemblies.UserAssemblyFromModelList(data, len(data))
+
 	response.JSON(c, gin.H{
-		"data":  data,
+		"data":  users,
 		"pager": pager,
 	})
 }
@@ -43,7 +47,10 @@ func (ctrl *UsersController) Show(c *gin.Context) {
 		response.Abort404(c)
 		return
 	}
-	response.Data(c, userModel)
+
+	userAssembly := assemblies.UserAssemblyFromModel(userModel)
+
+	response.Data(c, userAssembly)
 }
 
 func (ctrl *UsersController) Store(c *gin.Context) {
@@ -93,6 +100,7 @@ func (ctrl *UsersController) Update(c *gin.Context) {
 	userModel.Email = request.Email
 	userModel.Phone = request.Phone
 	userModel.Name = request.Name
+	userModel.Gender = request.Gender
 	rowsAffected := userModel.Save()
 	if rowsAffected > 0 {
 		response.Data(c, userModel)
