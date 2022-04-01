@@ -45,8 +45,8 @@ func UserAssemblyFromModel(data user.User) *UserAssembly {
 	}
 }
 
-func UserAssemblyFromModelList(data []user.User, total int) interface{} {
-	users := make([]UserAssembly, total)
+func UserAssemblyFromModelList(data []user.User) interface{} {
+	users := make([]UserAssembly, len(data))
 	for i, v := range data {
 		users[i] = UserAssembly{
 			ID:           v.ID,

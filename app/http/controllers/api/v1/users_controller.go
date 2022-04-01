@@ -32,7 +32,7 @@ func (ctrl *UsersController) Index(c *gin.Context) {
 
 	data, pager := user.Paginate(c, 0)
 
-	users := assemblies.UserAssemblyFromModelList(data, len(data))
+	users := assemblies.UserAssemblyFromModelList(data)
 
 	response.JSON(c, gin.H{
 		"data":  users,
