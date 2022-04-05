@@ -5,6 +5,7 @@ ENV TZ Asia/Shanghai
 
 WORKDIR /app
 ADD adcenter /app/adcenter
+ADD .env /app/.env
 
 CMD ["/app/adcenter"]
 EXPOSE 9000
