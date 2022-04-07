@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"gohub/app/http/assemblies"
 	"gohub/app/models/permission"
 	"gohub/app/policies"
 	"gohub/app/requests"
@@ -31,8 +32,9 @@ func (ctrl *PermissionsController) Index(c *gin.Context) {
 	}
 
 	data, pager := permission.Paginate(c, 0)
+	permissions := assemblies.PermissionAssemblyFromModelList(data)
 	response.JSON(c, gin.H{
-		"data":  data,
+		"data":  permissions,
 		"pager": pager,
 	})
 }
@@ -43,7 +45,8 @@ func (ctrl *PermissionsController) Show(c *gin.Context) {
 		response.Abort404(c)
 		return
 	}
-	response.Data(c, permissionModel)
+	permissionAssembly := assemblies.PermissionAssemblyFromModel(permissionModel)
+	response.Data(c, permissionAssembly)
 }
 
 func (ctrl *PermissionsController) Store(c *gin.Context) {
