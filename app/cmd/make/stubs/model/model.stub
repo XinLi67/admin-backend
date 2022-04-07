@@ -29,3 +29,8 @@ func ({{VariableName}} *{{StructName}}) Delete() (rowsAffected int64) {
     result := database.DB.Delete(&{{VariableName}})
     return result.RowsAffected
 }
+
+func ({{VariableName}} *{{StructName}}) BatchDelete(ids []int) (rowsAffected int64) {
+	result := database.DB.Delete(&{{VariableName}}, ids)
+	return result.RowsAffected
+}

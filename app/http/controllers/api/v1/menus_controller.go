@@ -131,6 +131,27 @@ func (ctrl *MenusController) Delete(c *gin.Context) {
 	response.Abort500(c, "删除失败，请稍后尝试~")
 }
 
+func (ctrl *MenusController) BatchDelete(c *gin.Context) {
+
+	request := requests.BatchDeleteRequest{}
+	bindOk := requests.Validate(c, &request, requests.BatchDelete)
+	if !bindOk {
+		return
+	}
+
+	menuModel := menu.Menu{}
+	if ok := policies.CanModifyMenu(c, menuModel); !ok {
+		response.Abort403(c)
+		return
+	}
+
+	rowsAffected := menuModel.BatchDelete(request.Ids)
+
+	response.Data(c, map[string]int64{
+		"rowsAffected": rowsAffected,
+	})
+}
+
 func (m *menuList) processToTree(pid uint64, level uint64) []menuItem {
 	var menuTree []menuItem
 	if level == 10 {

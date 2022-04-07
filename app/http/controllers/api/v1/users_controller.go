@@ -31,9 +31,13 @@ func (ctrl *UsersController) Index(c *gin.Context) {
 	}
 
 	data, pager := user.Paginate(c, 0)
+<<<<<<< HEAD
+	users := assemblies.UserAssemblyFromModelList(data)
+=======
 
 	users := assemblies.UserAssemblyFromModelList(data)
 
+>>>>>>> 68cfddf50cdafc643ebd2af6dbebf6a95c3e745c
 	response.JSON(c, gin.H{
 		"data":  users,
 		"pager": pager,
@@ -47,9 +51,16 @@ func (ctrl *UsersController) Show(c *gin.Context) {
 		response.Abort404(c)
 		return
 	}
+<<<<<<< HEAD
+	// userDto := dto.UserDTOFromModel(userModel)
+	// response.Data(c, userDto)
+
+	userAssembly := assemblies.UserAssemblyFromModel(userModel)
+=======
 
 	userAssembly := assemblies.UserAssemblyFromModel(userModel)
 
+>>>>>>> 68cfddf50cdafc643ebd2af6dbebf6a95c3e745c
 	response.Data(c, userAssembly)
 }
 
@@ -131,6 +142,27 @@ func (ctrl *UsersController) Delete(c *gin.Context) {
 	response.Abort500(c, "删除失败，请稍后尝试~")
 }
 
+func (ctrl *UsersController) BatchDelete(c *gin.Context) {
+
+	request := requests.BatchDeleteRequest{}
+	bindOk := requests.Validate(c, &request, requests.BatchDelete)
+	if !bindOk {
+		return
+	}
+
+	userModel := user.User{}
+	if ok := policies.CanModifyUser(c, userModel); !ok {
+		response.Abort403(c)
+		return
+	}
+
+	rowsAffected := userModel.BatchDelete(request.Ids)
+
+	response.Data(c, map[string]int64{
+		"rowsAffected": rowsAffected,
+	})
+}
+
 func (ctrl *UsersController) UpdateProfile(c *gin.Context) {
 
 	request := requests.UserUpdateProfileRequest{}
@@ -142,6 +174,7 @@ func (ctrl *UsersController) UpdateProfile(c *gin.Context) {
 	currentUser.Name = request.Name
 	currentUser.Email = request.Email
 	currentUser.Phone = request.Phone
+	currentUser.Gender = request.Gender
 	rowsAffected := currentUser.Save()
 	if rowsAffected > 0 {
 		response.Data(c, currentUser)

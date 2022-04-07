@@ -40,7 +40,7 @@ func Paginate(c *gin.Context, perPage int) (channels []Channel, paging paginator
 	return
 }
 
-func (channel *Channel) BatchDelete(ids []int) (rowsAffected int64) {
-	result := database.DB.Delete(&channel, ids)
-	return result.RowsAffected
-}
+// func (channel *Channel) BatchDelete(ids []int) (rowsAffected int64) {
+// 	result := database.DB.Delete(&channel, ids)
+// 	return result.RowsAffected
+// }

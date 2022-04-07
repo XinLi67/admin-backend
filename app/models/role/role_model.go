@@ -9,9 +9,9 @@ import (
 type Role struct {
 	models.BaseModel
 
-	Name        string `gorm:"column:name" json:"name"`
-	GuardName   string `gorm:"column:guard_name" json:"guard_name"`
-	Description string `gorm:"column:description" json:"description"`
+	Name        string `gorm:"column:name"`
+	GuardName   string `gorm:"column:guard_name"`
+	Description string `gorm:"column:description"`
 
 	models.CommonTimestampsField
 }
@@ -27,5 +27,10 @@ func (role *Role) Save() (rowsAffected int64) {
 
 func (role *Role) Delete() (rowsAffected int64) {
 	result := database.DB.Delete(&role)
+	return result.RowsAffected
+}
+
+func (role *Role) BatchDelete(ids []int) (rowsAffected int64) {
+	result := database.DB.Delete(&role, ids)
 	return result.RowsAffected
 }

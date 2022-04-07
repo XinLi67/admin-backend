@@ -9,9 +9,9 @@ import (
 type Channel struct {
 	models.BaseModel
 
-	Name        string `gorm:"column:name" json:"name"`
-	GuardName   string `gorm:"column:guard_name" json:"guard_name"`
-	Description string `gorm:"column:description" json:"description"`
+	Name        string `gorm:"column:name"`
+	Description string `gorm:"column:description"`
+	Status      uint64 `gorm:"column:status"`
 
 	models.CommonTimestampsField
 }
@@ -27,5 +27,10 @@ func (channel *Channel) Save() (rowsAffected int64) {
 
 func (channel *Channel) Delete() (rowsAffected int64) {
 	result := database.DB.Delete(&channel)
+	return result.RowsAffected
+}
+
+func (channel *Channel) BatchDelete(ids []int) (rowsAffected int64) {
+	result := database.DB.Delete(&channel, ids)
 	return result.RowsAffected
 }

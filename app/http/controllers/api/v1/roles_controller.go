@@ -107,6 +107,27 @@ func (ctrl *RolesController) Delete(c *gin.Context) {
 	response.Abort500(c, "删除失败，请稍后尝试~")
 }
 
+func (ctrl *RolesController) BatchDelete(c *gin.Context) {
+
+	request := requests.BatchDeleteRequest{}
+	bindOk := requests.Validate(c, &request, requests.BatchDelete)
+	if !bindOk {
+		return
+	}
+
+	roleModel := role.Role{}
+	if ok := policies.CanModifyRole(c, roleModel); !ok {
+		response.Abort403(c)
+		return
+	}
+
+	rowsAffected := roleModel.BatchDelete(request.Ids)
+
+	response.Data(c, map[string]int64{
+		"rowsAffected": rowsAffected,
+	})
+}
+
 func (ctrl *RolesController) GetGuardNameRoles(c *gin.Context) {
 	roles := role.All()
 	response.Data(c, roles)

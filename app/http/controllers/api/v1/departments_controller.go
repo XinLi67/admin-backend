@@ -127,6 +127,27 @@ func (ctrl *DepartmentsController) Delete(c *gin.Context) {
 	response.Abort500(c, "删除失败，请稍后尝试~")
 }
 
+func (ctrl *DepartmentsController) BatchDelete(c *gin.Context) {
+
+	request := requests.BatchDeleteRequest{}
+	bindOk := requests.Validate(c, &request, requests.BatchDelete)
+	if !bindOk {
+		return
+	}
+
+	departmentModel := department.Department{}
+	if ok := policies.CanModifyDepartment(c, departmentModel); !ok {
+		response.Abort403(c)
+		return
+	}
+
+	rowsAffected := departmentModel.BatchDelete(request.Ids)
+
+	response.Data(c, map[string]int64{
+		"rowsAffected": rowsAffected,
+	})
+}
+
 func (m *departmentList) processToTree(pid uint64, level uint64) []departmentItem {
 	var departmentTree []departmentItem
 	if level == 10 {

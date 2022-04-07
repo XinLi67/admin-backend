@@ -42,6 +42,15 @@ func init() {
 				Name:           "系统管理",
 				GuardName:      "admin",
 				Sequence:       0,
+			}, {
+				ParentId:       0,
+				Icon:           "",
+				Uri:            "/advertising",
+				IsLink:         false,
+				PermissionName: "",
+				Name:           "广告管理",
+				GuardName:      "admin",
+				Sequence:       0,
 			},
 		}
 
@@ -116,5 +125,29 @@ func init() {
 		}
 
 		console.Success(fmt.Sprintf("Table [%v] %v rows seeded", systemResult.Statement.Table, systemResult.RowsAffected))
+
+		advertisingMenu := menu.GetByName("广告管理")
+
+		advertisingMenus := []menu.Menu{
+			{
+				ParentId:       advertisingMenu.ID,
+				Icon:           "",
+				Uri:            "/advertising-index",
+				IsLink:         false,
+				PermissionName: "",
+				Name:           "广告列表",
+				GuardName:      "admin",
+				Sequence:       0,
+			},
+		}
+
+		advertisingResult := db.Table("menus").Create(&advertisingMenus)
+
+		if err := advertisingResult.Error; err != nil {
+			logger.LogIf(err)
+			return
+		}
+
+		console.Success(fmt.Sprintf("Table [%v] %v rows seeded", advertisingResult.Statement.Table, advertisingResult.RowsAffected))
 	})
 }

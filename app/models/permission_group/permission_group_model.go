@@ -9,8 +9,8 @@ import (
 type PermissionGroup struct {
 	models.BaseModel
 
-	Name        string `gorm:"column:name" json:"name"`
-	Description string `gorm:"column:description" json:"description"`
+	Name        string `gorm:"column:name"`
+	Description string `gorm:"column:description"`
 
 	models.CommonTimestampsField
 }
@@ -26,5 +26,10 @@ func (permissionGroup *PermissionGroup) Save() (rowsAffected int64) {
 
 func (permissionGroup *PermissionGroup) Delete() (rowsAffected int64) {
 	result := database.DB.Delete(&permissionGroup)
+	return result.RowsAffected
+}
+
+func (permissionGroup *PermissionGroup) BatchDelete(ids []int) (rowsAffected int64) {
+	result := database.DB.Delete(&permissionGroup, ids)
 	return result.RowsAffected
 }

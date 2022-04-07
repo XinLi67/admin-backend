@@ -61,10 +61,10 @@ func UserCreate(data interface{}, c *gin.Context) map[string][]string {
 }
 
 type UserUpdateProfileRequest struct {
-	Name   string `valid:"name" json:"name" valid:"name"`
-	Email  string `valid:"email" json:"email" valid:"email"`
-	Phone  string `valid:"phone" json:"phone" valid:"phone"`
-	Gender uint64 `valid:"gender" json:"gender" valid:"gender"`
+	Name   string `valid:"name" json:"name"`
+	Email  string `valid:"email" json:"email"`
+	Phone  string `valid:"phone" json:"phone"`
+	Gender uint64 `valid:"gender" json:"gender"`
 }
 
 func UserUpdateProfile(data interface{}, c *gin.Context) map[string][]string {
@@ -82,9 +82,7 @@ func UserUpdateProfile(data interface{}, c *gin.Context) map[string][]string {
 			"required",
 			"digits:11",
 		},
-		"gender": []string{
-			"required",
-		},
+		"gender": []string{"required", "in:1,2"},
 	}
 
 	messages := govalidator.MapData{
@@ -105,7 +103,8 @@ func UserUpdateProfile(data interface{}, c *gin.Context) map[string][]string {
 			"digits:手机号长度必须为 11 位的数字",
 		},
 		"gender": []string{
-			"required: 性别为必输项，参数名称 gender",
+			"required:性别为必输项，参数名称 gender",
+			"in:性别只能是1和2",
 		},
 	}
 	return validate(data, rules, messages)

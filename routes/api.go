@@ -43,7 +43,7 @@ func RegisterAPIRoutes(r *gin.Engine) {
 			// 发送验证码
 			vcc := new(auth.VerifyCodeController)
 			// 图片验证码
-			authGroup.POST("/verify-codes/captcha", middlewares.LimitPerRoute("50-H"), vcc.ShowCaptcha)
+			authGroup.POST("/verify-codes/captcha", middlewares.LimitPerRoute("1000-H"), vcc.ShowCaptcha)
 
 		}
 
@@ -54,8 +54,9 @@ func RegisterAPIRoutes(r *gin.Engine) {
 		{
 			pgGroup.GET("", pg.Index)
 			pgGroup.POST("", middlewares.AuthJWT(), pg.Store)
-			pgGroup.PATCH("/:id", middlewares.AuthJWT(), pg.Update)
-			pgGroup.DELETE("/:id", middlewares.AuthJWT(), pg.Delete)
+			pgGroup.POST("/:id/update", middlewares.AuthJWT(), pg.Update)
+			pgGroup.POST("/:id/delete", middlewares.AuthJWT(), pg.Delete)
+			pgGroup.POST("/batch-delete", middlewares.AuthJWT(), pg.BatchDelete)
 			pgGroup.GET("/:id", pg.Show)
 		}
 
@@ -66,8 +67,9 @@ func RegisterAPIRoutes(r *gin.Engine) {
 		{
 			permissionGroup.GET("", permission.Index)
 			permissionGroup.POST("", middlewares.AuthJWT(), permission.Store)
-			permissionGroup.PATCH("/:id", middlewares.AuthJWT(), permission.Update)
-			permissionGroup.DELETE("/:id", middlewares.AuthJWT(), permission.Delete)
+			permissionGroup.POST("/:id/update", middlewares.AuthJWT(), permission.Update)
+			permissionGroup.POST("/:id/delete", middlewares.AuthJWT(), permission.Delete)
+			permissionGroup.POST("/batch-delete", middlewares.AuthJWT(), permission.BatchDelete)
 			permissionGroup.GET("/:id", permission.Show)
 		}
 
@@ -78,9 +80,10 @@ func RegisterAPIRoutes(r *gin.Engine) {
 		{
 			menu.GET("", mu.Index)
 			menu.POST("", middlewares.AuthJWT(), mu.Store)
-			menu.PATCH("/:id", middlewares.AuthJWT(), mu.Update)
-			menu.DELETE("/:id", middlewares.AuthJWT(), mu.Delete)
-			menu.GET("/:id", permission.Show)
+			menu.POST("/:id/update", middlewares.AuthJWT(), mu.Update)
+			menu.POST("/:id/delete", middlewares.AuthJWT(), mu.Delete)
+			menu.POST("/batch-delete", middlewares.AuthJWT(), mu.BatchDelete)
+			menu.GET("/:id", mu.Show)
 		}
 
 		// 角色管理
@@ -90,12 +93,13 @@ func RegisterAPIRoutes(r *gin.Engine) {
 		{
 			roleGroup.GET("", role.Index)
 			roleGroup.POST("", middlewares.AuthJWT(), role.Store)
-			roleGroup.PATCH("/:id", middlewares.AuthJWT(), role.Update)
-			roleGroup.DELETE("/:id", middlewares.AuthJWT(), role.Delete)
+			roleGroup.POST("/:id/update", middlewares.AuthJWT(), role.Update)
+			roleGroup.POST("/:id/delete", middlewares.AuthJWT(), role.Delete)
+			roleGroup.POST("/batch-delete", middlewares.AuthJWT(), role.BatchDelete)
 			roleGroup.GET("/:id", role.Show)
-			roleGroup.PUT("/:id/roles/:guardName", role.UpdateGuardName)
+			roleGroup.POST("/:id/roles/:guardName", role.UpdateGuardName)
 			roleGroup.GET("/:id/permissions", role.GetRolePermissions)
-			roleGroup.PUT("/:id/permissions", role.AssignPermissions)
+			roleGroup.POST("/:id/permissions", role.AssignPermissions)
 		}
 
 		uc := new(controllers.UsersController)
@@ -106,9 +110,11 @@ func RegisterAPIRoutes(r *gin.Engine) {
 		{
 			usersGroup.GET("", uc.Index)
 			usersGroup.POST("", middlewares.AuthJWT(), uc.Store)
-			usersGroup.PATCH("/:id", middlewares.AuthJWT(), uc.Update)
-			usersGroup.DELETE("/:id", middlewares.AuthJWT(), uc.Delete)
+			usersGroup.POST("/:id/update", middlewares.AuthJWT(), uc.Update)
+			usersGroup.POST("/:id/delete", middlewares.AuthJWT(), uc.Delete)
+			usersGroup.POST("/batch-delete", middlewares.AuthJWT(), uc.BatchDelete)
 			usersGroup.GET("/:id", uc.Show)
+			usersGroup.POST("/password-reset", middlewares.AuthJWT(), uc.UpdatePassword)
 		}
 
 		// 部门管理
@@ -117,8 +123,9 @@ func RegisterAPIRoutes(r *gin.Engine) {
 		{
 			departmentGroup.GET("", dep.Index)
 			departmentGroup.POST("", middlewares.AuthJWT(), dep.Store)
-			departmentGroup.PATCH("/:id", middlewares.AuthJWT(), dep.Update)
-			departmentGroup.DELETE("/:id", middlewares.AuthJWT(), dep.Delete)
+			departmentGroup.POST("/:id/update", middlewares.AuthJWT(), dep.Update)
+			departmentGroup.POST("/:id/delete", middlewares.AuthJWT(), dep.Delete)
+			departmentGroup.POST("/batch-delete", middlewares.AuthJWT(), dep.BatchDelete)
 			departmentGroup.GET("/:id", dep.Show)
 		}
 
@@ -128,9 +135,130 @@ func RegisterAPIRoutes(r *gin.Engine) {
 		{
 			channelGroup.GET("", channel.Index)
 			channelGroup.POST("", middlewares.AuthJWT(), channel.Store)
-			channelGroup.PATCH("/:id", middlewares.AuthJWT(), channel.Update)
-			channelGroup.DELETE("/:id", middlewares.AuthJWT(), channel.Delete)
+			channelGroup.POST("/:id/update", middlewares.AuthJWT(), channel.Update)
+			channelGroup.POST("/:id/delete", middlewares.AuthJWT(), channel.Delete)
+			channelGroup.POST("/batch-delete", middlewares.AuthJWT(), channel.BatchDelete)
 			channelGroup.GET("/:id", channel.Show)
+		}
+
+		// 广告管理
+		advertising := new(controllers.AdvertisingsController)
+		advertisingGroup := v1.Group("/advertising")
+		{
+			advertisingGroup.GET("", advertising.Index)
+			advertisingGroup.POST("", middlewares.AuthJWT(), advertising.Store)
+			advertisingGroup.POST("/:id/update", middlewares.AuthJWT(), advertising.Update)
+			advertisingGroup.POST("/:id/delete", middlewares.AuthJWT(), advertising.Delete)
+			advertisingGroup.POST("/batch-delete", middlewares.AuthJWT(), advertising.BatchDelete)
+			advertisingGroup.GET("/:id", advertising.Show)
+		}
+
+		// 公告管理
+		announcement := new(controllers.AnnouncementsController)
+		announcementGroup := v1.Group("/announcement")
+		{
+			announcementGroup.GET("", announcement.Index)
+			announcementGroup.POST("", middlewares.AuthJWT(), announcement.Store)
+			announcementGroup.POST("/:id/update", middlewares.AuthJWT(), announcement.Update)
+			announcementGroup.POST("/:id/delete", middlewares.AuthJWT(), announcement.Delete)
+			announcementGroup.POST("/batch-delete", middlewares.AuthJWT(), announcement.BatchDelete)
+			announcementGroup.GET("/:id", announcement.Show)
+		}
+
+		// 广告位管理
+		advertisingPosition := new(controllers.AdvertisingPositionsController)
+		advertisingPositionGroup := v1.Group("/advertising-position")
+		{
+			advertisingPositionGroup.GET("", advertisingPosition.Index)
+			advertisingPositionGroup.POST("", middlewares.AuthJWT(), advertisingPosition.Store)
+			advertisingPositionGroup.POST("/:id/update", middlewares.AuthJWT(), advertisingPosition.Update)
+			advertisingPositionGroup.POST("/:id/delete", middlewares.AuthJWT(), advertisingPosition.Delete)
+			advertisingPositionGroup.POST("/batch-delete", middlewares.AuthJWT(), advertisingPosition.BatchDelete)
+			advertisingPositionGroup.GET("/:id", advertisingPosition.Show)
+		}
+
+		// 公告位管理
+		announcementPosition := new(controllers.AnnouncementPositionsController)
+		announcementPositionGroup := v1.Group("/announcement-position")
+		{
+			announcementPositionGroup.GET("", announcementPosition.Index)
+			announcementPositionGroup.POST("", middlewares.AuthJWT(), announcementPosition.Store)
+			announcementPositionGroup.POST("/:id/update", middlewares.AuthJWT(), announcementPosition.Update)
+			announcementPositionGroup.POST("/:id/delete", middlewares.AuthJWT(), announcementPosition.Delete)
+			announcementPositionGroup.POST("/batch-delete", middlewares.AuthJWT(), announcementPosition.BatchDelete)
+			announcementPositionGroup.GET("/:id", announcementPosition.Show)
+		}
+
+		// 广告计划管理
+		advertisingPlan := new(controllers.AdvertisingPlansController)
+		advertisingPlanGroup := v1.Group("/advertising-plan")
+		{
+			advertisingPlanGroup.GET("", advertisingPlan.Index)
+			advertisingPlanGroup.POST("", middlewares.AuthJWT(), advertisingPlan.Store)
+			advertisingPlanGroup.POST("/:id/update", middlewares.AuthJWT(), advertisingPlan.Update)
+			advertisingPlanGroup.POST("/:id/delete", middlewares.AuthJWT(), advertisingPlan.Delete)
+			advertisingPlanGroup.POST("/batch-delete", middlewares.AuthJWT(), advertisingPlan.BatchDelete)
+			advertisingPlanGroup.GET("/:id", advertisingPlan.Show)
+		}
+
+		// 公告计划管理
+		announcementPlan := new(controllers.AnnouncementPlansController)
+		announcementPlanGroup := v1.Group("/announcement-plan")
+		{
+			announcementPlanGroup.GET("", announcementPlan.Index)
+			announcementPlanGroup.POST("", middlewares.AuthJWT(), announcementPlan.Store)
+			announcementPlanGroup.POST("/:id/update", middlewares.AuthJWT(), announcementPlan.Update)
+			announcementPlanGroup.POST("/:id/delete", middlewares.AuthJWT(), announcementPlan.Delete)
+			announcementPlanGroup.POST("/batch-delete", middlewares.AuthJWT(), announcementPlan.BatchDelete)
+			announcementPlanGroup.GET("/:id", announcementPlan.Show)
+		}
+
+		// 素材管理
+		material := new(controllers.MaterialsController)
+		materialGroup := v1.Group("/material")
+		{
+			materialGroup.GET("", material.Index)
+			materialGroup.POST("", middlewares.AuthJWT(), material.Store)
+			materialGroup.POST("/:id/update", middlewares.AuthJWT(), material.Update)
+			materialGroup.POST("/:id/delete", middlewares.AuthJWT(), material.Delete)
+			materialGroup.POST("/batch-delete", middlewares.AuthJWT(), material.BatchDelete)
+			materialGroup.GET("/:id", material.Show)
+		}
+
+		// 素材组管理
+		mg := new(controllers.MaterialGroupsController)
+		mgGroup := v1.Group("/material-group")
+		{
+			mgGroup.GET("", mg.Index)
+			mgGroup.POST("", middlewares.AuthJWT(), mg.Store)
+			mgGroup.POST("/:id/update", middlewares.AuthJWT(), mg.Update)
+			mgGroup.POST("/:id/delete", middlewares.AuthJWT(), mg.Delete)
+			mgGroup.POST("/batch-delete", middlewares.AuthJWT(), mg.BatchDelete)
+			mgGroup.GET("/:id", mg.Show)
+		}
+
+		// 点击记录管理
+		clickRecord := new(controllers.ClickRecordsController)
+		clickRecordGroup := v1.Group("/click-record")
+		{
+			clickRecordGroup.GET("", clickRecord.Index)
+			clickRecordGroup.POST("", middlewares.AuthJWT(), clickRecord.Store)
+			clickRecordGroup.POST("/:id/update", middlewares.AuthJWT(), clickRecord.Update)
+			clickRecordGroup.POST("/:id/delete", middlewares.AuthJWT(), clickRecord.Delete)
+			clickRecordGroup.POST("/batch-delete", middlewares.AuthJWT(), clickRecord.BatchDelete)
+			clickRecordGroup.GET("/:id", clickRecord.Show)
+		}
+
+		// 审核记录管理
+		auditRecord := new(controllers.AuditRecordsController)
+		auditRecordGroup := v1.Group("/audit-record")
+		{
+			auditRecordGroup.GET("", auditRecord.Index)
+			auditRecordGroup.POST("", middlewares.AuthJWT(), auditRecord.Store)
+			auditRecordGroup.POST("/:id/update", middlewares.AuthJWT(), auditRecord.Update)
+			auditRecordGroup.POST("/:id/delete", middlewares.AuthJWT(), auditRecord.Delete)
+			auditRecordGroup.POST("/batch-delete", middlewares.AuthJWT(), auditRecord.BatchDelete)
+			auditRecordGroup.GET("/:id", auditRecord.Show)
 		}
 
 		tester := new(controllers.TestersController)

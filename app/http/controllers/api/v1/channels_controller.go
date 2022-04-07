@@ -44,8 +44,8 @@ func (ctrl *ChannelsController) Store(c *gin.Context) {
 
 	channelModel := channel.Channel{
 		Name:        request.Name,
-		GuardName:   request.GuardName,
 		Description: request.Description,
+		Status:      request.Status,
 	}
 	channelModel.Create()
 	if channelModel.ID > 0 {
@@ -75,8 +75,8 @@ func (ctrl *ChannelsController) Update(c *gin.Context) {
 	}
 
 	channelModel.Name = request.Name
-	channelModel.GuardName = request.GuardName
 	channelModel.Description = request.Description
+	channelModel.Status = request.Status
 	rowsAffected := channelModel.Save()
 	if rowsAffected > 0 {
 		response.Data(c, channelModel)
@@ -105,4 +105,25 @@ func (ctrl *ChannelsController) Delete(c *gin.Context) {
 	}
 
 	response.Abort500(c, "删除失败，请稍后尝试~")
+}
+
+func (ctrl *ChannelsController) BatchDelete(c *gin.Context) {
+
+	request := requests.BatchDeleteRequest{}
+	bindOk := requests.Validate(c, &request, requests.BatchDelete)
+	if !bindOk {
+		return
+	}
+
+	channelModel := channel.Channel{}
+	if ok := policies.CanModifyChannel(c, channelModel); !ok {
+		response.Abort403(c)
+		return
+	}
+
+	rowsAffected := channelModel.BatchDelete(request.Ids)
+
+	response.Data(c, map[string]int64{
+		"rowsAffected": rowsAffected,
+	})
 }
