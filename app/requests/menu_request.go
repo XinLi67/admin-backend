@@ -20,7 +20,7 @@ func MenuSave(data interface{}, c *gin.Context) map[string][]string {
 
 	rules := govalidator.MapData{
 		"parent_id":  []string{"exists_or_zero:menus,id"},
-		"name":       []string{"required", "min_cn:2", "max_cn:30", "not_exists:menus,name"},
+		"name":       []string{"required", "min_cn:2", "max_cn:30", "not_exists:menus,name," + c.Param("id")},
 		"guard_name": []string{"required", "min:2", "max:30"},
 	}
 	messages := govalidator.MapData{
@@ -32,31 +32,6 @@ func MenuSave(data interface{}, c *gin.Context) map[string][]string {
 			"min_cn:名称长度需至少 2 个字",
 			"max_cn:名称长度不能超过 30 个字",
 			"not_exists:名称已存在",
-		},
-		"guard_name": []string{
-			"required:名称为必填项",
-			"min:名称长度需至少 2 个字",
-			"max:名称长度不能超过 30 个字",
-		},
-	}
-	return validate(data, rules, messages)
-}
-
-func MenuUpdate(data interface{}, c *gin.Context) map[string][]string {
-
-	rules := govalidator.MapData{
-		"parent_id":  []string{"exists_or_zero:menus,id"},
-		"name":       []string{"required", "min_cn:2", "max_cn:8"},
-		"guard_name": []string{"required", "min:2", "max:30"},
-	}
-	messages := govalidator.MapData{
-		"parent_id": []string{
-			"exists_or_zero:上级名称不存在",
-		},
-		"name": []string{
-			"required:名称为必填项",
-			"min_cn:名称长度需至少 2 个字",
-			"max_cn:名称长度不能超过 8 个字",
 		},
 		"guard_name": []string{
 			"required:名称为必填项",

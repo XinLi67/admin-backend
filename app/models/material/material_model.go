@@ -3,6 +3,7 @@ package material
 
 import (
 	"gohub/app/models"
+	"gohub/app/models/material_group"
 	"gohub/pkg/database"
 )
 
@@ -16,6 +17,8 @@ type Material struct {
 	Url             string `gorm:"column:url"`
 	Title           string `gorm:"column:title"`
 	Content         string `gorm:"column:content"`
+
+	MaterialGroup material_group.MaterialGroup `json:"group"`
 
 	models.CommonTimestampsField
 }

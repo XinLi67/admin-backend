@@ -14,7 +14,7 @@ type RoleRequest struct {
 func RoleSave(data interface{}, c *gin.Context) map[string][]string {
 
 	rules := govalidator.MapData{
-		"name":       []string{"required", "min_cn:2", "max_cn:16", "not_exists:roles,name"},
+		"name":       []string{"required", "min_cn:2", "max_cn:16", "not_exists:roles,name," + c.Param("id")},
 		"guard_name": []string{"required", "min:2", "max:30"},
 	}
 	messages := govalidator.MapData{

@@ -6,7 +6,6 @@ import (
 )
 
 type AnnouncementRequest struct {
-	AnnouncementNo         uint64 `valid:"announcement_no" json:"announcement_no,omitempty"`
 	AnnouncementPositionId uint64 `json:"announcement_position_id,omitempty"`
 	CreatorId              uint64 `json:"creator_id,omitempty"`
 	DepartmentId           uint64 `json:"department_id,omitempty"`
@@ -23,25 +22,21 @@ type AnnouncementRequest struct {
 func AnnouncementSave(data interface{}, c *gin.Context) map[string][]string {
 
 	rules := govalidator.MapData{
-		"announcement_no": []string{"required", "not_exists:announcements,announcement_no"},
-		"title":           []string{"min:2", "max:60"},
-		"type":            []string{"numeric_between:-1,3"},
-		"redirect_to":     []string{"numeric_between:-1,2"},
+		"title":       []string{"min:2", "max:60", "not_exists:announcements,title," + c.Param("id")},
+		"type":        []string{"in:0,1"},
+		"redirect_to": []string{"in:0,1"},
 	}
 	messages := govalidator.MapData{
-		"announcement_no": []string{
-			"required:公告代码为必填项",
-			"not_exists:公告代码已存在",
-		},
 		"title": []string{
 			"min:最小长度为2",
 			"max:最大长度为60",
+			"not_exists:公告名称已存在",
 		},
 		"type": []string{
-			"numeric_between:只能为0或1或2",
+			"in:只能为0或1",
 		},
 		"redirect_to": []string{
-			"numeric_between:只能为0或1",
+			"in:只能为0或1",
 		},
 	}
 	return validate(data, rules, messages)

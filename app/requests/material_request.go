@@ -18,12 +18,12 @@ type MaterialRequest struct {
 func MaterialSave(data interface{}, c *gin.Context) map[string][]string {
 
 	rules := govalidator.MapData{
-		"type":  []string{"numeric_between:-1,2"},
+		"type":  []string{"in:0,1"},
 		"title": []string{"min:2", "max:30"},
 	}
 	messages := govalidator.MapData{
 		"type": []string{
-			"numeric_between:只能为0或1",
+			"in:只能为0或1",
 		},
 		"title": []string{
 			"min:最小长度为2",

@@ -87,7 +87,7 @@ func (ctrl *MenusController) Update(c *gin.Context) {
 	}
 
 	request := requests.MenuRequest{}
-	bindOk := requests.Validate(c, &request, requests.MenuUpdate)
+	bindOk := requests.Validate(c, &request, requests.MenuSave)
 	if !bindOk {
 		return
 	}

@@ -9,12 +9,12 @@ import (
 type Department struct {
 	models.BaseModel
 
-	ParentId    uint64 `gorm:"column:parent_id"`
-	Name        string `gorm:"column:name"`
-	Phone       string `gorm:"column:phone"`
-	LinkMan     string `gorm:"column:link_man"`
-	Address     string `gorm:"column:address"`
-	Description string `gorm:"column:description"`
+	ParentId    uint64 `gorm:"column:parent_id" json:"parent_id"`
+	Name        string `gorm:"column:name" json:"name"`
+	Phone       string `gorm:"column:phone" json:"phone"`
+	LinkMan     string `gorm:"column:link_man" json:"link_man"`
+	Address     string `gorm:"column:address" json:"address"`
+	Description string `gorm:"column:description" json:"description"`
 
 	models.CommonTimestampsField
 }

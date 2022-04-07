@@ -6,7 +6,6 @@ import (
 )
 
 type AdvertisingRequest struct {
-	AdvertisingNo         uint64 `valid:"advertising_no" json:"advertising_no,omitempty"`
 	AdvertisingPositionId uint64 `json:"advertising_position_id,omitempty"`
 	CreatorId             uint64 `json:"creator_id,omitempty"`
 	DepartmentId          uint64 `json:"department_id,omitempty"`
@@ -24,29 +23,25 @@ type AdvertisingRequest struct {
 func AdvertisingSave(data interface{}, c *gin.Context) map[string][]string {
 
 	rules := govalidator.MapData{
-		"advertising_no": []string{"required", "not_exists:advertisings,advertising_no"},
-		"title":          []string{"min:2", "max:60"},
-		"type":           []string{"numeric_between:-1,3"},
-		"redirect_to":    []string{"numeric_between:-1,2"},
-		"material_type":  []string{"numeric_between:-1,2"},
+		"title":         []string{"min:2", "max:60", "not_exists:advertisings,title," + c.Param("id")},
+		"type":          []string{"in:0,1,2,3"},
+		"redirect_to":   []string{"in:0,1"},
+		"material_type": []string{"in:0,1"},
 	}
 	messages := govalidator.MapData{
-		"advertising_no": []string{
-			"required:广告代码为必填项",
-			"not_exists:广告代码已存在",
-		},
 		"title": []string{
 			"min:最小长度为2",
 			"max:最大长度为60",
+			"not_exists:广告名称已存在",
 		},
 		"type": []string{
-			"numeric_between:只能为0或1或2",
+			"in:只能为0或1或2或3",
 		},
 		"redirect_to": []string{
-			"numeric_between:只能为0或1",
+			"in:只能为0或1",
 		},
 		"material_type": []string{
-			"numeric_between:只能为0或1",
+			"in:只能为0或1",
 		},
 	}
 	return validate(data, rules, messages)

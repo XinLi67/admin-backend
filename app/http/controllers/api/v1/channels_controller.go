@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"gohub/app/http/assemblies"
 	"gohub/app/models/channel"
 	"gohub/app/policies"
 	"gohub/app/requests"
@@ -20,8 +21,9 @@ func (ctrl *ChannelsController) Index(c *gin.Context) {
 	}
 
 	data, pager := channel.Paginate(c, 0)
+	channels := assemblies.ChannelAssemblyFromModelList(data)
 	response.JSON(c, gin.H{
-		"data":  data,
+		"data":  channels,
 		"pager": pager,
 	})
 }
@@ -32,7 +34,8 @@ func (ctrl *ChannelsController) Show(c *gin.Context) {
 		response.Abort404(c)
 		return
 	}
-	response.Data(c, channelModel)
+	channelAssembly := assemblies.ChannelAssemblyFromModel(channelModel)
+	response.Data(c, channelAssembly)
 }
 
 func (ctrl *ChannelsController) Store(c *gin.Context) {

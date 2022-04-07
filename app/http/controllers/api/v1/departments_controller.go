@@ -51,7 +51,7 @@ func (ctrl *DepartmentsController) Show(c *gin.Context) {
 func (ctrl *DepartmentsController) Store(c *gin.Context) {
 
 	request := requests.DepartmentRequest{}
-	if ok := requests.Validate(c, &request, requests.DepartmentUpdate); !ok {
+	if ok := requests.Validate(c, &request, requests.DepartmentSave); !ok {
 		return
 	}
 

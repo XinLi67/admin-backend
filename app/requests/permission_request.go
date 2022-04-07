@@ -25,7 +25,7 @@ func PermissionSave(data interface{}, c *gin.Context) map[string][]string {
 	messages := govalidator.MapData{
 		"permission_group_id": []string{
 			"required:权限组为必填项",
-			"not_exists:权限组不存在",
+			"exists:权限组不存在",
 		},
 		"name": []string{
 			"required:名称为必填项",

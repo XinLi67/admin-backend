@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"gohub/app/http/assemblies"
 	"gohub/app/models/click_record"
 	"gohub/app/policies"
 	"gohub/app/requests"
@@ -20,8 +21,9 @@ func (ctrl *ClickRecordsController) Index(c *gin.Context) {
 	}
 
 	data, pager := click_record.Paginate(c, 0)
+	clickRecords := assemblies.ClickRecordAssemblyFromModelList(data)
 	response.JSON(c, gin.H{
-		"data":  data,
+		"data":  clickRecords,
 		"pager": pager,
 	})
 }
@@ -32,7 +34,8 @@ func (ctrl *ClickRecordsController) Show(c *gin.Context) {
 		response.Abort404(c)
 		return
 	}
-	response.Data(c, clickRecordModel)
+	clickRecordAssembly := assemblies.ClickRecordAssemblyFromModel(clickRecordModel)
+	response.Data(c, clickRecordAssembly)
 }
 
 func (ctrl *ClickRecordsController) Store(c *gin.Context) {

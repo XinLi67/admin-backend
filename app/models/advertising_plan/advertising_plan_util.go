@@ -10,7 +10,7 @@ import (
 
 func Get(idstr string) (advertisingPlan AdvertisingPlan) {
 	// database.DB.Where("id", idstr).First(&advertisingPlan)
-	database.DB.Preload("User").Preload("advertising_position").Where("id", idstr).First(&advertisingPlan)
+	database.DB.Preload("User").Preload("AdvertisingPosition").Where("id", idstr).First(&advertisingPlan)
 	return
 }
 
@@ -21,7 +21,7 @@ func GetBy(field, value string) (advertisingPlan AdvertisingPlan) {
 
 func All() (advertisingPlans []AdvertisingPlan) {
 	// database.DB.Find(&advertisingPlans)
-	database.DB.Preload("User").Preload("advertising_position").Find(&advertisingPlans)
+	database.DB.Preload("User").Preload("AdvertisingPosition").Find(&advertisingPlans)
 	return
 }
 

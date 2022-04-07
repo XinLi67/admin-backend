@@ -46,7 +46,6 @@ func (ctrl *AnnouncementsController) Store(c *gin.Context) {
 	}
 
 	announcementModel := announcement.Announcement{
-		AnnouncementNo:         request.AnnouncementNo,
 		AnnouncementPositionId: request.AnnouncementPositionId,
 		CreatorId:              request.CreatorId,
 		DepartmentId:           request.DepartmentId,
@@ -86,7 +85,6 @@ func (ctrl *AnnouncementsController) Update(c *gin.Context) {
 		return
 	}
 
-	announcementModel.AnnouncementNo = request.AnnouncementNo
 	announcementModel.AnnouncementPositionId = request.AnnouncementPositionId
 	announcementModel.CreatorId = request.CreatorId
 	announcementModel.DepartmentId = request.DepartmentId
