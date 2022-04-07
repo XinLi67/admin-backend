@@ -1,6 +1,13 @@
 package dto
 
-import "gohub/app/models/user"
+import (
+	"gohub/app/models/user"
+)
+
+type DepartmentResonse struct {
+	Name    string `json:"name"`
+	Address string `json:"address"`
+}
 
 type UserDTO struct {
 	ID           uint64 `json:"id"`
@@ -12,9 +19,16 @@ type UserDTO struct {
 	Phone        string `json:"phone,omitempty"`
 	Avatar       string `json:"avatar"`
 	Status       uint64 `json:"status,omitempty"`
+
+	Department DepartmentResonse `json:"department"`
 }
 
-func UserDTOFromModel(data *user.User) *UserDTO {
+func UserDTOFromModel(data user.User) *UserDTO {
+	dep := &DepartmentResonse{
+		Name:    data.Department.Name,
+		Address: data.Department.Address,
+	}
+
 	return &UserDTO{
 		ID:           data.ID,
 		DepartmentId: data.DepartmentId,
@@ -25,6 +39,8 @@ func UserDTOFromModel(data *user.User) *UserDTO {
 		Phone:        data.Phone,
 		Avatar:       data.Avatar,
 		Status:       data.Status,
+
+		Department: *dep,
 	}
 }
 

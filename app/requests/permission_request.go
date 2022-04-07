@@ -19,7 +19,7 @@ func PermissionSave(data interface{}, c *gin.Context) map[string][]string {
 
 	rules := govalidator.MapData{
 		"permission_group_id": []string{"required", "exists:permission_groups,id"},
-		"name":                []string{"required", "min_cn:2", "max_cn:8"},
+		"name":                []string{"required", "min_cn:2", "max_cn:30"},
 		"display_name":        []string{"required", "min_cn:2", "max_cn:30"},
 	}
 	messages := govalidator.MapData{
@@ -30,7 +30,7 @@ func PermissionSave(data interface{}, c *gin.Context) map[string][]string {
 		"name": []string{
 			"required:名称为必填项",
 			"min_cn:名称长度需至少 2 个字",
-			"max_cn:名称长度不能超过 8 个字",
+			"max_cn:名称长度不能超过 30个字",
 		},
 		"display_name": []string{
 			"required:显示名称为必填项",

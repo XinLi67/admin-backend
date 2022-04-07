@@ -14,7 +14,6 @@ func init() {
 		models.BaseModel
 
 		Name        string `gorm:"type:varchar(120);not null;comment:角色名称"`
-		GuardName   string `gorm:"type:varchar(30);not null;comment:项目名称"`
 		Description string `gorm:"type:varchar(255);null;comment:角色说明"`
 
 		models.CommonTimestampsField

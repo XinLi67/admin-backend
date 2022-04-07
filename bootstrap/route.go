@@ -3,6 +3,7 @@ package bootstrap
 
 import (
 	"gohub/app/http/middlewares"
+	"gohub/pkg/config"
 	"gohub/routes"
 	"net/http"
 	"strings"
@@ -23,6 +24,9 @@ func SetupRoute(router *gin.Engine) {
 
 	//  配置 404 路由
 	setup404Handler(router)
+
+	// 配置静态文件
+	setupStaticFSHandler(router)
 }
 
 func registerGlobalMiddleWare(router *gin.Engine) {
@@ -60,4 +64,9 @@ func setup404Handler(router *gin.Engine) {
 			})
 		}
 	})
+}
+
+func setupStaticFSHandler(router *gin.Engine) {
+	// 配置静态文件目录
+	router.StaticFS("/static", http.Dir(config.GetString("STATIC_PATH", "static")))
 }

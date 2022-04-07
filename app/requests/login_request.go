@@ -44,7 +44,7 @@ func LoginByPassword(data interface{}, c *gin.Context) map[string][]string {
 		},
 		"captcha_answer": []string{
 			"required:图片验证码答案必填",
-			"digits:图片验证码长度必须为 6 位的数字",
+			"digits:图片验证码长度必须为 4 位的数字",
 		},
 	}
 

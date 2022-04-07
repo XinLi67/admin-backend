@@ -22,6 +22,7 @@ func init() {
 		permissionGroup := permission_group.GetByName("权限组")
 		menu := permission_group.GetByName("菜单")
 		common := permission_group.GetByName("公共")
+		advertising := permission_group.GetByName("广告")
 
 		permissions := []permission.Permission{
 			{
@@ -293,6 +294,12 @@ func init() {
 				Name:              "department.destroy",
 				GuardName:         "admin",
 				DisplayName:       "删除部门",
+				Icon:              "",
+			}, {
+				PermissionGroupId: advertising.ID,
+				Name:              "advertising-index.index",
+				GuardName:         "admin",
+				DisplayName:       "广告列表",
 				Icon:              "",
 			},
 		}

@@ -21,7 +21,7 @@ func VerifyCodePhone(data interface{}, c *gin.Context) map[string][]string {
 	rules := govalidator.MapData{
 		"phone":          []string{"required", "digits:11"},
 		"captcha_id":     []string{"required"},
-		"captcha_answer": []string{"required", "digits:6"},
+		"captcha_answer": []string{"required", "digits:4"},
 	}
 
 	// 2. 定制错误消息
@@ -35,7 +35,7 @@ func VerifyCodePhone(data interface{}, c *gin.Context) map[string][]string {
 		},
 		"captcha_answer": []string{
 			"required:图片验证码答案必填",
-			"digits:图片验证码长度必须为 6 位的数字",
+			"digits:图片验证码长度必须为 4 位的数字",
 		},
 	}
 
@@ -62,7 +62,7 @@ func VerifyCodeEmail(data interface{}, c *gin.Context) map[string][]string {
 	rules := govalidator.MapData{
 		"email":          []string{"required", "min:4", "max:30", "email"},
 		"captcha_id":     []string{"required"},
-		"captcha_answer": []string{"required", "digits:6"},
+		"captcha_answer": []string{"required", "digits:4"},
 	}
 
 	// 2. 定制错误消息
@@ -78,7 +78,7 @@ func VerifyCodeEmail(data interface{}, c *gin.Context) map[string][]string {
 		},
 		"captcha_answer": []string{
 			"required:图片验证码答案必填",
-			"digits:图片验证码长度必须为 6 位的数字",
+			"digits:图片验证码长度必须为 4 位的数字",
 		},
 	}
 

@@ -14,9 +14,16 @@ type PermissionGroupsController struct {
 }
 
 func (ctrl *PermissionGroupsController) All(c *gin.Context) {
-	permissionGroups := permission_group.All()
+	request := requests.PaginationRequest{}
+	if ok := requests.Validate(c, &request, requests.Pagination); !ok {
+		return
+	}
 
-	response.Data(c, permissionGroups)
+	data, pager := permission_group.Paginate(c, 0)
+	response.JSON(c, gin.H{
+		"data":  data,
+		"pager": pager,
+	})
 }
 
 func (ctrl *PermissionGroupsController) Index(c *gin.Context) {
@@ -110,4 +117,25 @@ func (ctrl *PermissionGroupsController) Delete(c *gin.Context) {
 	}
 
 	response.Abort500(c, "删除失败，请稍后尝试~")
+}
+
+func (ctrl *PermissionGroupsController) BatchDelete(c *gin.Context) {
+
+	request := requests.BatchDeleteRequest{}
+	bindOk := requests.Validate(c, &request, requests.BatchDelete)
+	if !bindOk {
+		return
+	}
+
+	permissionGroupModel := permission_group.PermissionGroup{}
+	if ok := policies.CanModifyPermissionGroup(c, permissionGroupModel); !ok {
+		response.Abort403(c)
+		return
+	}
+
+	rowsAffected := permissionGroupModel.BatchDelete(request.Ids)
+
+	response.Data(c, map[string]int64{
+		"rowsAffected": rowsAffected,
+	})
 }

@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"gohub/app/http/assemblies"
 	"gohub/app/models/user"
 	"gohub/app/policies"
 	"gohub/app/requests"
@@ -30,8 +31,9 @@ func (ctrl *UsersController) Index(c *gin.Context) {
 	}
 
 	data, pager := user.Paginate(c, 0)
+	users := assemblies.UserAssemblyFromModelList(data)
 	response.JSON(c, gin.H{
-		"data":  data,
+		"data":  users,
 		"pager": pager,
 	})
 }
@@ -43,7 +45,11 @@ func (ctrl *UsersController) Show(c *gin.Context) {
 		response.Abort404(c)
 		return
 	}
-	response.Data(c, userModel)
+	// userDto := dto.UserDTOFromModel(userModel)
+	// response.Data(c, userDto)
+
+	userAssembly := assemblies.UserAssemblyFromModel(userModel)
+	response.Data(c, userAssembly)
 }
 
 func (ctrl *UsersController) Store(c *gin.Context) {
@@ -93,6 +99,7 @@ func (ctrl *UsersController) Update(c *gin.Context) {
 	userModel.Email = request.Email
 	userModel.Phone = request.Phone
 	userModel.Name = request.Name
+	userModel.Gender = request.Gender
 	rowsAffected := userModel.Save()
 	if rowsAffected > 0 {
 		response.Data(c, userModel)
@@ -123,6 +130,27 @@ func (ctrl *UsersController) Delete(c *gin.Context) {
 	response.Abort500(c, "删除失败，请稍后尝试~")
 }
 
+func (ctrl *UsersController) BatchDelete(c *gin.Context) {
+
+	request := requests.BatchDeleteRequest{}
+	bindOk := requests.Validate(c, &request, requests.BatchDelete)
+	if !bindOk {
+		return
+	}
+
+	userModel := user.User{}
+	if ok := policies.CanModifyUser(c, userModel); !ok {
+		response.Abort403(c)
+		return
+	}
+
+	rowsAffected := userModel.BatchDelete(request.Ids)
+
+	response.Data(c, map[string]int64{
+		"rowsAffected": rowsAffected,
+	})
+}
+
 func (ctrl *UsersController) UpdateProfile(c *gin.Context) {
 
 	request := requests.UserUpdateProfileRequest{}
@@ -134,6 +162,7 @@ func (ctrl *UsersController) UpdateProfile(c *gin.Context) {
 	currentUser.Name = request.Name
 	currentUser.Email = request.Email
 	currentUser.Phone = request.Phone
+	currentUser.Gender = request.Gender
 	rowsAffected := currentUser.Save()
 	if rowsAffected > 0 {
 		response.Data(c, currentUser)
