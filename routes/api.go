@@ -6,13 +6,13 @@ import (
 	"gohub/app/http/controllers/api/v1/auth"
 	"gohub/app/http/middlewares"
 	"gohub/pkg/config"
-
+	"net/http"
 	"github.com/gin-gonic/gin"
 )
 
 // RegisterAPIRoutes 注册 API 相关路由
 func RegisterAPIRoutes(r *gin.Engine) {
-
+	r.StaticFS("/public", http.Dir("./public"))
 	// 测试一个 v1 的路由组，我们所有的 v1 版本的路由都将存放到这里
 	var v1 *gin.RouterGroup
 	if len(config.Get("app.api_domain")) == 0 {
@@ -263,5 +263,13 @@ func RegisterAPIRoutes(r *gin.Engine) {
 
 		tester := new(controllers.TestersController)
 		v1.POST("/tester", tester.BatchDelete)
+
+
+		//上传文件接口
+		uploadController := new((controllers.UploadController))
+		upload := v1.Group("/upload")
+		{
+			upload.POST("", uploadController.Upload)
+		}
 	}
 }
