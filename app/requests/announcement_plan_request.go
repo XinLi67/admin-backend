@@ -1,27 +1,25 @@
 package requests
 
 import (
-	"time"
-
 	"github.com/gin-gonic/gin"
 	"github.com/thedevsaddam/govalidator"
 )
 
 type AnnouncementPlanRequest struct {
-	Name                   string    `valid:"name" json:"name,omitempty"`
-	CreatorId              uint64    `json:"creator_id,omitempty"`
-	AnnouncementId         uint64    `json:"announcement_id,omitempty"`
-	AnnouncementType       uint64    `valid:"announcement_type" json:"announcement_type,omitempty"`
-	AnnouncementPositionId uint64    `json:"announcement_position_id,omitempty"`
-	Order                  uint64    `json:"order,omitempty"`
-	SchedulingDate         uint64    `valid:"scheduling_date" json:"scheduling_date,omitempty"`
-	SchedulingTime         uint64    `valid:"scheduling_time" json:"scheduling_time,omitempty"`
-	StartDate              time.Time `json:"start_date,omitempty"`
-	EndTDate               time.Time `json:"end_date,omitempty"`
-	StartTime              time.Time `json:"start_time,omitempty"`
-	EndTime                time.Time `json:"end_time,omitempty"`
-	AuditStatus            uint64    `json:"audit_status,omitempty"`
-	PresentStatus          uint64    `json:"present_status,omitempty"`
+	Name                   string `valid:"name" json:"name,omitempty"`
+	CreatorId              uint64 `json:"creator_id,omitempty"`
+	AnnouncementId         uint64 `json:"announcement_id,omitempty"`
+	AnnouncementType       uint64 `valid:"announcement_type" json:"announcement_type,omitempty"`
+	AnnouncementPositionId uint64 `json:"announcement_position_id,omitempty"`
+	Order                  uint64 `json:"order,omitempty"`
+	SchedulingDate         uint64 `valid:"scheduling_date" json:"scheduling_date,omitempty"`
+	SchedulingTime         uint64 `valid:"scheduling_time" json:"scheduling_time,omitempty"`
+	StartDate              string `json:"start_date,omitempty"`
+	EndDate                string `json:"end_date,omitempty"`
+	StartTime              string `json:"start_time,omitempty"`
+	Endime                 string `json:"end_time,omitempty"`
+	AuditStatus            uint64 `json:"audit_status,omitempty"`
+	PresentStatus          uint64 `json:"present_status,omitempty"`
 }
 
 func AnnouncementPlanSave(data interface{}, c *gin.Context) map[string][]string {

@@ -2,29 +2,28 @@ package assemblies
 
 import (
 	"gohub/app/models/announcement_plan"
-	"time"
 
 	"github.com/golang-module/carbon/v2"
 )
 
 type AnnouncementPlanAssembly struct {
-	ID                     uint64    `json:"id"`
-	Name                   string    `json:"name"`
-	CreatorId              uint64    `json:"creator_id"`
-	AnnouncementId         uint64    `json:"announcement_id"`
-	AnnouncementType       uint64    `json:"announcement_type"`
-	AnnouncementPositionId uint64    `json:"announcement_position_id"`
-	Order                  uint64    `json:"order"`
-	SchedulingDate         uint64    `json:"scheduling_date"`
-	SchedulingTime         uint64    `json:"scheduling_time"`
-	StartDate              time.Time `json:"start_date"`
-	EndTDate               time.Time `json:"end_date"`
-	StartTime              time.Time `json:"start_time"`
-	EndTime                time.Time `json:"end_time"`
-	AuditStatus            uint64    `json:"audit_status"`
-	PresentStatus          uint64    `json:"present_status"`
-	CreatedAt              string    `json:"created_at"`
-	UpdatedAt              string    `json:"updated_at"`
+	ID                     uint64 `json:"id"`
+	Name                   string `json:"name"`
+	CreatorId              uint64 `json:"creator_id"`
+	AnnouncementId         uint64 `json:"announcement_id"`
+	AnnouncementType       uint64 `json:"announcement_type"`
+	AnnouncementPositionId uint64 `json:"announcement_position_id"`
+	Order                  uint64 `json:"order"`
+	SchedulingDate         uint64 `json:"scheduling_date"`
+	SchedulingTime         uint64 `json:"scheduling_time"`
+	StartDate              string `json:"start_date"`
+	EndDate                string `json:"end_date"`
+	StartTime              string `json:"start_time"`
+	Endime                 string `json:"end_time"`
+	AuditStatus            uint64 `json:"audit_status"`
+	PresentStatus          uint64 `json:"present_status"`
+	CreatedAt              string `json:"created_at"`
+	UpdatedAt              string `json:"updated_at"`
 
 	User                 UserAssembly                 `json:"user"`
 	AnnouncementPosition AnnouncementPositionAssembly `json:"announcement_position"`
@@ -42,9 +41,9 @@ func AnnouncementPlanAssemblyFromModel(data announcement_plan.AnnouncementPlan) 
 		SchedulingDate:         data.SchedulingDate,
 		SchedulingTime:         data.SchedulingTime,
 		StartDate:              data.StartDate,
-		EndTDate:               data.EndTDate,
+		EndDate:                data.EndDate,
 		StartTime:              data.StartTime,
-		EndTime:                data.EndTime,
+		Endime:                 data.Endime,
 		AuditStatus:            data.AuditStatus,
 		PresentStatus:          data.PresentStatus,
 		CreatedAt:              carbon.Time2Carbon(data.CreatedAt).ToDateTimeString(),
@@ -80,9 +79,9 @@ func AnnouncementPlanAssemblyFromModelList(data []announcement_plan.Announcement
 			SchedulingDate:         v.SchedulingDate,
 			SchedulingTime:         v.SchedulingTime,
 			StartDate:              v.StartDate,
-			EndTDate:               v.EndTDate,
+			EndDate:                v.EndDate,
 			StartTime:              v.StartTime,
-			EndTime:                v.EndTime,
+			Endime:                 v.Endime,
 			AuditStatus:            v.AuditStatus,
 			PresentStatus:          v.PresentStatus,
 			CreatedAt:              carbon.Time2Carbon(v.CreatedAt).ToDateTimeString(),

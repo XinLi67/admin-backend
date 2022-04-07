@@ -55,7 +55,7 @@ func (ctrl *AdvertisingPlansController) Store(c *gin.Context) {
 		SchedulingDate:        request.SchedulingDate,
 		SchedulingTime:        request.SchedulingTime,
 		StartDate:             request.StartDate,
-		EndTDate:              request.EndTDate,
+		EndDate:               request.EndDate,
 		StartTime:             request.StartTime,
 		EndTime:               request.EndTime,
 		AuditStatus:           request.AuditStatus,
@@ -97,7 +97,7 @@ func (ctrl *AdvertisingPlansController) Update(c *gin.Context) {
 	advertisingPlanModel.SchedulingDate = request.SchedulingDate
 	advertisingPlanModel.SchedulingTime = request.SchedulingTime
 	advertisingPlanModel.StartDate = request.StartDate
-	advertisingPlanModel.EndTDate = request.EndTDate
+	advertisingPlanModel.EndDate = request.EndDate
 	advertisingPlanModel.StartTime = request.StartTime
 	advertisingPlanModel.EndTime = request.EndTime
 	advertisingPlanModel.AuditStatus = request.AuditStatus
