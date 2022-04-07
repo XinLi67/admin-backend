@@ -25,10 +25,10 @@ type AdvertisingPlanRequest struct {
 func AdvertisingPlanSave(data interface{}, c *gin.Context) map[string][]string {
 
 	rules := govalidator.MapData{
-		"name":             []string{"required", "min_cn:2", "max_cn:30", "not_exists:advertising_plans,name"},
-		"advertising_type": []string{"numeric_between:-1,4"},
-		"SchedulingDate":   []string{"numeric_between:-1,2"},
-		"SchedulingTime":   []string{"numeric_between:-1,2"},
+		"name":             []string{"required", "min_cn:2", "max_cn:30", "not_exists:advertising_plans,name," + c.Param("id")},
+		"advertising_type": []string{"in:0,1,2,3"},
+		"SchedulingDate":   []string{"in:0,1"},
+		"SchedulingTime":   []string{"in:0,1"},
 	}
 	messages := govalidator.MapData{
 		"name": []string{
@@ -38,13 +38,13 @@ func AdvertisingPlanSave(data interface{}, c *gin.Context) map[string][]string {
 			"not_exists:名称已存在",
 		},
 		"advertising_type": []string{
-			"numeric_between:只能为0或1或2或3",
+			"in:只能为0或1或2或3",
 		},
 		"SchedulingDate": []string{
-			"numeric_between:只能为0或1",
+			"in:只能为0或1",
 		},
 		"SchedulingTime": []string{
-			"numeric_between:只能为0或1",
+			"in:只能为0或1",
 		},
 	}
 	return validate(data, rules, messages)

@@ -3,6 +3,7 @@ package click_record
 
 import (
 	"gohub/app/models"
+	"gohub/app/models/advertising"
 	"gohub/pkg/database"
 )
 
@@ -14,6 +15,8 @@ type ClickRecord struct {
 	BrowsingTime  uint64 `gorm:"column:browsing_time"`
 	StartTime     string `gorm:"column:start_time"`
 	EndTime       string `gorm:"column:end_time"`
+
+	Advertising advertising.Advertising `json:"advertising"`
 
 	models.CommonTimestampsField
 }

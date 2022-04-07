@@ -4,7 +4,6 @@ go 1.17
 
 require (
 	github.com/KenmyZhang/aliyun-communicate v0.0.0-20180308134849-7997edc57454
-	github.com/disintegration/imaging v1.6.2
 	github.com/gertd/go-pluralize v0.1.7
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.7.7

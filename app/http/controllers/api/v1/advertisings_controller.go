@@ -46,7 +46,6 @@ func (ctrl *AdvertisingsController) Store(c *gin.Context) {
 	}
 
 	advertisingModel := advertising.Advertising{
-		AdvertisingNo:         request.AdvertisingNo,
 		AdvertisingPositionId: request.AdvertisingPositionId,
 		CreatorId:             request.CreatorId,
 		DepartmentId:          request.DepartmentId,
@@ -87,7 +86,6 @@ func (ctrl *AdvertisingsController) Update(c *gin.Context) {
 		return
 	}
 
-	advertisingModel.AdvertisingNo = request.AdvertisingNo
 	advertisingModel.AdvertisingPositionId = request.AdvertisingPositionId
 	advertisingModel.CreatorId = request.CreatorId
 	advertisingModel.DepartmentId = request.DepartmentId

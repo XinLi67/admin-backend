@@ -17,11 +17,11 @@ type AuditRecordRequest struct {
 func AuditRecordSave(data interface{}, c *gin.Context) map[string][]string {
 
 	rules := govalidator.MapData{
-		"auditable_type": []string{"numeric_between:-1,4"},
+		"auditable_type": []string{"in:0,1,2,3"},
 	}
 	messages := govalidator.MapData{
 		"auditable_type": []string{
-			"numeric_between:只能为0或1或2或3",
+			"in:只能为0或1或2或3",
 		},
 	}
 	return validate(data, rules, messages)

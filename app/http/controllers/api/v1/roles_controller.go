@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"gohub/app/http/assemblies"
 	"gohub/app/models/role"
 	"gohub/app/policies"
 	"gohub/app/requests"
@@ -20,8 +21,9 @@ func (ctrl *RolesController) Index(c *gin.Context) {
 	}
 
 	data, pager := role.Paginate(c, 0)
+	roles := assemblies.RoleAssemblyFromModelList(data)
 	response.JSON(c, gin.H{
-		"data":  data,
+		"data":  roles,
 		"pager": pager,
 	})
 }
@@ -32,7 +34,8 @@ func (ctrl *RolesController) Show(c *gin.Context) {
 		response.Abort404(c)
 		return
 	}
-	response.Data(c, roleModel)
+	roleAssembly := assemblies.RoleAssemblyFromModel(roleModel)
+	response.Data(c, roleAssembly)
 }
 
 func (ctrl *RolesController) Store(c *gin.Context) {

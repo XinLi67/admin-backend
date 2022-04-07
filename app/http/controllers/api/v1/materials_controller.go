@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"gohub/app/http/assemblies"
 	"gohub/app/models/material"
 	"gohub/app/policies"
 	"gohub/app/requests"
@@ -20,8 +21,9 @@ func (ctrl *MaterialsController) Index(c *gin.Context) {
 	}
 
 	data, pager := material.Paginate(c, 0)
+	materials := assemblies.MaterialAssemblyFromModelList(data)
 	response.JSON(c, gin.H{
-		"data":  data,
+		"data":  materials,
 		"pager": pager,
 	})
 }
@@ -32,7 +34,8 @@ func (ctrl *MaterialsController) Show(c *gin.Context) {
 		response.Abort404(c)
 		return
 	}
-	response.Data(c, materialModel)
+	materialAssembly := assemblies.MaterialAssemblyFromModel(materialModel)
+	response.Data(c, materialAssembly)
 }
 
 func (ctrl *MaterialsController) Store(c *gin.Context) {

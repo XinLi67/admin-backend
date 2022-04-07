@@ -18,7 +18,7 @@ type AdvertisingPositionRequest struct {
 func AdvertisingPositionSave(data interface{}, c *gin.Context) map[string][]string {
 
 	rules := govalidator.MapData{
-		"name":   []string{"required", "min_cn:2", "max_cn:30", "not_exists:advertising_positions,name"},
+		"name":   []string{"required", "min_cn:2", "max_cn:30", "not_exists:advertising_positions,name," + c.Param("id")},
 		"height": []string{"numeric"},
 		"weight": []string{"numeric"},
 	}

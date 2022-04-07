@@ -14,7 +14,7 @@ type ChannelRequest struct {
 func ChannelSave(data interface{}, c *gin.Context) map[string][]string {
 
 	rules := govalidator.MapData{
-		"name": []string{"required", "min_cn:2", "max_cn:30", "not_exists:channels,name"},
+		"name": []string{"required", "min_cn:2", "max_cn:30", "not_exists:channels,name," + c.Param("id")},
 	}
 	messages := govalidator.MapData{
 		"name": []string{

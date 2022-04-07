@@ -36,7 +36,8 @@ func init() {
 		}
 
 		// 用户请求过来的数据
-		requestValue := value.(string)
+		// requestValue := value.(string)
+		requestValue := cast.ToString(value)
 
 		// 拼接 SQL
 		query := database.DB.Table(tableName).Where(dbFiled+" = ?", requestValue)
