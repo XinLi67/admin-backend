@@ -9,7 +9,6 @@ import (
 )
 
 func Get(idstr string) (user User) {
-	// database.DB.Where("id", idstr).First(&user)
 	database.DB.Preload("Department").Where("id", idstr).First(&user)
 	return
 }
@@ -20,7 +19,6 @@ func GetBy(field, value string) (user User) {
 }
 
 func All() (users []User) {
-	// database.DB.Find(&users)
 	database.DB.Preload("Department").Find(&users)
 	return
 }

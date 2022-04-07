@@ -31,7 +31,13 @@ func (ctrl *UsersController) Index(c *gin.Context) {
 	}
 
 	data, pager := user.Paginate(c, 0)
+<<<<<<< HEAD
 	users := assemblies.UserAssemblyFromModelList(data)
+=======
+
+	users := assemblies.UserAssemblyFromModelList(data)
+
+>>>>>>> 68cfddf50cdafc643ebd2af6dbebf6a95c3e745c
 	response.JSON(c, gin.H{
 		"data":  users,
 		"pager": pager,
@@ -45,10 +51,16 @@ func (ctrl *UsersController) Show(c *gin.Context) {
 		response.Abort404(c)
 		return
 	}
+<<<<<<< HEAD
 	// userDto := dto.UserDTOFromModel(userModel)
 	// response.Data(c, userDto)
 
 	userAssembly := assemblies.UserAssemblyFromModel(userModel)
+=======
+
+	userAssembly := assemblies.UserAssemblyFromModel(userModel)
+
+>>>>>>> 68cfddf50cdafc643ebd2af6dbebf6a95c3e745c
 	response.Data(c, userAssembly)
 }
 

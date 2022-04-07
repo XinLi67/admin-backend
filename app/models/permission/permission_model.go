@@ -20,6 +20,8 @@ type Permission struct {
 
 	PermissionGroup permission_group.PermissionGroup `json:"group"`
 
+	PermissionGroup permission_group.PermissionGroup `json:"group"`
+
 	models.CommonTimestampsField
 }
 
