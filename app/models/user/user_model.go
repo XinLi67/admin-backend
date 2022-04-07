@@ -24,8 +24,6 @@ type User struct {
 
 	Department department.Department `json:"department"`
 
-	Department department.Department `json:"department"`
-
 	models.CommonTimestampsField
 }
 
