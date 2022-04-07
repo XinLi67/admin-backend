@@ -4,17 +4,16 @@ package click_record
 import (
 	"gohub/app/models"
 	"gohub/pkg/database"
-	"time"
 )
 
 type ClickRecord struct {
 	models.BaseModel
 
-	AdvertisingId uint64    `gorm:"column:advertising_id"`
-	CustomerId    uint64    `gorm:"column:customer_id"`
-	BrowsingTime  uint64    `gorm:"column:browsing_time"`
-	StartTime     time.Time `gorm:"column:start_time"`
-	EndTime       time.Time `gorm:"column:end_time"`
+	AdvertisingId uint64 `gorm:"column:advertising_id"`
+	CustomerId    uint64 `gorm:"column:customer_id"`
+	BrowsingTime  uint64 `gorm:"column:browsing_time"`
+	StartTime     string `gorm:"column:start_time"`
+	EndTime       string `gorm:"column:end_time"`
 
 	models.CommonTimestampsField
 }

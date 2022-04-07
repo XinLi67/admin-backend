@@ -7,6 +7,7 @@ import (
 	"gohub/pkg/logger"
 	"gohub/pkg/seed"
 
+	"github.com/golang-module/carbon/v2"
 	"gorm.io/gorm"
 )
 
@@ -26,6 +27,10 @@ func init() {
 				Order:                 1,
 				AuditStatus:           0,
 				PresentStatus:         0,
+				StartTime:             carbon.Now().ToTimeString(),
+				StartDate:             carbon.Now().ToDateString(),
+				EndTime:               carbon.Tomorrow().ToTimeString(),
+				EndDate:               carbon.Tomorrow().ToDateString(),
 			},
 			{
 				Name:                  "广告计划二",
@@ -38,6 +43,10 @@ func init() {
 				Order:                 2,
 				AuditStatus:           1,
 				PresentStatus:         1,
+				StartTime:             carbon.Now().ToTimeString(),
+				StartDate:             carbon.Now().ToDateString(),
+				EndTime:               carbon.Tomorrow().ToTimeString(),
+				EndDate:               carbon.Tomorrow().ToDateString(),
 			},
 		}
 

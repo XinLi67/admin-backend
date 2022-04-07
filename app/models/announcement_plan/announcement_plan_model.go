@@ -6,28 +6,27 @@ import (
 	"gohub/app/models/announcement_position"
 	"gohub/app/models/user"
 	"gohub/pkg/database"
-	"time"
 )
 
 type AnnouncementPlan struct {
 	models.BaseModel
 
-	Name                   string    `gorm:"column:name"`
-	CreatorId              uint64    `gorm:"column:creator_id"`
-	AnnouncementId         uint64    `gorm:"column:announcement_id"`
-	AnnouncementType       uint64    `gorm:"column:announcement_type"`
-	AnnouncementPositionId uint64    `gorm:"column:announcement_position_id"`
-	Order                  uint64    `gorm:"column:order"`
-	SchedulingDate         uint64    `gorm:"column:scheduling_date"`
-	SchedulingTime         uint64    `gorm:"column:scheduling_time"`
-	StartDate              time.Time `gorm:"column:start_date"`
-	EndTDate               time.Time `gorm:"column:end_date"`
-	StartTime              time.Time `gorm:"column:start_time"`
-	EndTime                time.Time `gorm:"column:end_time"`
-	AuditStatus            uint64    `gorm:"column:audit_status"`
-	PresentStatus          uint64    `gorm:"column:present_status"`
+	Name                   string `gorm:"column:name"`
+	CreatorId              uint64 `gorm:"column:creator_id"`
+	AnnouncementId         uint64 `gorm:"column:announcement_id"`
+	AnnouncementType       uint64 `gorm:"column:announcement_type"`
+	AnnouncementPositionId uint64 `gorm:"column:announcement_position_id"`
+	Order                  uint64 `gorm:"column:order"`
+	SchedulingDate         uint64 `gorm:"column:scheduling_date"`
+	SchedulingTime         uint64 `gorm:"column:scheduling_time"`
+	StartDate              string `gorm:"column:start_date"`
+	EndDate                string `gorm:"column:end_date"`
+	StartTime              string `gorm:"column:start_time"`
+	Endime                 string `gorm:"column:end_time"`
+	AuditStatus            uint64 `gorm:"column:audit_status"`
+	PresentStatus          uint64 `gorm:"column:present_status"`
 
-	User                 user.User                                  `json:"user"`
+	User                 user.User                                  `json:"user" gorm:"foreignkey:id"`
 	AnnouncementPosition announcement_position.AnnouncementPosition `json:"announcement_position"`
 
 	models.CommonTimestampsField

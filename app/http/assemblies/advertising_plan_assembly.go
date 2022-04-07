@@ -2,29 +2,28 @@ package assemblies
 
 import (
 	"gohub/app/models/advertising_plan"
-	"time"
 
 	"github.com/golang-module/carbon/v2"
 )
 
 type AdvertisingPlanAssembly struct {
-	ID                    uint64    `json:"id"`
-	Name                  string    `json:"name"`
-	CreatorId             uint64    `json:"creator_id"`
-	AdvertisingId         uint64    `json:"ajdvertising_id"`
-	AdvertisingType       uint64    `json:"advertising_type"`
-	AdvertisingPositionId uint64    `json:"advertising_position_id"`
-	Order                 uint64    `json:"order"`
-	SchedulingDate        uint64    `json:"scheduling_date"`
-	SchedulingTime        uint64    `json:"scheduling_time"`
-	StartDate             time.Time `json:"start_date"`
-	EndTDate              time.Time `json:"end_date"`
-	StartTime             time.Time `json:"start_time"`
-	EndTime               time.Time `json:"end_time"`
-	AuditStatus           uint64    `json:"audit_status"`
-	PresentStatus         uint64    `json:"present_status"`
-	CreatedAt             string    `json:"created_at"`
-	UpdatedAt             string    `json:"updated_at"`
+	ID                    uint64 `json:"id"`
+	Name                  string `json:"name"`
+	CreatorId             uint64 `json:"creator_id"`
+	AdvertisingId         uint64 `json:"ajdvertising_id"`
+	AdvertisingType       uint64 `json:"advertising_type"`
+	AdvertisingPositionId uint64 `json:"advertising_position_id"`
+	Order                 uint64 `json:"order"`
+	SchedulingDate        uint64 `json:"scheduling_date"`
+	SchedulingTime        uint64 `json:"scheduling_time"`
+	StartDate             string `json:"start_date"`
+	EndDate               string `json:"end_date"`
+	StartTime             string `json:"start_time"`
+	EndTime               string `json:"end_time"`
+	AuditStatus           uint64 `json:"audit_status"`
+	PresentStatus         uint64 `json:"present_status"`
+	CreatedAt             string `json:"created_at"`
+	UpdatedAt             string `json:"updated_at"`
 
 	User                UserAssembly                `json:"user"`
 	AdvertisingPosition AdvertisingPositionAssembly `json:"advertising_position"`
@@ -42,7 +41,7 @@ func AdvertisingPlanAssemblyFromModel(data advertising_plan.AdvertisingPlan) *Ad
 		SchedulingDate:        data.SchedulingDate,
 		SchedulingTime:        data.SchedulingTime,
 		StartDate:             data.StartDate,
-		EndTDate:              data.EndTDate,
+		EndDate:               data.EndDate,
 		StartTime:             data.StartTime,
 		EndTime:               data.EndTime,
 		AuditStatus:           data.AuditStatus,
@@ -80,7 +79,7 @@ func AdvertisingPlanAssemblyFromModelList(data []advertising_plan.AdvertisingPla
 			SchedulingDate:        v.SchedulingDate,
 			SchedulingTime:        v.SchedulingTime,
 			StartDate:             v.StartDate,
-			EndTDate:              v.EndTDate,
+			EndDate:               v.EndDate,
 			StartTime:             v.StartTime,
 			EndTime:               v.EndTime,
 			AuditStatus:           v.AuditStatus,

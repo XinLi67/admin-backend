@@ -6,29 +6,27 @@ import (
 	"gohub/app/models/advertising_position"
 	"gohub/app/models/user"
 	"gohub/pkg/database"
-
-	"time"
 )
 
 type AdvertisingPlan struct {
 	models.BaseModel
 
-	Name                  string    `gorm:"column:name"`
-	CreatorId             uint64    `gorm:"column:creator_id"`
-	AdvertisingId         uint64    `gorm:"column:advertising_id"`
-	AdvertisingType       uint64    `gorm:"column:advertising_type"`
-	AdvertisingPositionId uint64    `gorm:"column:advertising_position_id"`
-	Order                 uint64    `gorm:"column:order"`
-	SchedulingDate        uint64    `gorm:"column:scheduling_date"`
-	SchedulingTime        uint64    `gorm:"column:scheduling_time"`
-	StartDate             time.Time `gorm:"column:start_date"`
-	EndTDate              time.Time `gorm:"column:end_date"`
-	StartTime             time.Time `gorm:"column:start_time"`
-	EndTime               time.Time `gorm:"column:end_time"`
-	AuditStatus           uint64    `gorm:"column:audit_status"`
-	PresentStatus         uint64    `gorm:"column:present_status"`
+	Name                  string `gorm:"column:name"`
+	CreatorId             uint64 `gorm:"column:creator_id"`
+	AdvertisingId         uint64 `gorm:"column:advertising_id"`
+	AdvertisingType       uint64 `gorm:"column:advertising_type"`
+	AdvertisingPositionId uint64 `gorm:"column:advertising_position_id"`
+	Order                 uint64 `gorm:"column:order"`
+	SchedulingDate        uint64 `gorm:"column:scheduling_date"`
+	SchedulingTime        uint64 `gorm:"column:scheduling_time"`
+	StartDate             string `gorm:"column:start_date"`
+	EndDate               string `gorm:"column:end_date"`
+	StartTime             string `gorm:"column:start_time"`
+	EndTime               string `gorm:"column:end_time"`
+	AuditStatus           uint64 `gorm:"column:audit_status"`
+	PresentStatus         uint64 `gorm:"column:present_status"`
 
-	User                user.User                                `json:"user"`
+	User                user.User                                `json:"user" gorm:"foreignkey:id"`
 	AdvertisingPosition advertising_position.AdvertisingPosition `json:"advertising_position"`
 
 	models.CommonTimestampsField
