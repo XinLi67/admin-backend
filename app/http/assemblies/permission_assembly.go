@@ -45,9 +45,9 @@ func PermissionAssemblyFromModel(data permission.Permission) *PermissionAssembly
 }
 
 func PermissionAssemblyFromModelList(data []permission.Permission) interface{} {
-	users := make([]PermissionAssembly, len(data))
+	permissions := make([]PermissionAssembly, len(data))
 	for i, v := range data {
-		users[i] = PermissionAssembly{
+		permissions[i] = PermissionAssembly{
 			ID:                v.ID,
 			PermissionGroupId: v.PermissionGroupId,
 			Name:              v.Name,
@@ -67,5 +67,5 @@ func PermissionAssemblyFromModelList(data []permission.Permission) interface{} {
 		}
 	}
 
-	return users
+	return permissions
 }
