@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"gohub/app/http/assemblies"
 	"gohub/app/models/permission_group"
 	"gohub/app/policies"
 	"gohub/app/requests"
@@ -20,8 +21,9 @@ func (ctrl *PermissionGroupsController) All(c *gin.Context) {
 	}
 
 	data, pager := permission_group.Paginate(c, 0)
+	permissionGroups := assemblies.PermissionGroupAssemblyFromModelList(data)
 	response.JSON(c, gin.H{
-		"data":  data,
+		"data":  permissionGroups,
 		"pager": pager,
 	})
 }
@@ -33,8 +35,9 @@ func (ctrl *PermissionGroupsController) Index(c *gin.Context) {
 	}
 
 	data, pager := permission_group.Paginate(c, 0)
+	permissionGroups := assemblies.PermissionGroupAssemblyFromModelList(data)
 	response.JSON(c, gin.H{
-		"data":  data,
+		"data":  permissionGroups,
 		"pager": pager,
 	})
 }
