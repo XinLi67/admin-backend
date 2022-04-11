@@ -7,6 +7,7 @@ import (
 	"gohub/app/http/middlewares"
 	"gohub/pkg/config"
 	"net/http"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -218,8 +219,8 @@ func RegisterAPIRoutes(r *gin.Engine) {
 		materialGroup := v1.Group("/material")
 		{
 			materialGroup.GET("", material.Index)
-			materialGroup.POST("", middlewares.AuthJWT(), material.Store)
-			materialGroup.POST("/:id/update", middlewares.AuthJWT(), material.Update)
+			materialGroup.POST("", material.Store)
+			materialGroup.POST("/:id/update", material.Update)
 			materialGroup.POST("/:id/delete", middlewares.AuthJWT(), material.Delete)
 			materialGroup.POST("/batch-delete", middlewares.AuthJWT(), material.BatchDelete)
 			materialGroup.GET("/:id", material.Show)
@@ -230,8 +231,9 @@ func RegisterAPIRoutes(r *gin.Engine) {
 		mgGroup := v1.Group("/material-group")
 		{
 			mgGroup.GET("", mg.Index)
-			mgGroup.POST("", middlewares.AuthJWT(), mg.Store)
-			mgGroup.POST("/:id/update", middlewares.AuthJWT(), mg.Update)
+			// mgGroup.GET("/group", mg.Index2)
+			mgGroup.POST("", mg.Store)
+			mgGroup.POST("/:id/update", mg.Update)
 			mgGroup.POST("/:id/delete", middlewares.AuthJWT(), mg.Delete)
 			mgGroup.POST("/batch-delete", middlewares.AuthJWT(), mg.BatchDelete)
 			mgGroup.GET("/:id", mg.Show)
@@ -263,7 +265,6 @@ func RegisterAPIRoutes(r *gin.Engine) {
 
 		tester := new(controllers.TestersController)
 		v1.POST("/tester", tester.BatchDelete)
-
 
 		//上传文件接口
 		uploadController := new((controllers.UploadController))

@@ -20,13 +20,14 @@ func (ctrl *MaterialGroupsController) Index(c *gin.Context) {
 		return
 	}
 
-	data, pager := material_group.Paginate(c, 0)
+	data, pager := material_group.Search(c, 0)
 	materialGroups := assemblies.MaterialGroupAssemblyFromModelList(data)
 	response.JSON(c, gin.H{
 		"data":  materialGroups,
 		"pager": pager,
 	})
 }
+
 
 func (ctrl *MaterialGroupsController) Show(c *gin.Context) {
 	materialGroupModel := material_group.Get(c.Param("id"))
@@ -64,10 +65,10 @@ func (ctrl *MaterialGroupsController) Update(c *gin.Context) {
 		return
 	}
 
-	if ok := policies.CanModifyMaterialGroup(c, materialGroupModel); !ok {
-		response.Abort403(c)
-		return
-	}
+	// if ok := policies.CanModifyMaterialGroup(c, materialGroupModel); !ok {
+	// 	response.Abort403(c)
+	// 	return
+	// }
 
 	request := requests.MaterialGroupRequest{}
 	bindOk := requests.Validate(c, &request, requests.MaterialGroupSave)
