@@ -17,7 +17,6 @@ type Menu struct {
 	PermissionName string `gorm:"column:permission_name" json:"permission_name"`
 	GuardName      string `gorm:"column:guard_name" json:"guard_name"`
 	Sequence       uint64 `gorm:"column:sequence" json:"sequence"`
-
 	models.CommonTimestampsField
 }
 

@@ -6,36 +6,61 @@ import (
 	"gohub/pkg/paginator"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 func Get(idstr string) (materialGroup MaterialGroup) {
-    database.DB.Where("id", idstr).First(&materialGroup)
-    return
+	database.DB.Where("id", idstr).First(&materialGroup)
+	return
 }
 
 func GetBy(field, value string) (materialGroup MaterialGroup) {
-    database.DB.Where("? = ?", field, value).First(&materialGroup)
-    return
+	database.DB.Where("? = ?", field, value).First(&materialGroup)
+	return
 }
 
 func All() (materialGroups []MaterialGroup) {
-    database.DB.Find(&materialGroups)
-    return 
+	database.DB.Find(&materialGroups)
+	return
 }
 
 func IsExist(field, value string) bool {
-    var count int64
-    database.DB.Model(MaterialGroup{}).Where(" = ?", field, value).Count(&count)
-    return count > 0
+	var count int64
+	database.DB.Model(MaterialGroup{}).Where(" = ?", field, value).Count(&count)
+	return count > 0
 }
 
 func Paginate(c *gin.Context, perPage int) (materialGroups []MaterialGroup, paging paginator.Paging) {
-    paging = paginator.Paginate(
-        c,
-        database.DB.Model(MaterialGroup{}),
-        &materialGroups,
-        app.V1URL(database.TableName(&MaterialGroup{})),
-        perPage,
-    )
-    return
+	paging = paginator.Paginate(
+		c,
+		database.DB.Model(MaterialGroup{}),
+		&materialGroups,
+		app.V1URL(database.TableName(&MaterialGroup{})),
+		perPage,
+	)
+	return
+}
+
+//素材分组多条件查询
+func Search(c *gin.Context, perPage int) (materials []MaterialGroup, paging paginator.Paging) {
+	var db *gorm.DB
+	name := c.Query("name")
+	start_time := c.Query("start_time")
+	end_time := c.Query("end_time")
+	db = database.DB.Model(MaterialGroup{})
+	if start_time != "" && end_time != "" {
+		db = database.DB.Model(MaterialGroup{}).Where("created_at BETWEEN ? AND ?", start_time, end_time)
+	}
+	if name != "" {
+		db = database.DB.Model(MaterialGroup{}).Where("name like ? ", "%"+name+"%")
+	}
+	paging = paginator.Paginate(
+		c,
+		db,
+		&materials,
+		app.V1URL(database.TableName(&MaterialGroup{})),
+		perPage,
+	)
+	return
+
 }
