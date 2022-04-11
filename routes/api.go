@@ -231,9 +231,8 @@ func RegisterAPIRoutes(r *gin.Engine) {
 		mgGroup := v1.Group("/material-group")
 		{
 			mgGroup.GET("", mg.Index)
-			// mgGroup.GET("/group", mg.Index2)
-			mgGroup.POST("", mg.Store)
-			mgGroup.POST("/:id/update", mg.Update)
+			mgGroup.POST("", middlewares.AuthJWT(), mg.Store)
+			mgGroup.POST("/:id/update", middlewares.AuthJWT(), mg.Update)
 			mgGroup.POST("/:id/delete", middlewares.AuthJWT(), mg.Delete)
 			mgGroup.POST("/batch-delete", middlewares.AuthJWT(), mg.BatchDelete)
 			mgGroup.GET("/:id", mg.Show)

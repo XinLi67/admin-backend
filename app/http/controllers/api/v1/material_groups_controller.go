@@ -28,7 +28,6 @@ func (ctrl *MaterialGroupsController) Index(c *gin.Context) {
 	})
 }
 
-
 func (ctrl *MaterialGroupsController) Show(c *gin.Context) {
 	materialGroupModel := material_group.Get(c.Param("id"))
 	if materialGroupModel.ID == 0 {
@@ -65,10 +64,10 @@ func (ctrl *MaterialGroupsController) Update(c *gin.Context) {
 		return
 	}
 
-	// if ok := policies.CanModifyMaterialGroup(c, materialGroupModel); !ok {
-	// 	response.Abort403(c)
-	// 	return
-	// }
+	if ok := policies.CanModifyMaterialGroup(c, materialGroupModel); !ok {
+		response.Abort403(c)
+		return
+	}
 
 	request := requests.MaterialGroupRequest{}
 	bindOk := requests.Validate(c, &request, requests.MaterialGroupSave)
