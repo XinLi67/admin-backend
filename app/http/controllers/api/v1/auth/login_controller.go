@@ -35,6 +35,7 @@ func (lc *LoginController) LoginByPassword(c *gin.Context) {
 			"data": map[string]string{
 				"token": token,
 			},
+			"id": user.ID,
 		})
 	}
 }

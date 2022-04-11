@@ -23,3 +23,18 @@ func MaterialGroupAssemblyFromModel(data *material_group.MaterialGroup) *Materia
 		UpdatedAt:   carbon.Time2Carbon(data.UpdatedAt).ToDateTimeString(),
 	}
 }
+
+func MaterialGroupAssemblyFromModelList(data []material_group.MaterialGroup) interface{} {
+	MaterialGroups := make([]MaterialGroupAssembly, len(data))
+	for i, v := range data {
+		MaterialGroups[i] = MaterialGroupAssembly{
+			ID:          v.ID,
+			Name:        v.Name,
+			Description: v.Description,
+			CreatedAt:   carbon.Time2Carbon(v.CreatedAt).ToDateTimeString(),
+			UpdatedAt:   carbon.Time2Carbon(v.UpdatedAt).ToDateTimeString(),
+		}
+	}
+
+	return MaterialGroups
+}

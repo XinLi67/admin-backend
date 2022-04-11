@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"gohub/app/http/assemblies"
 	"gohub/app/models/material_group"
 	"gohub/app/policies"
 	"gohub/app/requests"
@@ -20,8 +21,9 @@ func (ctrl *MaterialGroupsController) Index(c *gin.Context) {
 	}
 
 	data, pager := material_group.Paginate(c, 0)
+	materialGroups := assemblies.MaterialGroupAssemblyFromModelList(data)
 	response.JSON(c, gin.H{
-		"data":  data,
+		"data":  materialGroups,
 		"pager": pager,
 	})
 }

@@ -9,7 +9,8 @@ import (
 )
 
 func Get(idstr string) (permission Permission) {
-	database.DB.Preload("PermissionGroup").Where("id", idstr).First(&permission)
+	database.DB.Where("id", idstr).First(&permission)
+	// database.DB.Preload("PermissionGroup").Where("id", idstr).First(&permission)
 	return
 }
 
@@ -19,7 +20,7 @@ func GetBy(field, value string) (permission Permission) {
 }
 
 func All() (permissions []Permission) {
-	database.DB.Preload("PermissionGroup").Find(&permissions)
+	database.DB.Find(&permissions)
 	return
 }
 
