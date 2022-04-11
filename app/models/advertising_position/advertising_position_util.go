@@ -9,8 +9,8 @@ import (
 )
 
 func Get(idstr string) (advertisingPosition AdvertisingPosition) {
-	// database.DB.Where("id", idstr).First(&advertisingPosition)
-	database.DB.Preload("Channel").Where("id", idstr).First(&advertisingPosition)
+	database.DB.Where("id", idstr).First(&advertisingPosition)
+	// database.DB.Preload("Channel").Where("id", idstr).First(&advertisingPosition)
 	return
 }
 
