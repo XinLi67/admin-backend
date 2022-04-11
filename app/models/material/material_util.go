@@ -6,6 +6,7 @@ import (
 	"gohub/pkg/paginator"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 func Get(idstr string) (material Material) {
@@ -38,4 +39,29 @@ func Paginate(c *gin.Context, perPage int) (materials []Material, paging paginat
 		perPage,
 	)
 	return
+}
+
+//素材多条件查询
+func Search(c *gin.Context, perPage int) (materials []Material, paging paginator.Paging) {
+	var db *gorm.DB
+	title := c.Query("title")
+	start_time := c.Query("start_time")
+	end_time := c.Query("end_time")
+	material_group_id := c.Query("material_group_id")
+	db = database.DB.Model(Material{}).Where(" material_group_id = ?", material_group_id)
+	if start_time != "" && end_time != "" {
+		db = database.DB.Model(Material{}).Where("title like ? AND material_group_id = ?", "%"+title+"%", material_group_id)
+	}
+	if title != "" {
+		db = database.DB.Model(Material{}).Where("created_at BETWEEN ? AND ? AND material_group_id = ?", start_time, end_time, material_group_id)
+	}
+	paging = paginator.Paginate(
+		c,
+		db,
+		&materials,
+		app.V1URL(database.TableName(&Material{})),
+		perPage,
+	)
+	return
+
 }

@@ -20,9 +20,10 @@ func (ctrl *MaterialsController) Index(c *gin.Context) {
 		return
 	}
 
-	data, pager := material.Paginate(c, 0)
+	data, pager := material.Search(c, 0)
 	materials := assemblies.MaterialAssemblyFromModelList(data)
 	response.JSON(c, gin.H{
+
 		"data":  materials,
 		"pager": pager,
 	})
