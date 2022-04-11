@@ -20,7 +20,8 @@ func (ctrl *AdvertisingsController) Index(c *gin.Context) {
 		return
 	}
 
-	data, pager := advertising.Paginate(c, 0)
+	// data, pager := advertising.Paginate(c, 0)
+	data, pager := advertising.Search(c, 0)
 	advertisings := assemblies.AdvertisingAssemblyFromModelList(data, len(data))
 	response.JSON(c, gin.H{
 		"data":  advertisings,
