@@ -60,6 +60,7 @@ func Search(c *gin.Context, perPage int) (Advertisings []Advertising, paging pag
 	types := c.Query("type")
 	advertising_position_id := c.Query("advertising_position_id")
 	title := c.Query("title")
+	status := c.Query("status")
 	if types != "" {
 		db = database.DB.Model(Advertising{}).Where("type = ? ", types)
 		if advertising_position_id != "" {
@@ -81,13 +82,24 @@ func Search(c *gin.Context, perPage int) (Advertisings []Advertising, paging pag
 		)
 		return
 	} else {
-		paging = paginator.Paginate(
-			c,
-			database.DB.Model(Advertising{}),
-			&Advertisings,
-			app.V1URL(database.TableName(&Advertising{})),
-			perPage,
-		)
+		if status != "" {
+			db = database.DB.Model(Advertising{}).Where("status = ? ", status)
+			paging = paginator.Paginate(
+				c,
+				db,
+				&Advertisings,
+				app.V1URL(database.TableName(&Advertising{})),
+				perPage,
+			)
+		} else {
+			paging = paginator.Paginate(
+				c,
+				database.DB.Model(Advertising{}),
+				&Advertisings,
+				app.V1URL(database.TableName(&Advertising{})),
+				perPage,
+			)
+		}
 		return
 	}
 }
