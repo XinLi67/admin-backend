@@ -54,6 +54,9 @@ func Search(c *gin.Context, perPage int) (materials []MaterialGroup, paging pagi
 	if name != "" {
 		db = database.DB.Model(MaterialGroup{}).Where("name like ? ", "%"+name+"%")
 	}
+	if start_time != "" && end_time != "" && name != "" {
+		db = database.DB.Model(MaterialGroup{}).Where("name like ? AND created_at BETWEEN ? AND ?", "%"+name+"%", start_time, end_time)
+	}
 	paging = paginator.Paginate(
 		c,
 		db,
