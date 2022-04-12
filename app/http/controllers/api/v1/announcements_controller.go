@@ -20,7 +20,7 @@ func (ctrl *AnnouncementsController) Index(c *gin.Context) {
 		return
 	}
 
-	data, pager := announcement.Paginate(c, 0)
+	data, pager := announcement.Search(c, 0)
 	announcements := assemblies.AnnouncementAssemblyFromModelList(data, len(data))
 	response.JSON(c, gin.H{
 		"data":  announcements,
