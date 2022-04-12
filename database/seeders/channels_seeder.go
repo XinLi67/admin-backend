@@ -28,7 +28,7 @@ func init() {
 		}
 
 		result := db.Table("channels").Create(&channels)
-
+//fkosgfiko
 		if err := result.Error; err != nil {
 			logger.LogIf(err)
 			return
