@@ -1,11 +1,14 @@
 package v1
 
 import (
+	"encoding/json"
 	"gohub/app/http/assemblies"
 	"gohub/app/models/material_group"
 	"gohub/app/policies"
 	"gohub/app/requests"
+	"gohub/pkg/database"
 	"gohub/pkg/response"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -127,4 +130,70 @@ func (ctrl *MaterialGroupsController) BatchDelete(c *gin.Context) {
 	response.Data(c, map[string]int64{
 		"rowsAffected": rowsAffected,
 	})
+}
+
+//文件夹查找
+func (ctrl *MaterialGroupsController) GetDocumentById(c *gin.Context) {
+	request := requests.PaginationRequest{}
+	if ok := requests.Validate(c, &request, requests.Pagination); !ok {
+		return
+	}
+	data, pager := material_group.GetDocumentById(c, 0, c.Param("id"))
+	materialGroups := assemblies.MaterialGroupAssemblyFromModelList(data)
+	response.JSON(c, gin.H{
+		"data":  materialGroups,
+		"pager": pager,
+	})
+}
+
+//文件导航获取
+type groupItem struct {
+	material_group.MaterialGroup
+	Chileren []groupItem `json:"children"`
+}
+
+func (ctrl *MaterialGroupsController) GetTree(c *gin.Context) {
+	var groupTrees []groupItem
+	database.DB.Model(material_group.MaterialGroup{}).Find(&groupTrees)
+	id := c.Param("id")
+	intNum, _ := strconv.Atoi(id)
+	data := treeDate(groupTrees, uint64(intNum))
+	response.Data(c, data)
+}
+func treeDate(groupItem1 []groupItem, id uint64) []groupItem {
+	var groupTrees []groupItem
+	for _, v := range groupItem1 {
+		if v.ID == id {
+			if v.ParentId != 0 {
+				v.Chileren = append(groupTrees, treeDate(groupItem1, v.ParentId)...)
+
+			}
+			groupTrees = append(groupTrees, v)
+
+		}
+	}
+	return groupTrees
+}
+
+//获取PATH 弃用
+func (ctrl *MaterialGroupsController) GetPath(c *gin.Context) {
+	materialGroupModel := material_group.All()
+	intNum, _ := strconv.Atoi(c.Param("id"))
+	data := getPath(materialGroupModel, uint64(intNum))
+	b, _ := json.Marshal(data)
+	result := string(b)
+	response.Data(c, result)
+}
+func getPath(materialGroup []material_group.MaterialGroup, id uint64) []int {
+	var path []int
+	for _, v := range materialGroup {
+		if v.ID == id {
+			if v.ParentId != 0 {
+				path = append(path, getPath(materialGroup, v.ParentId)...)
+			}
+			path = append(path, int(v.ParentId))
+
+		}
+	}
+	return path
 }

@@ -50,10 +50,11 @@ func Search(c *gin.Context, perPage int) (materials []Material, paging paginator
 	material_group_id := c.Query("material_group_id")
 	db = database.DB.Model(Material{}).Where(" material_group_id = ?", material_group_id)
 	if start_time != "" && end_time != "" {
-		db = database.DB.Model(Material{}).Where("title like ? AND material_group_id = ?", "%"+title+"%", material_group_id)
+		db = database.DB.Model(Material{}).Where("created_at BETWEEN ? AND ? AND material_group_id = ?", start_time, end_time, material_group_id)
 	}
 	if title != "" {
-		db = database.DB.Model(Material{}).Where("created_at BETWEEN ? AND ? AND material_group_id = ?", start_time, end_time, material_group_id)
+
+		db = database.DB.Model(Material{}).Where("title like ? AND material_group_id = ?", "%"+title+"%", material_group_id)
 	}
 	if start_time != "" && end_time != "" && title != "" {
 		db = database.DB.Model(Material{}).Where("title like ? AND created_at BETWEEN ? AND ? AND material_group_id = ?", "%"+title+"%", start_time, end_time, material_group_id)
