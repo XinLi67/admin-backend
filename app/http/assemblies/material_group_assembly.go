@@ -10,6 +10,8 @@ type MaterialGroupAssembly struct {
 	ID          uint64 `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
+	ParentId    uint64 `json:"parent_id"`
+	Path        string `json:"path"`
 	CreatedAt   string `json:"created_at"`
 	UpdatedAt   string `json:"updated_at"`
 }
@@ -18,6 +20,8 @@ func MaterialGroupAssemblyFromModel(data *material_group.MaterialGroup) *Materia
 	return &MaterialGroupAssembly{
 		ID:          data.ID,
 		Name:        data.Name,
+		ParentId:    data.ParentId,
+		Path:        data.Path,
 		Description: data.Description,
 		CreatedAt:   carbon.Time2Carbon(data.CreatedAt).ToDateTimeString(),
 		UpdatedAt:   carbon.Time2Carbon(data.UpdatedAt).ToDateTimeString(),
@@ -31,6 +35,8 @@ func MaterialGroupAssemblyFromModelList(data []material_group.MaterialGroup) int
 			ID:          v.ID,
 			Name:        v.Name,
 			Description: v.Description,
+			ParentId:    v.ParentId,
+			Path:        v.Path,
 			CreatedAt:   carbon.Time2Carbon(v.CreatedAt).ToDateTimeString(),
 			UpdatedAt:   carbon.Time2Carbon(v.UpdatedAt).ToDateTimeString(),
 		}
