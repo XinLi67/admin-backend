@@ -38,6 +38,41 @@ func (ctrl *ClickRecordsController) Show(c *gin.Context) {
 	response.Data(c, clickRecordAssembly)
 }
 
+func (ctrl *ClickRecordsController) ShowByMonth(c *gin.Context) {
+
+	recordList := click_record.ShowByMonth()
+
+	response.Data(c, recordList)
+}
+
+func (ctrl *ClickRecordsController) ShowByWeek(c *gin.Context) {
+
+	recordList := click_record.ShowByWeek()
+
+	response.Data(c, recordList)
+}
+
+func (ctrl *ClickRecordsController) ShowByAdversingId(c *gin.Context) {
+
+	recordList := click_record.ShowByAdversingId()
+
+	response.Data(c, recordList)
+}
+
+func (ctrl *ClickRecordsController) ShowByCustomerId(c *gin.Context) {
+
+	recordList := click_record.ShowByCustomerId()
+
+	response.Data(c, recordList)
+}
+
+func (ctrl *ClickRecordsController) ShowByPosId(c *gin.Context) {
+
+	recordList := click_record.ShowByPosId()
+
+	response.Data(c, recordList)
+}
+
 func (ctrl *ClickRecordsController) Store(c *gin.Context) {
 
 	request := requests.ClickRecordRequest{}
@@ -59,6 +94,8 @@ func (ctrl *ClickRecordsController) Store(c *gin.Context) {
 		response.Abort500(c, "创建失败，请稍后尝试~")
 	}
 }
+
+
 
 func (ctrl *ClickRecordsController) Update(c *gin.Context) {
 

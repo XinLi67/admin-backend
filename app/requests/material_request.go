@@ -3,6 +3,7 @@ package requests
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/thedevsaddam/govalidator"
+	"mime/multipart"
 )
 
 type MaterialRequest struct {
@@ -10,8 +11,10 @@ type MaterialRequest struct {
 	MaterialGroupId uint64 `json:"material_group_id,omitempty"`
 	DepartmentId    uint64 `json:"department_id,omitempty"`
 	Type            uint64 `valid:"type" json:"type,omitempty"`
-	Url             string `json:"url,omitempty"`
-	Title           string `valid:"title" json:"title,omitempty"`
+	//Url              *multipart.FileHeader `json:"url,omitempty" form:"url`
+	Url             *multipart.FileHeader `valid:"url"  form:"url"`
+	//Title           string `valid:"title" json:"title,omitempty" form:"title`
+	Title           string `valid:"title" form:"title`
 	Content         string `json:"content,omitempty"`
 }
 

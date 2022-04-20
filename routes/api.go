@@ -152,6 +152,7 @@ func RegisterAPIRoutes(r *gin.Engine) {
 			advertisingGroup.POST("/:id/delete", middlewares.AuthJWT(), advertising.Delete)
 			advertisingGroup.POST("/batch-delete", middlewares.AuthJWT(), advertising.BatchDelete)
 			advertisingGroup.GET("/:id", advertising.Show)
+			advertisingGroup.GET("/advertising-position-id/:id", advertising.IndexByAdvertisingPosId)
 		}
 
 		// 公告管理
@@ -248,6 +249,11 @@ func RegisterAPIRoutes(r *gin.Engine) {
 			clickRecordGroup.POST("/:id/delete", middlewares.AuthJWT(), clickRecord.Delete)
 			clickRecordGroup.POST("/batch-delete", middlewares.AuthJWT(), clickRecord.BatchDelete)
 			clickRecordGroup.GET("/:id", clickRecord.Show)
+			clickRecordGroup.GET("/showByMonth", clickRecord.ShowByMonth)
+			clickRecordGroup.GET("/showByWeek", clickRecord.ShowByWeek)
+			clickRecordGroup.GET("/showByAdversingId", clickRecord.ShowByAdversingId)
+			clickRecordGroup.GET("/showByCustomerId", clickRecord.ShowByCustomerId)
+			clickRecordGroup.GET("/showByPosId", clickRecord.ShowByPosId)
 		}
 
 		// 审核记录管理

@@ -1,17 +1,22 @@
 package advertising
 
 import (
+	"github.com/gin-gonic/gin"
 	"gohub/pkg/app"
 	"gohub/pkg/database"
 	"gohub/pkg/paginator"
-
-	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 func Get(idstr string) (advertising Advertising) {
 	// database.DB.Where("id", idstr).First(&advertising)
-	database.DB.Preload("User").Where("id", idstr).First(&advertising)
+	database.DB.Preload("advertising_position").Preload("User").Where("id", idstr).First(&advertising)
+	return
+}
+
+//根据广告位获取对应广告
+func GetAll(idstr string) (advertising []Advertising) {
+	// database.DB.Where("id", idstr).First(&advertising)
+	database.DB.Preload("advertising_position").Where("advertising_position_id", idstr).Find(&advertising)
 	return
 }
 
@@ -22,7 +27,7 @@ func GetBy(field, value string) (advertising Advertising) {
 
 func All() (advertisings []Advertising) {
 	// database.DB.Find(&advertisings)
-	database.DB.Preload("AdvertisingPosition").Preload("User").Find(&advertisings)
+	database.DB.Preload("advertising_position").Preload("User").Find(&advertisings)
 	return
 }
 
@@ -43,63 +48,15 @@ func Paginate(c *gin.Context, perPage int) (advertisings []Advertising, paging p
 	return
 }
 
-// func Search(c *gin.Context, perPage int) (advertisings []Advertising, paging paginator.Paging) {
-// 	query := database.DB.Model(Advertising{}).Where("title like ?", "%"+c.Query("title")+"%")
-// 	paging = paginator.Paginate(
-// 		c,
-// 		query,
-// 		&advertisings,
-// 		app.V1URL(database.TableName(&Advertising{})),
-// 		perPage,
-// 	)
-// 	return
-// }
-
-func Search(c *gin.Context, perPage int) (Advertisings []Advertising, paging paginator.Paging) {
-	var db *gorm.DB
-	types := c.Query("type")
-	advertising_position_id := c.Query("advertising_position_id")
-	title := c.Query("title")
-	status := c.Query("status")
-	if types != "" {
-		db = database.DB.Model(Advertising{}).Where("type = ? ", types)
-		if advertising_position_id != "" {
-			db = database.DB.Model(Advertising{}).Where("type = ? AND advertising_position_id= ?", types, advertising_position_id)
-		}
-		if title != "" {
-			if advertising_position_id != "" {
-				db = database.DB.Model(Advertising{}).Where("type = ? AND advertising_position_id= ? AND title like ?", types, advertising_position_id, "%"+title+"%")
-			} else {
-				db = database.DB.Model(Advertising{}).Where("type = ? AND title like ?", types, "%"+title+"%")
-			}
-		}
-		paging = paginator.Paginate(
-			c,
-			db,
-			&Advertisings,
-			app.V1URL(database.TableName(&Advertising{})),
-			perPage,
-		)
-		return
-	} else {
-		if status != "" {
-			db = database.DB.Model(Advertising{}).Where("status = ? ", status)
-			paging = paginator.Paginate(
-				c,
-				db,
-				&Advertisings,
-				app.V1URL(database.TableName(&Advertising{})),
-				perPage,
-			)
-		} else {
-			paging = paginator.Paginate(
-				c,
-				database.DB.Model(Advertising{}),
-				&Advertisings,
-				app.V1URL(database.TableName(&Advertising{})),
-				perPage,
-			)
-		}
-		return
-	}
+func Paginate2(c *gin.Context, perPage int, params string) (materials []Advertising, paging paginator.Paging) {
+	paging = paginator.Paginate(
+		c,
+		//database.DB.Model(Material{}),
+		database.DB.Model(Advertising{}).Where("advertising_position_id = ?", params),
+		&materials,
+		app.V1URL(database.TableName(&Advertising{})+"/list?params="+params),
+		perPage,
+	)
+	return materials, paging
 }
+
