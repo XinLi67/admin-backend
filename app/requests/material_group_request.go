@@ -7,6 +7,8 @@ import (
 
 type MaterialGroupRequest struct {
 	Name        string `valid:"name" json:"name,omitempty"`
+	ParentId    uint64 `valid:"parent_id" json:"parent_id,omitempty"`
+	Path        string `valid:"path" json:"path,omitempty"`
 	Description string `json:"description,omitempty"`
 }
 
