@@ -2,13 +2,15 @@ package v1
 
 import (
 	"fmt"
-	"github.com/xuri/excelize/v2"
 	"gohub/app/http/assemblies"
 	"gohub/app/models/announcement_position"
 	"gohub/app/policies"
 	"gohub/app/requests"
+	"gohub/pkg/paginator"
 	"gohub/pkg/response"
 	"gohub/utils"
+
+	"github.com/xuri/excelize/v2"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,12 +20,26 @@ type AnnouncementPositionsController struct {
 }
 
 func (ctrl *AnnouncementPositionsController) Index(c *gin.Context) {
+	status := c.Query("status")
+	params := c.Query("params")
+
 	request := requests.PaginationRequest{}
 	if ok := requests.Validate(c, &request, requests.Pagination); !ok {
 		return
 	}
 
-	data, pager := announcement_position.Paginate(c, 0)
+	var data []announcement_position.AnnouncementPosition
+	var pager paginator.Paging
+	if len(status) > 0 && len(params) > 0 {
+		data, pager = announcement_position.PaginateByStatusAndParams(c, 0, status, params)
+	} else if len(params) > 0 {
+		data, pager = announcement_position.PaginateByName(c, 0, params)
+	} else if len(status) > 0 {
+		data, pager = announcement_position.PaginateByStatus(c, 0, status)
+	} else {
+		data, pager = announcement_position.Paginate(c, 0)
+	}
+
 	announcementPositions := assemblies.AnnouncementPositionAssemblyFromModelList(data, len(data))
 	response.JSON(c, gin.H{
 		"data":  announcementPositions,
@@ -143,12 +159,11 @@ func (ctrl *AnnouncementPositionsController) BatchDelete(c *gin.Context) {
 	})
 }
 
-
 //数据导出
 func (ctrl *AnnouncementPositionsController) Export(c *gin.Context) {
 
-	listData:=announcement_position.All2()
-	f := excelize.NewFile()// 设置单元格的值
+	listData := announcement_position.All2()
+	f := excelize.NewFile() // 设置单元格的值
 	//// 这里设置表头
 	f.SetCellValue("Sheet1", "A1", "ID")
 	f.SetCellValue("Sheet1", "B1", "公告位名称")
@@ -176,8 +191,8 @@ func (ctrl *AnnouncementPositionsController) Export(c *gin.Context) {
 
 	}
 
-	var fileName=utils.RandFileName()
-	var fullPath="G:/studyFile/"+fileName+".xlsx"
+	var fileName = utils.RandFileName()
+	var fullPath = "G:/studyFile/" + fileName + ".xlsx"
 
 	// 保存文件
 	if err := f.SaveAs(fullPath); err != nil {

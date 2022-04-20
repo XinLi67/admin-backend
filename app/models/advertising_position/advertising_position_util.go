@@ -47,3 +47,38 @@ func Paginate(c *gin.Context, perPage int) (advertisingPositions []AdvertisingPo
 	)
 	return
 }
+
+func PaginateByName(c *gin.Context, perPage int, params string) (advertisingPositions []AdvertisingPosition, paging paginator.Paging) {
+	paging = paginator.Paginate(
+		c,
+		database.DB.Model(AdvertisingPosition{}).Where("name like ?", "%"+params+"%"),
+		&advertisingPositions,
+		app.V1URL(database.TableName(&AdvertisingPosition{})+"/list?params="+params),
+		perPage,
+	)
+	return advertisingPositions, paging
+}
+
+//根据审核状态查询后分页显示
+func PaginateByStatus(c *gin.Context, perPage int, status string) (advertisingPositions []AdvertisingPosition, paging paginator.Paging) {
+	paging = paginator.Paginate(
+		c,
+		database.DB.Model(AdvertisingPosition{}).Where("status = ?", status),
+		&advertisingPositions,
+		app.V1URL(database.TableName(&AdvertisingPosition{})+"/list?status="+status),
+		perPage,
+	)
+	return advertisingPositions, paging
+}
+
+//根据审核状态查询后分页显示
+func PaginateByStatusAndParams(c *gin.Context, perPage int, status string, params string) (advertisingPlans []AdvertisingPosition, paging paginator.Paging) {
+	paging = paginator.Paginate(
+		c,
+		database.DB.Model(AdvertisingPosition{}).Where("status = ? and name like ?", status, "%"+params+"%"),
+		&advertisingPlans,
+		app.V1URL(database.TableName(&AdvertisingPosition{})+"/list?status="+status+"?params="+params),
+		perPage,
+	)
+	return advertisingPlans, paging
+}
