@@ -11,7 +11,8 @@ type MaterialGroup struct {
 
 	Name        string `gorm:"column:name"`
 	Description string `gorm:"column:description"`
-
+	ParentId    uint64 `gorm:"column:parent_id"`
+	Path        string `gorm:"column:path" `
 	models.CommonTimestampsField
 }
 

@@ -233,6 +233,7 @@ func RegisterAPIRoutes(r *gin.Engine) {
 			materialGroup.POST("/:id/delete", middlewares.AuthJWT(), material.Delete)
 			materialGroup.POST("/batch-delete", middlewares.AuthJWT(), material.BatchDelete)
 			materialGroup.GET("/:id", material.Show)
+			
 		}
 
 		// 素材组管理
@@ -245,6 +246,9 @@ func RegisterAPIRoutes(r *gin.Engine) {
 			mgGroup.POST("/:id/delete", middlewares.AuthJWT(), mg.Delete)
 			mgGroup.POST("/batch-delete", middlewares.AuthJWT(), mg.BatchDelete)
 			mgGroup.GET("/:id", mg.Show)
+			mgGroup.GET("/:id/document", mg.GetDocumentById)
+			mgGroup.GET("/:id/menu", mg.GetTree)
+			mgGroup.GET("/:id/get", mg.GetPath)
 		}
 
 		// 点击记录管理

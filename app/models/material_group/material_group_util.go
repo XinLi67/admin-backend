@@ -41,21 +41,47 @@ func Paginate(c *gin.Context, perPage int) (materialGroups []MaterialGroup, pagi
 	return
 }
 
+//文件夹查找
+func GetDocumentById(c *gin.Context, perPage int, id string) (materialGroups []MaterialGroup, paging paginator.Paging) {
+	var db *gorm.DB
+	name := c.Query("name")
+	start_time := c.Query("start_time")
+	end_time := c.Query("end_time")
+	db = database.DB.Model(MaterialGroup{}).Where(" parent_id = ?", id)
+	if start_time != "" && end_time != "" {
+		db = database.DB.Model(MaterialGroup{}).Where("created_at BETWEEN ? AND ? AND parent_id = ?", start_time, end_time, id)
+	}
+	if name != "" {
+		db = database.DB.Model(MaterialGroup{}).Where("name like ? AND parent_id = ?", "%"+name+"%", id)
+	}
+	if start_time != "" && end_time != "" && name != "" {
+		db = database.DB.Model(MaterialGroup{}).Where("name like ? AND created_at BETWEEN ? AND ? AND parent_id = ?", "%"+name+"%", start_time, end_time, id)
+	}
+	paging = paginator.Paginate(
+		c,
+		db,
+		&materialGroups,
+		app.V1URL(database.TableName(&MaterialGroup{})),
+		perPage,
+	)
+	return
+}
+
 //素材分组多条件查询
 func Search(c *gin.Context, perPage int) (materials []MaterialGroup, paging paginator.Paging) {
 	var db *gorm.DB
 	name := c.Query("name")
 	start_time := c.Query("start_time")
 	end_time := c.Query("end_time")
-	db = database.DB.Model(MaterialGroup{})
+	db = database.DB.Model(MaterialGroup{}).Where(" parent_id= ? ", 0)
 	if start_time != "" && end_time != "" {
-		db = database.DB.Model(MaterialGroup{}).Where("created_at BETWEEN ? AND ?", start_time, end_time)
+		db = database.DB.Model(MaterialGroup{}).Where("created_at BETWEEN ? AND ? AND parent_id=0", start_time, end_time)
 	}
 	if name != "" {
-		db = database.DB.Model(MaterialGroup{}).Where("name like ? ", "%"+name+"%")
+		db = database.DB.Model(MaterialGroup{}).Where("name like ? AND parent_id= 0 ", "%"+name+"%")
 	}
 	if start_time != "" && end_time != "" && name != "" {
-		db = database.DB.Model(MaterialGroup{}).Where("name like ? AND created_at BETWEEN ? AND ?", "%"+name+"%", start_time, end_time)
+		db = database.DB.Model(MaterialGroup{}).Where("name like ? AND created_at BETWEEN ? AND ? AND parent_id=0", "%"+name+"%", start_time, end_time)
 	}
 	paging = paginator.Paginate(
 		c,
