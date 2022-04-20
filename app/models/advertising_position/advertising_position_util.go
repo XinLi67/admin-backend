@@ -25,6 +25,12 @@ func All() (advertisingPositions []AdvertisingPosition) {
 	return
 }
 
+func All2() (advertisingPos []*AdvertisingPosition) {
+	// database.DB.Find(&advertisings)
+	database.DB.Find(&advertisingPos)
+	return
+}
+
 func IsExist(field, value string) bool {
 	var count int64
 	database.DB.Model(AdvertisingPosition{}).Where(" = ?", field, value).Count(&count)

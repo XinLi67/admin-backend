@@ -36,6 +36,12 @@ func All() (advertisingPlans []AdvertisingPlan) {
 	return
 }
 
+func All2() (advertisingPlans []*AdvertisingPlan) {
+	// database.DB.Find(&advertisings)
+	database.DB.Find(&advertisingPlans)
+	return
+}
+
 func IsExist(field, value string) bool {
 	var count int64
 	database.DB.Model(AdvertisingPlan{}).Where(" = ?", field, value).Count(&count)
@@ -51,6 +57,18 @@ func Paginate(c *gin.Context, perPage int) (advertisingPlans []AdvertisingPlan, 
 		perPage,
 	)
 	return
+}
+
+//根据审核状态查询后分页显示
+func Paginate2(c *gin.Context, perPage int, audit_status string) (advertisingPlans []AdvertisingPlan, paging paginator.Paging) {
+	paging = paginator.Paginate(
+		c,
+		database.DB.Model(AdvertisingPlan{}).Where("audit_status = ?", audit_status),
+		&advertisingPlans,
+		app.V1URL(database.TableName(&AdvertisingPlan{})+"/list?audit_status="+audit_status),
+		perPage,
+	)
+	return advertisingPlans, paging
 }
 
 //缓存相关
@@ -73,4 +91,15 @@ func AllCached(id string) (advertisingPlans []AdvertisingPlan) {
 		cache.Set(cacheKey, advertisingPlans, expireTime)
 	}
 	return
+}
+
+func GetByStatus(c *gin.Context, perPage int, audit_status string) (advertisingPlans []AdvertisingPlan, paging paginator.Paging) {
+	paging = paginator.Paginate(
+		c,
+		database.DB.Model(AdvertisingPlan{}).Where("audit_status = ?", audit_status),
+		&advertisingPlans,
+		app.V1URL(database.TableName(&AdvertisingPlan{})+"/list?audit_status="+audit_status),
+		perPage,
+	)
+	return advertisingPlans, paging
 }

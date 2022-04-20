@@ -18,6 +18,10 @@ type AdvertisingRequest struct {
 	RedirectParams        string `json:"redirect_params,omitempty"`
 	Description           string `json:"description,omitempty"`
 	Status                uint64 `json:"status,omitempty"`
+	AuditReason           string `json:"audit_reason"`
+	PushContent           string `json:"push_content,omitempty"`
+	PushTitle             string `json:"push_title,omitempty"`
+	AdvertisingCreativity string `json:"advertising_creativity,omitempty"`
 }
 
 func AdvertisingSave(data interface{}, c *gin.Context) map[string][]string {

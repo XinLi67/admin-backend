@@ -51,7 +51,7 @@ func InitUploadConf() *UploadConf {
 		FileMaxSize:             5,       //单位Mb 0:不限制大小 / 5
 		Drive:                   "oss", // local / oss / qiniu
 		UploadConfLocal: &UploadConfLocal{
-			Host: "http://localhost:3000", //根域名
+			Host: "http://localhost:9000", //根域名
 		},
 		//以下oss账号仅限测试。非法操作者。请自重 感谢 壹cup清茶 贡献的测试账号
 		UploadConfOss: &UploadConfOss{

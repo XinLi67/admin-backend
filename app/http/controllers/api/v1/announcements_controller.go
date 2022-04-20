@@ -1,11 +1,15 @@
 package v1
 
 import (
+	"fmt"
+	"github.com/xuri/excelize/v2"
 	"gohub/app/http/assemblies"
 	"gohub/app/models/announcement"
 	"gohub/app/policies"
 	"gohub/app/requests"
+	"gohub/pkg/paginator"
 	"gohub/pkg/response"
+	"gohub/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,12 +19,23 @@ type AnnouncementsController struct {
 }
 
 func (ctrl *AnnouncementsController) Index(c *gin.Context) {
+	params := c.Query("params")
+	status := c.Query("status")
 	request := requests.PaginationRequest{}
 	if ok := requests.Validate(c, &request, requests.Pagination); !ok {
 		return
 	}
 
-	data, pager := announcement.Search(c, 0)
+	var data []announcement.Announcement
+	var pager paginator.Paging
+	if len(status) > 0 {
+		data, pager = announcement.PaginateByStatus(c, 0, status)
+	} else if len(params) > 0 {
+		data, pager = announcement.Paginate2(c, 0, params)
+	} else {
+		data, pager = announcement.Paginate(c, 0)
+	}
+
 	announcements := assemblies.AnnouncementAssemblyFromModelList(data, len(data))
 	response.JSON(c, gin.H{
 		"data":  announcements,
@@ -57,6 +72,7 @@ func (ctrl *AnnouncementsController) Store(c *gin.Context) {
 		RedirectParams:         request.RedirectParams,
 		Content:                request.Content,
 		Status:                 request.Status,
+		AuditReason:            request.AuditReason,
 	}
 	announcementModel.Create()
 	if announcementModel.ID > 0 {
@@ -146,4 +162,57 @@ func (ctrl *AnnouncementsController) BatchDelete(c *gin.Context) {
 	response.Data(c, map[string]int64{
 		"rowsAffected": rowsAffected,
 	})
+}
+
+//数据导出
+func (ctrl *AnnouncementsController) Export(c *gin.Context) {
+
+	listData := announcement.All2()
+	f := excelize.NewFile() // 设置单元格的值
+	//// 这里设置表头
+	f.SetCellValue("Sheet1", "A1", "ID")
+	f.SetCellValue("Sheet1", "B1", "公告编号")
+	f.SetCellValue("Sheet1", "C1", "公告位编号")
+	f.SetCellValue("Sheet1", "D1", "创建者编号")
+	f.SetCellValue("Sheet1", "E1", "部门ID")
+	f.SetCellValue("Sheet1", "F1", "标题")
+	f.SetCellValue("Sheet1", "G1", "长公告标题")
+	f.SetCellValue("Sheet1", "H1", "类型")
+	f.SetCellValue("Sheet1", "I1", "头图链接")
+	f.SetCellValue("Sheet1", "J1", "跳转类型")
+	f.SetCellValue("Sheet1", "K1", "跳转参数")
+	f.SetCellValue("Sheet1", "L1", "内容")
+	f.SetCellValue("Sheet1", "M1", "状态")
+
+	line := 1
+
+	//fruits := getFruits()
+	// 循环写入数据
+	for _, v := range listData {
+		line++
+		f.SetCellValue("Sheet1", fmt.Sprintf("A%d", line), v.ID)
+		f.SetCellValue("Sheet1", fmt.Sprintf("B%d", line), v.AnnouncementNo)
+		f.SetCellValue("Sheet1", fmt.Sprintf("C%d", line), v.AnnouncementPositionId)
+		f.SetCellValue("Sheet1", fmt.Sprintf("D%d", line), v.CreatorId)
+		f.SetCellValue("Sheet1", fmt.Sprintf("E%d", line), v.DepartmentId)
+		f.SetCellValue("Sheet1", fmt.Sprintf("F%d", line), v.Title)
+		f.SetCellValue("Sheet1", fmt.Sprintf("G%d", line), v.LongTitle)
+		f.SetCellValue("Sheet1", fmt.Sprintf("H%d", line), v.Type)
+		f.SetCellValue("Sheet1", fmt.Sprintf("I%d", line), v.Banner)
+		f.SetCellValue("Sheet1", fmt.Sprintf("J%d", line), v.RedirectTo)
+		f.SetCellValue("Sheet1", fmt.Sprintf("K%d", line), v.RedirectParams)
+		f.SetCellValue("Sheet1", fmt.Sprintf("L%d", line), v.Content)
+		f.SetCellValue("Sheet1", fmt.Sprintf("M%d", line), v.Status)
+
+	}
+
+	var fileName = utils.RandFileName()
+	var fullPath = "G:/studyFile/" + fileName + ".xlsx"
+
+	// 保存文件
+	if err := f.SaveAs(fullPath); err != nil {
+		fmt.Println(err)
+	}
+
+	response.Data(c, "文件保存为:"+fullPath)
 }

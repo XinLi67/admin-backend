@@ -6,11 +6,11 @@ import (
 	"gohub/app/models/advertising_plan"
 )
 
-type BatchStoreRequest struct {
+type AdvertigingBatchStoreRequest struct {
 	Data []advertising_plan.AdvertisingPlan `valid:"data" json:"data"`
 }
 
-func BatchStore(data interface{}, c *gin.Context) map[string][]string {
+func AdvertigingBatchStore(data interface{}, c *gin.Context) map[string][]string {
 
 	rules := govalidator.MapData{
 		"data": []string{"required"},

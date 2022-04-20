@@ -16,12 +16,13 @@ type MaterialsController struct {
 }
 
 func (ctrl *MaterialsController) Index(c *gin.Context) {
+	params := c.Query("params")
 	request := requests.PaginationRequest{}
 	if ok := requests.Validate(c, &request, requests.Pagination); !ok {
 		return
 	}
 
-	data, pager := material.Search(c, 0)
+	data, pager := material.Paginate2(c, 0,params)
 	materials := assemblies.MaterialAssemblyFromModelList(data)
 	response.JSON(c, gin.H{
 

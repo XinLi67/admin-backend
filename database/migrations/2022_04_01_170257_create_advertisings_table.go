@@ -13,19 +13,23 @@ func init() {
 	type Advertising struct {
 		models.BaseModel
 
-		AdvertisingNo         uint64 `gorm:"type:bigint unsigned;column:advertising_no"`
-		AdvertisingPositionId uint64 `gorm:"type:bigint unsigned;column:advertising_position_id"`
-		CreatorId             uint64 `gorm:"type:bigint unsigned;column:creator_id"`
-		DepartmentId          uint64 `gorm:"type:bigint unsigned;column:department_id"`
-		Title                 string `gorm:"type:varchar(255);column:title"`
-		Type                  uint64 `gorm:"type:tinyint unsigned;column:type"`
-		RedirectTo            uint64 `gorm:"type:tinyint unsigned;column:redirect_to"`
-		MaterialId            uint64 `gorm:"type:bigint unsigned;column:material_id"`
-		MaterialType          uint64 `gorm:"type:tinyint unsigned;column:material_type"`
-		Size                  string `gorm:"type:varchar(60);column:size"`
-		RedirectParams        string `gorm:"type:varchar(60);column:redirect_params"`
-		Description           string `gorm:"type:text;column:description"`
-		Status                uint64 `gorm:"type:tinyint unsigned;column:status"`
+		AdvertisingNo         uint64 `gorm:"column:advertising_no"`
+		AdvertisingPositionId uint64 `gorm:"column:advertising_position_id"`
+		CreatorId             uint64 `gorm:"column:creator_id"`
+		DepartmentId          uint64 `gorm:"column:department_id"`
+		Title                 string `gorm:"column:title"`
+		Type                  uint64 `gorm:"column:type"`
+		RedirectTo            uint64 `gorm:"column:redirect_to"`
+		MaterialId            uint64 `gorm:"column:material_id"`
+		MaterialType          uint64 `gorm:"column:material_type"`
+		Size                  string `gorm:"column:size"`
+		RedirectParams        string `gorm:"column:redirect_params"`
+		Description           string `gorm:"column:description"`
+		Status                uint64 `gorm:"column:status"`
+		AuditReason           string `gorm:"column:audit_reason"`
+		PushContent           string `gorm:"column:push_content"`
+		PushTitle             string `gorm:"column:push_title"`
+		AdvertisingCreativity string `gorm:"column:advertising_creativity"`
 
 		models.CommonTimestampsField
 	}

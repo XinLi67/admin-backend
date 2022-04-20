@@ -50,3 +50,8 @@ func (advertisingPlan *AdvertisingPlan) BatchDelete(ids []int) (rowsAffected int
 	result := database.DB.Delete(&advertisingPlan, ids)
 	return result.RowsAffected
 }
+
+func (advertisingPlan *AdvertisingPlan) BatchStore(adPlans []AdvertisingPlan) (rowsAffected int64) {
+	result := database.DB.Create(&adPlans)
+	return result.RowsAffected
+}
