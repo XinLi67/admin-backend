@@ -40,9 +40,9 @@ func (ctrl *AnnouncementPositionsController) Index(c *gin.Context) {
 		data, pager = announcement_position.Paginate(c, 0)
 	}
 
-	announcementPositions := assemblies.AnnouncementPositionAssemblyFromModelList(data, len(data))
+	// announcementPositions := assemblies.AnnouncementPositionAssemblyFromModelList(data, len(data))
 	response.JSON(c, gin.H{
-		"data":  announcementPositions,
+		"data":  data,
 		"pager": pager,
 	})
 }
