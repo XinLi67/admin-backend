@@ -12,6 +12,7 @@ type ClickRecord struct {
 
 	AdvertisingId uint64 `gorm:"column:advertising_id"`
 	CustomerId    uint64 `gorm:"column:customer_id"`
+	PositionId    uint64 `gorm:"column:position_id"`
 	BrowsingTime  uint64 `gorm:"column:browsing_time"`
 	StartTime     string `gorm:"column:start_time"`
 	EndTime       string `gorm:"column:end_time"`
@@ -20,6 +21,19 @@ type ClickRecord struct {
 
 	models.CommonTimestampsField
 }
+
+type DateGroupResult struct {
+	Mon  string
+	Week  string
+	Total int64
+}
+
+//type ClickRecordGroupResult struct {
+//	AdvertisingId  string
+//	CustomerId  string
+//	PositionId  string  `gorm:"column:advertising_position_id"`
+//	Total int64
+//}
 
 func (clickRecord *ClickRecord) Create() {
 	database.DB.Create(&clickRecord)

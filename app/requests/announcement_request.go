@@ -17,6 +17,7 @@ type AnnouncementRequest struct {
 	RedirectParams         string `json:"redirect_params,omitempty"`
 	Content                string `json:"content,omitempty"`
 	Status                 uint64 `json:"status,omitempty"`
+	AuditReason            string `json:"audit_reason,omitempty"`
 }
 
 func AnnouncementSave(data interface{}, c *gin.Context) map[string][]string {

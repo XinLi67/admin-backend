@@ -21,6 +21,10 @@ type AdvertisingAssembly struct {
 	RedirectParams        string `json:"redirect_params"`
 	Description           string `json:"description"`
 	Status                uint64 `json:"status"`
+	AuditReason           string `json:"audit_reason"`
+	PushContent           string `json:"push_content"`
+	PushTitle             string `json:"push_title"`
+	AdvertisingCreativity string `json:"advertising_creativity"`
 	CreatedAt             string `json:"created_at"`
 	UpdatedAt             string `json:"updated_at"`
 
@@ -44,6 +48,10 @@ func AdvertisingAssemblyFromModel(data advertising.Advertising) *AdvertisingAsse
 		RedirectParams:        data.RedirectParams,
 		Description:           data.Description,
 		Status:                data.Status,
+		AuditReason:		   data.AuditReason,
+		PushContent:           data.PushContent,
+		PushTitle:             data.PushTitle,
+		AdvertisingCreativity: data.AdvertisingCreativity,
 		CreatedAt:             carbon.Time2Carbon(data.CreatedAt).ToDateTimeString(),
 		UpdatedAt:             carbon.Time2Carbon(data.UpdatedAt).ToDateTimeString(),
 
@@ -80,6 +88,10 @@ func AdvertisingAssemblyFromModelList(data []advertising.Advertising, total int)
 			RedirectParams:        v.RedirectParams,
 			Description:           v.Description,
 			Status:                v.Status,
+			AuditReason:		   v.AuditReason,
+			PushContent:           v.PushContent,
+			PushTitle:             v.PushTitle,
+			AdvertisingCreativity: v.AdvertisingCreativity,
 			CreatedAt:             carbon.Time2Carbon(v.CreatedAt).ToDateTimeString(),
 			UpdatedAt:             carbon.Time2Carbon(v.UpdatedAt).ToDateTimeString(),
 

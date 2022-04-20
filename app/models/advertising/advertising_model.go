@@ -24,6 +24,10 @@ type Advertising struct {
 	RedirectParams        string `gorm:"column:redirect_params"`
 	Description           string `gorm:"column:description"`
 	Status                uint64 `gorm:"column:status"`
+	AuditReason           string `gorm:"column:audit_reason"`
+	PushContent           string `gorm:"column:push_content"`
+	PushTitle             string `gorm:"column:push_title"`
+	AdvertisingCreativity string `gorm:"column:advertising_creativity"`
 
 	User                user.User                                `json:"user" gorm:"foreignkey:id"`
 	AdvertisingPosition advertising_position.AdvertisingPosition `json:"advertising_position"`

@@ -6,6 +6,7 @@ import (
 	"gohub/app/policies"
 	"gohub/app/requests"
 	"gohub/pkg/response"
+	"gohub/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,12 +16,13 @@ type MaterialsController struct {
 }
 
 func (ctrl *MaterialsController) Index(c *gin.Context) {
+	params := c.Query("params")
 	request := requests.PaginationRequest{}
 	if ok := requests.Validate(c, &request, requests.Pagination); !ok {
 		return
 	}
 
-	data, pager := material.Search(c, 0)
+	data, pager := material.Paginate2(c, 0,params)
 	materials := assemblies.MaterialAssemblyFromModelList(data)
 	response.JSON(c, gin.H{
 
@@ -41,17 +43,28 @@ func (ctrl *MaterialsController) Show(c *gin.Context) {
 
 func (ctrl *MaterialsController) Store(c *gin.Context) {
 
+	host := utils.UploadConfig.UploadConfOss.HostRepostry
+
 	request := requests.MaterialRequest{}
 	if ok := requests.Validate(c, &request, requests.MaterialSave); !ok {
 		return
 	}
+
+	upErr, _, pathRelative := utils.ActionUplaodFile(c, request.Url)
+
+	if upErr != nil   {
+		response.Abort500(c, "上传素材失败，请稍后尝试~")
+		return
+	}
+
 
 	materialModel := material.Material{
 		CreatorId:       request.CreatorId,
 		MaterialGroupId: request.MaterialGroupId,
 		DepartmentId:    request.DepartmentId,
 		Type:            request.Type,
-		Url:             request.Url,
+		//Url:             request.Url,
+		Url:     host + "/" + pathRelative,
 		Title:           request.Title,
 		Content:         request.Content,
 	}
@@ -86,7 +99,7 @@ func (ctrl *MaterialsController) Update(c *gin.Context) {
 	materialModel.MaterialGroupId = request.MaterialGroupId
 	materialModel.DepartmentId = request.DepartmentId
 	materialModel.Type = request.Type
-	materialModel.Url = request.Url
+	//materialModel.Url = request.Url
 	materialModel.Title = request.Title
 	materialModel.Content = request.Content
 

@@ -23,6 +23,7 @@ type Announcement struct {
 	RedirectParams         string `gorm:"column:redirect_params"`
 	Content                string `gorm:"column:content"`
 	Status                 uint64 `gorm:"column:status"`
+	AuditReason            string `gorm:"column:audit_reason"`
 
 	User                 user.User                                  `json:"user" gorm:"foreignkey:id"`
 	AnnouncementPosition announcement_position.AnnouncementPosition `json:"announcement_position"`

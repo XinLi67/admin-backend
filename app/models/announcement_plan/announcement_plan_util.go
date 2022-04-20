@@ -26,6 +26,12 @@ func All() (announcementPlans []AnnouncementPlan) {
 	return
 }
 
+func All2() (announcementPlans []*AnnouncementPlan) {
+	// database.DB.Find(&advertisings)
+	database.DB.Find(&announcementPlans)
+	return
+}
+
 func IsExist(field, value string) bool {
 	var count int64
 	database.DB.Model(AnnouncementPlan{}).Where(" = ?", field, value).Count(&count)

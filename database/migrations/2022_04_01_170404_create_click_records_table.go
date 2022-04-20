@@ -13,11 +13,12 @@ func init() {
 	type ClickRecord struct {
 		models.BaseModel
 
-		AdvertisingId uint64 `gorm:"type:bigint unsigned;column:advertising_id"`
-		CustomerId    uint64 `gorm:"type:bigint unsigned;column:customer_id"`
-		BrowsingTime  uint64 `gorm:"type:bigint unsigned;column:browsing_time"`
-		StartTime     string `gorm:"type:varchar(10);column:start_time"`
-		EndTime       string `gorm:"type:varchar(10);column:end_time"`
+		AdvertisingId uint64 `gorm:"column:advertising_id"`
+		CustomerId    uint64 `gorm:"column:customer_id"`
+		PositionId    uint64 `gorm:"column:position_id"`
+		BrowsingTime  uint64 `gorm:"column:browsing_time"`
+		StartTime     string `gorm:"column:start_time"`
+		EndTime       string `gorm:"column:end_time"`
 
 		models.CommonTimestampsField
 	}

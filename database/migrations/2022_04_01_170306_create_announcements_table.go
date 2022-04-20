@@ -25,6 +25,7 @@ func init() {
 		RedirectParams         string `gorm:"type:varchar(60);column:redirect_params"`
 		Content                string `gorm:"type:text;column:content"`
 		Status                 uint64 `gorm:"type:tinyint unsigned;column:status"`
+		AuditReason            string `gorm:"type:text;column:audit_reason"`
 
 		models.CommonTimestampsField
 	}

@@ -152,6 +152,8 @@ func RegisterAPIRoutes(r *gin.Engine) {
 			advertisingGroup.POST("/:id/delete", middlewares.AuthJWT(), advertising.Delete)
 			advertisingGroup.POST("/batch-delete", middlewares.AuthJWT(), advertising.BatchDelete)
 			advertisingGroup.GET("/:id", advertising.Show)
+			advertisingGroup.GET("/advertising-position-id/:id", advertising.IndexByAdvertisingPosId)
+			advertisingGroup.GET("/export", advertising.Export)
 		}
 
 		// 公告管理
@@ -164,6 +166,7 @@ func RegisterAPIRoutes(r *gin.Engine) {
 			announcementGroup.POST("/:id/delete", middlewares.AuthJWT(), announcement.Delete)
 			announcementGroup.POST("/batch-delete", middlewares.AuthJWT(), announcement.BatchDelete)
 			announcementGroup.GET("/:id", announcement.Show)
+			announcementGroup.GET("/export", announcement.Export)
 		}
 
 		// 广告位管理
@@ -176,6 +179,7 @@ func RegisterAPIRoutes(r *gin.Engine) {
 			advertisingPositionGroup.POST("/:id/delete", middlewares.AuthJWT(), advertisingPosition.Delete)
 			advertisingPositionGroup.POST("/batch-delete", middlewares.AuthJWT(), advertisingPosition.BatchDelete)
 			advertisingPositionGroup.GET("/:id", advertisingPosition.Show)
+			advertisingPositionGroup.GET("/export", advertisingPosition.Export)
 		}
 
 		// 公告位管理
@@ -188,6 +192,7 @@ func RegisterAPIRoutes(r *gin.Engine) {
 			announcementPositionGroup.POST("/:id/delete", middlewares.AuthJWT(), announcementPosition.Delete)
 			announcementPositionGroup.POST("/batch-delete", middlewares.AuthJWT(), announcementPosition.BatchDelete)
 			announcementPositionGroup.GET("/:id", announcementPosition.Show)
+			announcementPositionGroup.GET("/export", announcementPosition.Export)
 		}
 
 		// 广告计划管理
@@ -199,7 +204,9 @@ func RegisterAPIRoutes(r *gin.Engine) {
 			advertisingPlanGroup.POST("/:id/update", middlewares.AuthJWT(), advertisingPlan.Update)
 			advertisingPlanGroup.POST("/:id/delete", middlewares.AuthJWT(), advertisingPlan.Delete)
 			advertisingPlanGroup.POST("/batch-delete", middlewares.AuthJWT(), advertisingPlan.BatchDelete)
+			advertisingPlanGroup.POST("/batch-store", middlewares.AuthJWT(), advertisingPlan.BatchStore)
 			advertisingPlanGroup.GET("/:id", advertisingPlan.Show)
+			advertisingPlanGroup.GET("/export", advertisingPlan.Export)
 		}
 
 		// 公告计划管理
@@ -211,7 +218,9 @@ func RegisterAPIRoutes(r *gin.Engine) {
 			announcementPlanGroup.POST("/:id/update", middlewares.AuthJWT(), announcementPlan.Update)
 			announcementPlanGroup.POST("/:id/delete", middlewares.AuthJWT(), announcementPlan.Delete)
 			announcementPlanGroup.POST("/batch-delete", middlewares.AuthJWT(), announcementPlan.BatchDelete)
+			announcementPlanGroup.POST("/batch-store", middlewares.AuthJWT(), announcementPlan.BatchStore)
 			announcementPlanGroup.GET("/:id", announcementPlan.Show)
+			announcementPlanGroup.GET("/export", announcementPlan.Export)
 		}
 
 		// 素材管理
@@ -252,6 +261,11 @@ func RegisterAPIRoutes(r *gin.Engine) {
 			clickRecordGroup.POST("/:id/delete", middlewares.AuthJWT(), clickRecord.Delete)
 			clickRecordGroup.POST("/batch-delete", middlewares.AuthJWT(), clickRecord.BatchDelete)
 			clickRecordGroup.GET("/:id", clickRecord.Show)
+			clickRecordGroup.GET("/showByMonth", clickRecord.ShowByMonth)
+			clickRecordGroup.GET("/showByWeek", clickRecord.ShowByWeek)
+			clickRecordGroup.GET("/showByAdversingId", clickRecord.ShowByAdversingId)
+			clickRecordGroup.GET("/showByCustomerId", clickRecord.ShowByCustomerId)
+			clickRecordGroup.GET("/showByPosId", clickRecord.ShowByPosId)
 		}
 
 		// 审核记录管理
@@ -275,5 +289,6 @@ func RegisterAPIRoutes(r *gin.Engine) {
 		{
 			upload.POST("", uploadController.Upload)
 		}
+
 	}
 }
