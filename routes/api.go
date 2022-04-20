@@ -228,12 +228,12 @@ func RegisterAPIRoutes(r *gin.Engine) {
 		materialGroup := v1.Group("/material")
 		{
 			materialGroup.GET("", material.Index)
-			materialGroup.POST("", material.Store)
-			materialGroup.POST("/:id/update", material.Update)
+			materialGroup.POST("",middlewares.AuthJWT(), material.Store)
+			materialGroup.POST("/:id/update", middlewares.AuthJWT(), material.Update)
 			materialGroup.POST("/:id/delete", middlewares.AuthJWT(), material.Delete)
 			materialGroup.POST("/batch-delete", middlewares.AuthJWT(), material.BatchDelete)
 			materialGroup.GET("/:id", material.Show)
-			
+
 		}
 
 		// 素材组管理

@@ -50,6 +50,8 @@ func (ctrl *MaterialGroupsController) Store(c *gin.Context) {
 	materialGroupModel := material_group.MaterialGroup{
 		Name:        request.Name,
 		Description: request.Description,
+		ParentId:        request.ParentId,
+		Path:        request.Path,
 	}
 	materialGroupModel.Create()
 	if materialGroupModel.ID > 0 {
