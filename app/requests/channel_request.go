@@ -8,7 +8,7 @@ import (
 type ChannelRequest struct {
 	Name        string `json:"name" valid:"name"`
 	Description string `json:"description"`
-	Status      uint64 `json:"status;omitempty"`
+	Status      uint64 `json:"status"`
 }
 
 func ChannelSave(data interface{}, c *gin.Context) map[string][]string {

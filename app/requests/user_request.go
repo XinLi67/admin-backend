@@ -18,7 +18,7 @@ type UserCreateRequest struct {
 	Email        string `json:"email"`
 	Phone        string `json:"phone"`
 	Avatar       string `json:"avatar"`
-	Status       uint64 `json:"status;omitempty"`
+	Status       uint64 `json:"status" valid:"status"`
 }
 
 func UserCreate(data interface{}, c *gin.Context) map[string][]string {
