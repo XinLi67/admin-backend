@@ -9,6 +9,8 @@ import (
 	"gohub/pkg/database"
 	"gohub/pkg/response"
 	"strconv"
+	"strings"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -45,12 +47,13 @@ func (ctrl *MaterialGroupsController) Store(c *gin.Context) {
 	if ok := requests.Validate(c, &request, requests.MaterialGroupSave); !ok {
 		return
 	}
-
+	//根据ParentId获取Path
+	Path := GetPath(request.ParentId)
 	materialGroupModel := material_group.MaterialGroup{
 		Name:        request.Name,
 		Description: request.Description,
-		ParentId:        request.ParentId,
-		Path:        request.Path,
+		ParentId:    request.ParentId,
+		Path:        Path,
 	}
 	materialGroupModel.Create()
 	if materialGroupModel.ID > 0 {
@@ -176,14 +179,15 @@ func treeDate(groupItem1 []groupItem, id uint64) []groupItem {
 	return groupTrees
 }
 
-//获取PATH 弃用
-func (ctrl *MaterialGroupsController) GetPath(c *gin.Context) {
+//获取PATH
+func GetPath(id uint64) string {
 	materialGroupModel := material_group.All()
-	intNum, _ := strconv.Atoi(c.Param("id"))
-	data := getPath(materialGroupModel, uint64(intNum))
+	data := getPath(materialGroupModel, id)
+	data = append(data, int(id))
 	b, _ := json.Marshal(data)
 	result := string(b)
-	response.Data(c, result)
+	result = strings.Trim(result, "[]")
+	return result
 }
 func getPath(materialGroup []material_group.MaterialGroup, id uint64) []int {
 	var path []int

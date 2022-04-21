@@ -70,26 +70,15 @@ func Search(c *gin.Context, perPage int) (materials []Material, paging paginator
 
 }
 
-func Paginate2(c *gin.Context, perPage int, params string) (materials []Material, paging paginator.Paging) {
+func SearchByCreatorId(c *gin.Context, perPage int, CreatorId string) (materials []Material, paging paginator.Paging) {
+	// material_group_id := c.Query("material_group_id")
+	// title := c.Query("title")
 	paging = paginator.Paginate(
 		c,
-		//database.DB.Model(Material{}),
-		database.DB.Model(Material{}).Where("id like ?", "%"+params+"%").
-			//Or("creator_id like ?", "%"+params+"%").
-			//Or("advertising_no like ?", "%"+params+"%").
-			//Or("department_id like ?", "%"+params+"%").
-			Or("title like ?", "%"+params+"%"),
-		//Or("type like ?", "%"+params+"%").
-		//Or("material_id like ?", "%"+params+"%").
-		//Or("material_type like ?", "%"+params+"%").
-		//Or("size like ?", "%"+params+"%").
-		//Or("redirect_to like ?", "%"+params+"%").
-		//Or("redirect_params like ?", "%"+params+"%").
-		//Or("description like ?", "%"+params+"%"),
-
+		database.DB.Model(Material{}).Where("creator_id =?", CreatorId),
 		&materials,
-		app.V1URL(database.TableName(&Material{})+"/list?params="+params),
+		app.V1URL(database.TableName(&Material{})),
 		perPage,
 	)
-	return materials, paging
+	return
 }

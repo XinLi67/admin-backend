@@ -29,6 +29,19 @@ func (ctrl *MaterialsController) Index(c *gin.Context) {
 	})
 }
 
+func (ctrl *MaterialsController) GetByCreatorId(c *gin.Context) {
+	request := requests.PaginationRequest{}
+	if ok := requests.Validate(c, &request, requests.Pagination); !ok {
+		return
+	}
+
+	data, pager := material.SearchByCreatorId(c, 0, c.Param("id"))
+	materials := assemblies.MaterialAssemblyFromModelList(data)
+	response.JSON(c, gin.H{
+		"data":  materials,
+		"pager": pager,
+	})
+}
 func (ctrl *MaterialsController) Show(c *gin.Context) {
 	materialModel := material.Get(c.Param("id"))
 	if materialModel.ID == 0 {

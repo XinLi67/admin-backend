@@ -228,11 +228,12 @@ func RegisterAPIRoutes(r *gin.Engine) {
 		materialGroup := v1.Group("/material")
 		{
 			materialGroup.GET("", material.Index)
-			materialGroup.POST("",middlewares.AuthJWT(), material.Store)
+			materialGroup.POST("", middlewares.AuthJWT(), material.Store)
 			materialGroup.POST("/:id/update", middlewares.AuthJWT(), material.Update)
 			materialGroup.POST("/:id/delete", middlewares.AuthJWT(), material.Delete)
 			materialGroup.POST("/batch-delete", middlewares.AuthJWT(), material.BatchDelete)
 			materialGroup.GET("/:id", material.Show)
+			materialGroup.GET("/:id/GetByCreatorId", material.GetByCreatorId)
 
 		}
 
@@ -248,7 +249,6 @@ func RegisterAPIRoutes(r *gin.Engine) {
 			mgGroup.GET("/:id", mg.Show)
 			mgGroup.GET("/:id/document", mg.GetDocumentById)
 			mgGroup.GET("/:id/menu", mg.GetTree)
-			mgGroup.GET("/:id/get", mg.GetPath)
 		}
 
 		// 点击记录管理
