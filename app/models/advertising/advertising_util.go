@@ -53,7 +53,7 @@ func Paginate(c *gin.Context, perPage int) (advertisings []Advertising, paging p
 	return
 }
 
-func Paginate2(c *gin.Context, perPage int, params string) (materials []Advertising, paging paginator.Paging) {
+func Paginate2(c *gin.Context, perPage int, params string) (advertisings []Advertising, paging paginator.Paging) {
 	paging = paginator.Paginate(
 		c,
 		//database.DB.Model(Material{}),
@@ -62,18 +62,41 @@ func Paginate2(c *gin.Context, perPage int, params string) (materials []Advertis
 			//Or("advertising_no like ?", "%"+params+"%").
 			//Or("department_id like ?", "%"+params+"%").
 			Or("title like ?", "%"+params+"%"),
-			//Or("type like ?", "%"+params+"%").
-			//Or("material_id like ?", "%"+params+"%").
-			//Or("material_type like ?", "%"+params+"%").
-			//Or("size like ?", "%"+params+"%").
-			//Or("redirect_to like ?", "%"+params+"%").
-			//Or("redirect_params like ?", "%"+params+"%").
-			//Or("description like ?", "%"+params+"%"),
+		//Or("type like ?", "%"+params+"%").
+		//Or("material_id like ?", "%"+params+"%").
+		//Or("material_type like ?", "%"+params+"%").
+		//Or("size like ?", "%"+params+"%").
+		//Or("redirect_to like ?", "%"+params+"%").
+		//Or("redirect_params like ?", "%"+params+"%").
+		//Or("description like ?", "%"+params+"%"),
 
-		&materials,
+		&advertisings,
 		app.V1URL(database.TableName(&Advertising{})+"/list?params="+params),
 		perPage,
 	)
-	return materials, paging
+	return advertisings, paging
 }
 
+//根据审核状态查询后分页显示
+func PaginateByStatus(c *gin.Context, perPage int, status string) (advertisings []Advertising, paging paginator.Paging) {
+	paging = paginator.Paginate(
+		c,
+		database.DB.Model(Advertising{}).Where("status = ?", status),
+		&advertisings,
+		app.V1URL(database.TableName(&Advertising{})+"/list?status="+status),
+		perPage,
+	)
+	return advertisings, paging
+}
+
+//根据审核状态和模糊查询参数名查询后分页显示
+func PaginateByStatusAndParams(c *gin.Context, perPage int, status string, params string) (advertisings []Advertising, paging paginator.Paging) {
+	paging = paginator.Paginate(
+		c,
+		database.DB.Model(Advertising{}).Where("status = ? and title like ?", status, "%"+params+"%"),
+		&advertisings,
+		app.V1URL(database.TableName(&Advertising{})+"/list?status="+status+"?params="+params),
+		perPage,
+	)
+	return advertisings, paging
+}

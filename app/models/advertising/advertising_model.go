@@ -28,6 +28,8 @@ type Advertising struct {
 	PushContent           string `gorm:"column:push_content"`
 	PushTitle             string `gorm:"column:push_title"`
 	AdvertisingCreativity string `gorm:"column:advertising_creativity"`
+	StartTime             string `gorm:"column:start_time"`
+	EndTime               string `gorm:"column:end_time"`
 
 	User                user.User                                `json:"user" gorm:"foreignkey:id"`
 	AdvertisingPosition advertising_position.AdvertisingPosition `json:"advertising_position"`

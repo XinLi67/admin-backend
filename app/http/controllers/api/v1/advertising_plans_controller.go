@@ -21,16 +21,22 @@ type AdvertisingPlansController struct {
 
 func (ctrl *AdvertisingPlansController) Index(c *gin.Context) {
 	audit_status := c.Query("audit_status")
+	params := c.Query("params")
+
 	request := requests.PaginationRequest{}
 	if ok := requests.Validate(c, &request, requests.Pagination); !ok {
 		return
 	}
-	var  data []advertising_plan.AdvertisingPlan
+	var data []advertising_plan.AdvertisingPlan
 	var pager paginator.Paging
-	if len(audit_status)<=0{
+	if len(audit_status) > 0 && len(params) > 0 {
+		data, pager = advertising_plan.PaginateByStatusAndParams(c, 0, audit_status, params)
+	} else if len(params) > 0 {
+		data, pager = advertising_plan.Paginate2(c, 0, params)
+	} else if len(audit_status) > 0 {
+		data, pager = advertising_plan.PaginateByStatus(c, 0, audit_status)
+	} else {
 		data, pager = advertising_plan.Paginate(c, 0)
-	}else{
-		data, pager = advertising_plan.Paginate2(c, 0,audit_status)
 	}
 
 	AdvertisingPlans := assemblies.AdvertisingPlanAssemblyFromModelList(data, len(data))
@@ -49,7 +55,6 @@ func (ctrl *AdvertisingPlansController) Show(c *gin.Context) {
 	advertisingPlanAssembly := assemblies.AdvertisingPlanAssemblyFromModel(advertisingPlanModel)
 	response.Data(c, advertisingPlanAssembly)
 }
-
 
 func (ctrl *AdvertisingPlansController) Store(c *gin.Context) {
 
