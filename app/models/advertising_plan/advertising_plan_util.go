@@ -59,13 +59,36 @@ func Paginate(c *gin.Context, perPage int) (advertisingPlans []AdvertisingPlan, 
 	return
 }
 
+func Paginate2(c *gin.Context, perPage int, params string) (advertisingPlans []AdvertisingPlan, paging paginator.Paging) {
+	paging = paginator.Paginate(
+		c,
+		database.DB.Model(AdvertisingPlan{}).Where("name like ?", "%"+params+"%"),
+		&advertisingPlans,
+		app.V1URL(database.TableName(&AdvertisingPlan{})+"/list?params="+params),
+		perPage,
+	)
+	return advertisingPlans, paging
+}
+
 //根据审核状态查询后分页显示
-func Paginate2(c *gin.Context, perPage int, audit_status string) (advertisingPlans []AdvertisingPlan, paging paginator.Paging) {
+func PaginateByStatus(c *gin.Context, perPage int, audit_status string) (advertisingPlans []AdvertisingPlan, paging paginator.Paging) {
 	paging = paginator.Paginate(
 		c,
 		database.DB.Model(AdvertisingPlan{}).Where("audit_status = ?", audit_status),
 		&advertisingPlans,
 		app.V1URL(database.TableName(&AdvertisingPlan{})+"/list?audit_status="+audit_status),
+		perPage,
+	)
+	return advertisingPlans, paging
+}
+
+//根据审核状态查询后分页显示
+func PaginateByStatusAndParams(c *gin.Context, perPage int, audit_status string, params string) (advertisingPlans []AdvertisingPlan, paging paginator.Paging) {
+	paging = paginator.Paginate(
+		c,
+		database.DB.Model(AdvertisingPlan{}).Where("audit_status = ? and name like ?", audit_status, "%"+params+"%"),
+		&advertisingPlans,
+		app.V1URL(database.TableName(&AdvertisingPlan{})+"/list?audit_status="+audit_status+"?params="+params),
 		perPage,
 	)
 	return advertisingPlans, paging

@@ -2,6 +2,7 @@ package v1
 
 import (
 	"fmt"
+	"github.com/xuri/excelize/v2"
 	"gohub/app/http/assemblies"
 	"gohub/app/models/advertising_position"
 	"gohub/app/policies"
@@ -9,8 +10,6 @@ import (
 	"gohub/pkg/paginator"
 	"gohub/pkg/response"
 	"gohub/utils"
-
-	"github.com/xuri/excelize/v2"
 
 	"github.com/gin-gonic/gin"
 )
@@ -162,8 +161,8 @@ func (ctrl *AdvertisingPositionsController) BatchDelete(c *gin.Context) {
 //数据导出
 func (ctrl *AdvertisingPositionsController) Export(c *gin.Context) {
 
-	listData := advertising_position.All2()
-	f := excelize.NewFile() // 设置单元格的值
+	listData:=advertising_position.All2()
+	f := excelize.NewFile()// 设置单元格的值
 	//// 这里设置表头
 	f.SetCellValue("Sheet1", "A1", "ID")
 	f.SetCellValue("Sheet1", "B1", "广告位名称")
@@ -190,8 +189,8 @@ func (ctrl *AdvertisingPositionsController) Export(c *gin.Context) {
 		f.SetCellValue("Sheet1", fmt.Sprintf("H%d", line), v.Description)
 	}
 
-	var fileName = utils.RandFileName()
-	var fullPath = "G:/studyFile/" + fileName + ".xlsx"
+	var fileName=utils.RandFileName()
+	var fullPath="G:/studyFile/"+fileName+".xlsx"
 
 	// 保存文件
 	if err := f.SaveAs(fullPath); err != nil {

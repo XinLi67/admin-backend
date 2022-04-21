@@ -3,7 +3,6 @@ module gohub
 go 1.17
 
 require (
-	github.com/EDDYCJY/go-gin-example v0.0.0-20201228125222-28f372bf41f9
 	github.com/KenmyZhang/aliyun-communicate v0.0.0-20180308134849-7997edc57454
 	github.com/aliyun/aliyun-oss-go-sdk v2.2.2+incompatible
 	github.com/gertd/go-pluralize v0.1.7
@@ -22,6 +21,7 @@ require (
 	github.com/spf13/viper v1.10.1
 	github.com/thedevsaddam/govalidator v1.9.10
 	github.com/ulule/limiter/v3 v3.9.0
+	github.com/xuri/excelize/v2 v2.6.0
 	go.uber.org/zap v1.20.0
 	golang.org/x/crypto v0.0.0-20220408190544-5352b0902921
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
@@ -35,7 +35,6 @@ require (
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
-	github.com/go-ini/ini v1.32.1-0.20180214101753-32e4be5f41bb // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/go-playground/validator/v10 v10.10.0 // indirect
@@ -68,7 +67,6 @@ require (
 	github.com/subosito/gotenv v1.2.0 // indirect
 	github.com/ugorji/go/codec v1.2.6 // indirect
 	github.com/xuri/efp v0.0.0-20220407160117-ad0f7a785be8 // indirect
-	github.com/xuri/excelize/v2 v2.6.0 // indirect
 	github.com/xuri/nfp v0.0.0-20220409054826-5e722a1d9e22 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/multierr v1.6.0 // indirect

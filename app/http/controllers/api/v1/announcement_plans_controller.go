@@ -8,6 +8,7 @@ import (
 	"gohub/app/policies"
 	"gohub/app/requests"
 	"gohub/pkg/database"
+	"gohub/pkg/paginator"
 	"gohub/pkg/response"
 	"gohub/utils"
 
@@ -19,12 +20,26 @@ type AnnouncementPlansController struct {
 }
 
 func (ctrl *AnnouncementPlansController) Index(c *gin.Context) {
+	status := c.Query("audit_status")
+	params := c.Query("params")
+
 	request := requests.PaginationRequest{}
 	if ok := requests.Validate(c, &request, requests.Pagination); !ok {
 		return
 	}
 
-	data, pager := announcement_plan.Paginate(c, 0)
+	var data []announcement_plan.AnnouncementPlan
+	var pager paginator.Paging
+	if len(status) > 0 && len(params) > 0 {
+		data, pager = announcement_plan.PaginateByStatusAndParams(c, 0, status, params)
+	} else if len(params) > 0 {
+		data, pager = announcement_plan.PaginateByName(c, 0, params)
+	} else if len(status) > 0 {
+		data, pager = announcement_plan.PaginateByStatus(c, 0, status)
+	} else {
+		data, pager = announcement_plan.Paginate(c, 0)
+	}
+
 	announcementPlans := assemblies.AnnouncementPlanAssemblyFromModelList(data, len(data))
 	response.JSON(c, gin.H{
 		"data":  announcementPlans,

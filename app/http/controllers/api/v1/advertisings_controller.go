@@ -8,6 +8,7 @@ import (
 	"gohub/app/models/advertising_plan"
 	"gohub/app/policies"
 	"gohub/app/requests"
+	"gohub/pkg/paginator"
 	"gohub/pkg/response"
 	"gohub/utils"
 
@@ -21,6 +22,7 @@ type AdvertisingsController struct {
 func (ctrl *AdvertisingsController) Index(c *gin.Context) {
 
 	params := c.Query("params")
+	status := c.Query("status")
 	request := requests.PaginationRequest{}
 	if ok := requests.Validate(c, &request, requests.Pagination); !ok {
 		return
@@ -28,7 +30,18 @@ func (ctrl *AdvertisingsController) Index(c *gin.Context) {
 
 	// data, pager := advertising.Paginate(c, 0)
 	//data, pager := advertising.Search(c, 0)
-	data, pager := advertising.Paginate2(c, 10, params)
+	var data []advertising.Advertising
+	var pager paginator.Paging
+	if len(status) > 0 && len(params) > 0 {
+		data, pager = advertising.PaginateByStatusAndParams(c, 0, status, params)
+	} else if len(params) > 0 {
+		data, pager = advertising.Paginate2(c, 0, params)
+	} else if len(status) > 0 {
+		data, pager = advertising.PaginateByStatus(c, 0, status)
+	} else {
+		data, pager = advertising.Paginate(c, 0)
+	}
+
 	advertisings := assemblies.AdvertisingAssemblyFromModelList(data, len(data))
 	response.JSON(c, gin.H{
 		"data":  advertisings,
@@ -132,6 +145,9 @@ func (ctrl *AdvertisingsController) Update(c *gin.Context) {
 	advertisingModel.RedirectParams = request.RedirectParams
 	advertisingModel.Description = request.Description
 	advertisingModel.Status = request.Status
+	advertisingModel.PushContent = request.PushContent
+	advertisingModel.PushTitle = request.PushTitle
+	advertisingModel.AdvertisingCreativity = request.AdvertisingCreativity
 
 	rowsAffected := advertisingModel.Save()
 	if rowsAffected > 0 {
