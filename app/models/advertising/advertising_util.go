@@ -53,7 +53,7 @@ func Paginate(c *gin.Context, perPage int) (advertisings []Advertising, paging p
 	return
 }
 
-func Paginate2(c *gin.Context, perPage int, params string) (advertisings []Advertising, paging paginator.Paging) {
+func PaginateByTitle(c *gin.Context, perPage int, params string) (advertisings []Advertising, paging paginator.Paging) {
 	paging = paginator.Paginate(
 		c,
 		//database.DB.Model(Material{}),
@@ -72,6 +72,50 @@ func Paginate2(c *gin.Context, perPage int, params string) (advertisings []Adver
 
 		&advertisings,
 		app.V1URL(database.TableName(&Advertising{})+"/list?params="+params),
+		perPage,
+	)
+	return advertisings, paging
+}
+
+func PaginateByType(c *gin.Context, perPage int, adtype string) (advertisings []Advertising, paging paginator.Paging) {
+	paging = paginator.Paginate(
+		c,
+		database.DB.Model(Advertising{}).Where("type = ?", adtype),
+		&advertisings,
+		app.V1URL(database.TableName(&Advertising{})+"/list?type="+adtype),
+		perPage,
+	)
+	return advertisings, paging
+}
+
+func PaginateByPosId(c *gin.Context, perPage int, posId string) (advertisings []Advertising, paging paginator.Paging) {
+	paging = paginator.Paginate(
+		c,
+		database.DB.Model(Advertising{}).Where("advertising_position_id = ?", posId),
+		&advertisings,
+		app.V1URL(database.TableName(&Advertising{})+"/list?advertising_position_id="+posId),
+		perPage,
+	)
+	return advertisings, paging
+}
+
+func PaginateByAdtypeAndAdvertisingPositionId(c *gin.Context, perPage int, adtype string,posId string) (advertisings []Advertising, paging paginator.Paging) {
+	paging = paginator.Paginate(
+		c,
+		database.DB.Model(Advertising{}).Where("type = ? and advertising_position_id=?", adtype,posId),
+		&advertisings,
+		app.V1URL(database.TableName(&Advertising{})+"/list?type="+adtype+"?advertising_position_id="+posId),
+		perPage,
+	)
+	return advertisings, paging
+}
+
+func PaginateByAdtypeAndParams(c *gin.Context, perPage int, adtype string,params string) (advertisings []Advertising, paging paginator.Paging) {
+	paging = paginator.Paginate(
+		c,
+		database.DB.Model(Advertising{}).Where("type = ? and title like ?", adtype,"%"+params+"%"),
+		&advertisings,
+		app.V1URL(database.TableName(&Advertising{})+"/list?type="+adtype+"?params="+params),
 		perPage,
 	)
 	return advertisings, paging
@@ -96,6 +140,17 @@ func PaginateByStatusAndParams(c *gin.Context, perPage int, status string, param
 		database.DB.Model(Advertising{}).Where("status = ? and title like ?", status, "%"+params+"%"),
 		&advertisings,
 		app.V1URL(database.TableName(&Advertising{})+"/list?status="+status+"?params="+params),
+		perPage,
+	)
+	return advertisings, paging
+}
+
+func PaginateByParamsAndAdtypeAndAdvertisingPositionId(c *gin.Context, perPage int,  params string, adtype string,posId string) (advertisings []Advertising, paging paginator.Paging) {
+	paging = paginator.Paginate(
+		c,
+		database.DB.Model(Advertising{}).Where("title like ? and type =  ? and advertising_position_id=?", "%"+params+"%", adtype,posId),
+		&advertisings,
+		app.V1URL(database.TableName(&Advertising{})+"/list?params="+params+"?type="+adtype+"advertisingPositionId="+posId),
 		perPage,
 	)
 	return advertisings, paging

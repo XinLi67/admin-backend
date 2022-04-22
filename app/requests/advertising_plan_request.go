@@ -3,9 +3,12 @@ package requests
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/thedevsaddam/govalidator"
+	"gohub/app/models"
 )
 
 type AdvertisingPlanRequest struct {
+
+	models.BaseModel
 	Name                  string `valid:"name" json:"name,omitempty"`
 	CreatorId             uint64 `json:"creator_id,omitempty"`
 	AdvertisingId         uint64 `json:"advertising_id,omitempty"`

@@ -3,7 +3,6 @@ package advertising_plan
 
 import (
 	"gohub/app/models"
-	"gohub/app/models/advertising"
 	"gohub/app/models/advertising_position"
 	"gohub/app/models/user"
 	"gohub/pkg/database"
@@ -29,7 +28,7 @@ type AdvertisingPlan struct {
 
 	User                user.User                                `json:"user" gorm:"foreignkey:id"`
 	AdvertisingPosition advertising_position.AdvertisingPosition `json:"advertising_position"`
-	Advertising         advertising.Advertising                  `json:"advertising"`
+	//Advertising         advertising.Advertising                `json:"advertising"`
 
 	models.CommonTimestampsField
 }

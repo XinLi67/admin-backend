@@ -1,9 +1,12 @@
 package v1
 
 import (
+	"bytes"
 	"fmt"
+	"github.com/tealeg/xlsx"
 	"github.com/xuri/excelize/v2"
 	"gohub/app/http/assemblies"
+	"gohub/app/models/advertising"
 	"gohub/app/models/advertising_plan"
 	"gohub/app/policies"
 	"gohub/app/requests"
@@ -11,6 +14,8 @@ import (
 	"gohub/pkg/paginator"
 	"gohub/pkg/response"
 	"gohub/utils"
+	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -97,16 +102,48 @@ func (ctrl *AdvertisingPlansController) BatchStore(c *gin.Context) {
 		return
 	}
 
-	var plans = request.Data
-	database.DB.Create(&plans)
+	var advertisings = request.Advertisings
 
-	for _, plan := range plans {
-		fmt.Println("新增广告计划记录ID:", plan.ID)
+	advertisingPlanModel := advertising_plan.AdvertisingPlan{
+		Name:                  request.AdvertisingPlan.Name,
+		CreatorId:             request.AdvertisingPlan.CreatorId,
+		AdvertisingId:         request.AdvertisingPlan.AdvertisingId,
+		AdvertisingType:       request.AdvertisingPlan.AdvertisingType,
+		AdvertisingPositionId: request.AdvertisingPlan.AdvertisingPositionId,
+		Order:                 request.AdvertisingPlan.Order,
+		SchedulingDate:        request.AdvertisingPlan.SchedulingDate,
+		SchedulingTime:        request.AdvertisingPlan.SchedulingTime,
+		StartDate:             request.AdvertisingPlan.StartDate,
+		EndDate:               request.AdvertisingPlan.EndDate,
+		StartTime:             request.AdvertisingPlan.StartTime,
+		EndTime:               request.AdvertisingPlan.EndTime,
+		AuditStatus:           request.AdvertisingPlan.AuditStatus,
+		PresentStatus:         request.AdvertisingPlan.PresentStatus,
 	}
 
-	response.Data(c, map[string]int{
-		"新增广告计划数量": len(plans),
-	})
+	advertisingPlanModel.Create()
+	if advertisingPlanModel.ID > 0 {
+		fmt.Println("新增广告计划记录ID:", advertisingPlanModel.ID)
+	}
+
+	var len1 =len(advertisings)
+	var advertisingModels []advertising.Advertising=make([]advertising.Advertising,len1)
+
+	fmt.Println(len(advertisingModels))
+
+	for i, item := range advertisings {
+		advertisingModels[i].AdvertisingNo=item.AdvertisingNo
+		advertisingModels[i].AdvertisingPositionId=item.AdvertisingPositionId
+		advertisingModels[i].StartTime=item.StartTime
+		advertisingModels[i].EndTime=item.EndTime
+	}
+
+	for _,item := range advertisingModels{
+		database.DB.Model(&advertising.Advertising{}).Where("advertising_no=?",item.AdvertisingNo).Updates(advertising.Advertising{StartTime:item.StartTime,EndTime:item.EndTime,SchedulingTime:item.SchedulingTime,AdvertisingPositionId:item.AdvertisingPositionId})
+	}
+
+
+	response.Created(c, advertisingPlanModel)
 
 }
 
@@ -241,12 +278,54 @@ func (ctrl *AdvertisingPlansController) Export(c *gin.Context) {
 	}
 
 	var fileName = utils.RandFileName()
-	var fullPath = "G:/studyFile/" + fileName + ".xlsx"
+	var fullPath = "D:/" + fileName + ".xlsx"
 
 	// 保存文件
 	if err := f.SaveAs(fullPath); err != nil {
 		fmt.Println(err)
 	}
 
-	response.Data(c, "文件保存为:"+fullPath)
+	var w http.ResponseWriter
+	var r *http.Request
+
+	w.Header().Add("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, fileName))
+	w.Header().Add("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+
+	var buffer bytes.Buffer
+	_ = f.Write(&buffer)
+	content := bytes.NewReader(buffer.Bytes())
+	http.ServeContent(w, r, fileName, time.Now(), content)
+
+	//response.Data(c, "文件保存为:"+fullPath)
 }
+
+
+// DataToExcel 数据导出excel, dataList里面的对象为指针
+func DataToExcel(w http.ResponseWriter, r *http.Request, titleList []string, dataList []interface{}, fileName string) {
+	// 生成一个新的文件
+	file := xlsx.NewFile()
+	// 添加sheet页
+	sheet, _ := file.AddSheet("Sheet1")
+	// 插入表头
+	titleRow := sheet.AddRow()
+	for _, v := range titleList {
+		cell := titleRow.AddCell()
+		cell.Value = v
+		cell.GetStyle().Font.Color = "00FF0000"
+	}
+	// 插入内容
+	for _, v := range dataList {
+		row := sheet.AddRow()
+		row.WriteStruct(v, -1)
+	}
+	fileName = fmt.Sprintf("%s.xlsx", fileName)
+	//_ = file.Save(fileName)
+	w.Header().Add("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, fileName))
+	w.Header().Add("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+
+	var buffer bytes.Buffer
+	_ = file.Write(&buffer)
+	content := bytes.NewReader(buffer.Bytes())
+	http.ServeContent(w, r, fileName, time.Now(), content)
+}
+
