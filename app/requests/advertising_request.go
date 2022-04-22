@@ -3,9 +3,13 @@ package requests
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/thedevsaddam/govalidator"
+	"gohub/app/models"
 )
 
 type AdvertisingRequest struct {
+	models.BaseModel
+
+	AdvertisingNo         uint64 `json:"advertising_no"`
 	AdvertisingPositionId uint64 `json:"advertising_position_id,omitempty"`
 	CreatorId             uint64 `json:"creator_id,omitempty"`
 	DepartmentId          uint64 `json:"department_id,omitempty"`
@@ -13,15 +17,19 @@ type AdvertisingRequest struct {
 	Type                  uint64 `valid:"type" json:"type,omitempty"`
 	RedirectTo            uint64 `valid:"redirect_to" json:"redirect_to,omitempty"`
 	MaterialId            uint64 `json:"material_id,omitempty"`
-	Materialtype          uint64 `valid:"material_type" json:"material_type,omitempty"`
+	MaterialType          uint64 `valid:"material_type" json:"material_type,omitempty"`
 	Size                  string `json:"size,omitempty"`
 	RedirectParams        string `json:"redirect_params,omitempty"`
 	Description           string `json:"description,omitempty"`
 	Status                uint64 `json:"status,omitempty"`
-	AuditReason           string `json:"audit_reason"`
+	AuditReason           string `json:"audit_reason,omitempty"`
 	PushContent           string `json:"push_content,omitempty"`
 	PushTitle             string `json:"push_title,omitempty"`
 	AdvertisingCreativity string `json:"advertising_creativity,omitempty"`
+	StartTime             string `json:"start_time,omitempty"`
+	EndTime               string `json:"end_time,omitempty"`
+	SchedulingTime        uint64 `json:"scheduling_time,omitempty"`
+
 }
 
 func AdvertisingSave(data interface{}, c *gin.Context) map[string][]string {

@@ -3,22 +3,23 @@ package requests
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/thedevsaddam/govalidator"
-	"gohub/app/models/advertising_plan"
 )
 
 type AdvertigingBatchStoreRequest struct {
-	Data []advertising_plan.AdvertisingPlan `valid:"data" json:"data"`
+	AdvertisingPlan AdvertisingPlanRequest `valid:"advertising_plan" json:"advertising_plan"`
+	Advertisings []AdvertisingRequest `valid:"advertisings" json:"advertisings"`
+
 }
 
 func AdvertigingBatchStore(data interface{}, c *gin.Context) map[string][]string {
 
 	rules := govalidator.MapData{
-		"data": []string{"required"},
+		"advertising_plan": []string{},
 	}
 
 	messages := govalidator.MapData{
-		"data": []string{
-			"required:参数data为必填项",
+		"advertising_plan": []string{
+			"required:参数advertising_plan为必填项",
 		},
 	}
 	return validate(data, rules, messages)

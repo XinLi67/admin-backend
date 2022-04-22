@@ -23,19 +23,29 @@ func (ctrl *AdvertisingsController) Index(c *gin.Context) {
 
 	params := c.Query("params")
 	status := c.Query("status")
+	adtype := c.Query("type")
+	advertising_position_id := c.Query("advertising_position_id")
 	request := requests.PaginationRequest{}
 	if ok := requests.Validate(c, &request, requests.Pagination); !ok {
 		return
 	}
 
-	// data, pager := advertising.Paginate(c, 0)
-	//data, pager := advertising.Search(c, 0)
 	var data []advertising.Advertising
 	var pager paginator.Paging
-	if len(status) > 0 && len(params) > 0 {
+	if len(params)>0 && len(adtype)>0 && len(advertising_position_id)>0{
+		data, pager = advertising.PaginateByParamsAndAdtypeAndAdvertisingPositionId(c, 0, params,adtype,advertising_position_id)
+	}else if len(adtype)>0 && len(advertising_position_id) >0{
+		data, pager = advertising.PaginateByAdtypeAndAdvertisingPositionId(c, 0,adtype,advertising_position_id)
+	}else if len(adtype)>0 && len(params) >0{
+		data, pager = advertising.PaginateByAdtypeAndParams(c, 0,adtype,params)
+	} else if len(status) > 0 && len(params) > 0 {
 		data, pager = advertising.PaginateByStatusAndParams(c, 0, status, params)
-	} else if len(params) > 0 {
-		data, pager = advertising.Paginate2(c, 0, params)
+	} else if len(advertising_position_id)>0 {
+		data, pager = advertising.PaginateByPosId(c, 0, advertising_position_id)
+	} else if len(adtype)>0{
+		data, pager = advertising.PaginateByType(c, 0, adtype)
+	}else if len(params) > 0 {
+		data, pager = advertising.PaginateByTitle(c, 0, params)
 	} else if len(status) > 0 {
 		data, pager = advertising.PaginateByStatus(c, 0, status)
 	} else {
@@ -97,7 +107,7 @@ func (ctrl *AdvertisingsController) Store(c *gin.Context) {
 		Type:                  request.Type,
 		RedirectTo:            request.RedirectTo,
 		MaterialId:            request.MaterialId,
-		MaterialType:          request.Materialtype,
+		MaterialType:          request.MaterialType,
 		Size:                  request.Size,
 		RedirectParams:        request.RedirectParams,
 		Description:           request.Description,
@@ -140,7 +150,7 @@ func (ctrl *AdvertisingsController) Update(c *gin.Context) {
 	advertisingModel.Type = request.Type
 	advertisingModel.RedirectTo = request.RedirectTo
 	advertisingModel.MaterialId = request.MaterialId
-	advertisingModel.MaterialType = request.Materialtype
+	advertisingModel.MaterialType = request.MaterialType
 	advertisingModel.Size = request.Size
 	advertisingModel.RedirectParams = request.RedirectParams
 	advertisingModel.Description = request.Description

@@ -15,6 +15,7 @@ func init() {
 
 		AdvertisingNo         uint64 `gorm:"column:advertising_no"`
 		AdvertisingPositionId uint64 `gorm:"column:advertising_position_id"`
+		AdvertisingPlanId     uint64 `gorm:"column:advertising_plan_id"`
 		CreatorId             uint64 `gorm:"column:creator_id"`
 		DepartmentId          uint64 `gorm:"column:department_id"`
 		Title                 string `gorm:"column:title"`
@@ -30,6 +31,9 @@ func init() {
 		PushContent           string `gorm:"column:push_content"`
 		PushTitle             string `gorm:"column:push_title"`
 		AdvertisingCreativity string `gorm:"column:advertising_creativity"`
+		StartTime             string `gorm:"type:varchar(20);column:start_time"`
+		EndTime               string `gorm:"type:varchar(20);column:end_time"`
+		SchedulingTime        uint64 `gorm:"column:scheduling_time"`
 
 		models.CommonTimestampsField
 	}

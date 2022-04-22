@@ -24,7 +24,7 @@ func AnnouncementSave(data interface{}, c *gin.Context) map[string][]string {
 
 	rules := govalidator.MapData{
 		"title":       []string{"min:2", "max:60", "not_exists:announcements,title," + c.Param("id")},
-		"type":        []string{"in:0,1"},
+		"type":        []string{"in:0,1,2"},
 		"redirect_to": []string{"in:0,1"},
 	}
 	messages := govalidator.MapData{
@@ -34,7 +34,7 @@ func AnnouncementSave(data interface{}, c *gin.Context) map[string][]string {
 			"not_exists:公告名称已存在",
 		},
 		"type": []string{
-			"in:只能为0或1",
+			"in:只能为0或1或2",
 		},
 		"redirect_to": []string{
 			"in:只能为0或1",

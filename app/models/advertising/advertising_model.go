@@ -13,6 +13,7 @@ type Advertising struct {
 
 	AdvertisingNo         uint64 `gorm:"column:advertising_no"`
 	AdvertisingPositionId uint64 `gorm:"column:advertising_position_id"`
+	AdvertisingPlanId     uint64 `gorm:"column:advertising_plan_id"`
 	CreatorId             uint64 `gorm:"column:creator_id"`
 	DepartmentId          uint64 `gorm:"column:department_id"`
 	Title                 string `gorm:"column:title"`
@@ -28,8 +29,9 @@ type Advertising struct {
 	PushContent           string `gorm:"column:push_content"`
 	PushTitle             string `gorm:"column:push_title"`
 	AdvertisingCreativity string `gorm:"column:advertising_creativity"`
-	StartTime             string `gorm:"column:start_time"`
-	EndTime               string `gorm:"column:end_time"`
+	StartTime             string `gorm:"type:varchar(20);column:start_time"`
+	EndTime               string `gorm:"type:varchar(20);column:end_time"`
+	SchedulingTime        uint64 `gorm:"column:scheduling_time"`
 
 	User                user.User                                `json:"user" gorm:"foreignkey:id"`
 	AdvertisingPosition advertising_position.AdvertisingPosition `json:"advertising_position"`
