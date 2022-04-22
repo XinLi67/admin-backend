@@ -47,17 +47,23 @@ func Search(c *gin.Context, perPage int) (materials []Material, paging paginator
 	title := c.Query("title")
 	start_time := c.Query("start_time")
 	end_time := c.Query("end_time")
+	creator_id := c.Query("creator_id")
 	material_group_id := c.Query("material_group_id")
-	db = database.DB.Model(Material{}).Where(" material_group_id = ?", material_group_id)
+	db = database.DB.Model(Material{})
 	if start_time != "" && end_time != "" {
-		db = database.DB.Model(Material{}).Where("created_at BETWEEN ? AND ? AND material_group_id = ?", start_time, end_time, material_group_id)
+		db.Where("created_at BETWEEN ? AND ? ", start_time, end_time)
 	}
 	if title != "" {
-
-		db = database.DB.Model(Material{}).Where("title like ? AND material_group_id = ?", "%"+title+"%", material_group_id)
+		db.Where("title like ? ", "%"+title+"%")
 	}
 	if start_time != "" && end_time != "" && title != "" {
-		db = database.DB.Model(Material{}).Where("title like ? AND created_at BETWEEN ? AND ? AND material_group_id = ?", "%"+title+"%", start_time, end_time, material_group_id)
+		db.Where(" created_at BETWEEN ? AND ? AND creator_id = ?", start_time, end_time)
+	}
+	if material_group_id != "" {
+		db.Where("material_group_id = ?", material_group_id)
+	}
+	if creator_id != "" {
+		db.Where("creator_id = ?", creator_id)
 	}
 	paging = paginator.Paginate(
 		c,
@@ -68,17 +74,4 @@ func Search(c *gin.Context, perPage int) (materials []Material, paging paginator
 	)
 	return
 
-}
-
-func SearchByCreatorId(c *gin.Context, perPage int, CreatorId string) (materials []Material, paging paginator.Paging) {
-	// material_group_id := c.Query("material_group_id")
-	// title := c.Query("title")
-	paging = paginator.Paginate(
-		c,
-		database.DB.Model(Material{}).Where("creator_id =?", CreatorId),
-		&materials,
-		app.V1URL(database.TableName(&Material{})),
-		perPage,
-	)
-	return
 }
