@@ -41,7 +41,7 @@ func Paginate(c *gin.Context, perPage int) (materialGroups []MaterialGroup, pagi
 	return
 }
 
-//文件夹查找
+//文件夹多条件查找
 func GetDocumentById(c *gin.Context, perPage int, id string) (materialGroups []MaterialGroup, paging paginator.Paging) {
 	var db *gorm.DB
 	name := c.Query("name")
@@ -49,13 +49,10 @@ func GetDocumentById(c *gin.Context, perPage int, id string) (materialGroups []M
 	end_time := c.Query("end_time")
 	db = database.DB.Model(MaterialGroup{}).Where(" parent_id = ?", id)
 	if start_time != "" && end_time != "" {
-		db = database.DB.Model(MaterialGroup{}).Where("created_at BETWEEN ? AND ? AND parent_id = ?", start_time, end_time, id)
+		db.Where("created_at BETWEEN ? AND ? ", start_time, end_time)
 	}
 	if name != "" {
-		db = database.DB.Model(MaterialGroup{}).Where("name like ? AND parent_id = ?", "%"+name+"%", id)
-	}
-	if start_time != "" && end_time != "" && name != "" {
-		db = database.DB.Model(MaterialGroup{}).Where("name like ? AND created_at BETWEEN ? AND ? AND parent_id = ?", "%"+name+"%", start_time, end_time, id)
+		db.Where("name like ? ", "%"+name+"%")
 	}
 	paging = paginator.Paginate(
 		c,

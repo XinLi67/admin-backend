@@ -233,7 +233,6 @@ func RegisterAPIRoutes(r *gin.Engine) {
 			materialGroup.POST("/:id/delete", middlewares.AuthJWT(), material.Delete)
 			materialGroup.POST("/batch-delete", middlewares.AuthJWT(), material.BatchDelete)
 			materialGroup.GET("/:id", material.Show)
-			materialGroup.GET("/:id/GetByCreatorId", material.GetByCreatorId)
 
 		}
 
