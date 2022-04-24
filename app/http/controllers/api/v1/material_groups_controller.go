@@ -6,7 +6,6 @@ import (
 	"gohub/app/models/material_group"
 	"gohub/app/policies"
 	"gohub/app/requests"
-
 	"gohub/pkg/response"
 	"strconv"
 	"strings"
@@ -17,8 +16,6 @@ import (
 type MaterialGroupsController struct {
 	BaseAPIController
 }
-
-
 
 func (ctrl *MaterialGroupsController) Show(c *gin.Context) {
 	materialGroupModel := material_group.Get(c.Param("id"))
@@ -69,10 +66,8 @@ func (ctrl *MaterialGroupsController) Update(c *gin.Context) {
 	if !bindOk {
 		return
 	}
-
 	materialGroupModel.Name = request.Name
 	materialGroupModel.Description = request.Description
-
 	rowsAffected := materialGroupModel.Save()
 	if rowsAffected > 0 {
 		response.Data(c, materialGroupModel)
@@ -90,7 +85,10 @@ func (ctrl *MaterialGroupsController) Delete(c *gin.Context) {
 	}
 	count := material_group.GetCountById(id)
 	if count > 0 {
-		response.Data(c, "不能删除")
+
+		response.JSON(c, gin.H{
+			"message": "不能删除",
+		})
 		return
 	}
 	if ok := policies.CanModifyMaterialGroup(c, materialGroupModel); !ok {
@@ -134,17 +132,12 @@ func (ctrl *MaterialGroupsController) GetDocumentById(c *gin.Context) {
 	if ok := requests.Validate(c, &request, requests.Pagination); !ok {
 		return
 	}
-	count := material_group.GetCountById(c.Param("id"))
-	if count == 0 {
-		response.Data(c, "0")
-	} else {
-		data, pager := material_group.GetDocumentById(c, 0, c.Param("id"))
-		materialGroups := assemblies.MaterialGroupAssemblyFromModelList(data)
-		response.JSON(c, gin.H{
-			"data":  materialGroups,
-			"pager": pager,
-		})
-	}
+	data, pager := material_group.GetDocumentById(c, 0, c.Param("id"))
+	materialGroups := assemblies.MaterialGroupAssemblyFromModelList(data)
+	response.JSON(c, gin.H{
+		"data":  materialGroups,
+		"pager": pager,
+	})
 }
 
 //文件导航获取
