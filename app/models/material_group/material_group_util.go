@@ -4,11 +4,9 @@ import (
 	"gohub/pkg/app"
 	"gohub/pkg/database"
 	"gohub/pkg/paginator"
-
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
-
 func Get(idstr string) (materialGroup MaterialGroup) {
 	database.DB.Where("id", idstr).First(&materialGroup)
 	return
@@ -40,7 +38,10 @@ func Paginate(c *gin.Context, perPage int) (materialGroups []MaterialGroup, pagi
 	)
 	return
 }
-
+func GetCountById(id string) (count int64) {
+	database.DB.Model(MaterialGroup{}).Where(" parent_id = ?", id).Count(&count)
+	return
+}
 //文件夹多条件查找
 func GetDocumentById(c *gin.Context, perPage int, id string) (materialGroups []MaterialGroup, paging paginator.Paging) {
 	var db *gorm.DB
@@ -64,29 +65,3 @@ func GetDocumentById(c *gin.Context, perPage int, id string) (materialGroups []M
 	return
 }
 
-//素材分组多条件查询
-func Search(c *gin.Context, perPage int) (materials []MaterialGroup, paging paginator.Paging) {
-	var db *gorm.DB
-	name := c.Query("name")
-	start_time := c.Query("start_time")
-	end_time := c.Query("end_time")
-	db = database.DB.Model(MaterialGroup{}).Where(" parent_id= ? ", 0)
-	if start_time != "" && end_time != "" {
-		db = database.DB.Model(MaterialGroup{}).Where("created_at BETWEEN ? AND ? AND parent_id=0", start_time, end_time)
-	}
-	if name != "" {
-		db = database.DB.Model(MaterialGroup{}).Where("name like ? AND parent_id= 0 ", "%"+name+"%")
-	}
-	if start_time != "" && end_time != "" && name != "" {
-		db = database.DB.Model(MaterialGroup{}).Where("name like ? AND created_at BETWEEN ? AND ? AND parent_id=0", "%"+name+"%", start_time, end_time)
-	}
-	paging = paginator.Paginate(
-		c,
-		db,
-		&materials,
-		app.V1URL(database.TableName(&MaterialGroup{})),
-		perPage,
-	)
-	return
-
-}

@@ -6,7 +6,7 @@ import (
 	"gohub/app/models/material_group"
 	"gohub/app/policies"
 	"gohub/app/requests"
-	"gohub/pkg/database"
+
 	"gohub/pkg/response"
 	"strconv"
 	"strings"
@@ -18,19 +18,7 @@ type MaterialGroupsController struct {
 	BaseAPIController
 }
 
-func (ctrl *MaterialGroupsController) Index(c *gin.Context) {
-	request := requests.PaginationRequest{}
-	if ok := requests.Validate(c, &request, requests.Pagination); !ok {
-		return
-	}
 
-	data, pager := material_group.Search(c, 0)
-	materialGroups := assemblies.MaterialGroupAssemblyFromModelList(data)
-	response.JSON(c, gin.H{
-		"data":  materialGroups,
-		"pager": pager,
-	})
-}
 
 func (ctrl *MaterialGroupsController) Show(c *gin.Context) {
 	materialGroupModel := material_group.Get(c.Param("id"))
@@ -94,13 +82,17 @@ func (ctrl *MaterialGroupsController) Update(c *gin.Context) {
 }
 
 func (ctrl *MaterialGroupsController) Delete(c *gin.Context) {
-
-	materialGroupModel := material_group.Get(c.Param("id"))
+	id := c.Param("id")
+	materialGroupModel := material_group.Get(id)
 	if materialGroupModel.ID == 0 {
 		response.Abort404(c)
 		return
 	}
-
+	count := material_group.GetCountById(id)
+	if count > 0 {
+		response.Data(c, "不能删除")
+		return
+	}
 	if ok := policies.CanModifyMaterialGroup(c, materialGroupModel); !ok {
 		response.Abort403(c)
 		return
@@ -142,23 +134,42 @@ func (ctrl *MaterialGroupsController) GetDocumentById(c *gin.Context) {
 	if ok := requests.Validate(c, &request, requests.Pagination); !ok {
 		return
 	}
-	data, pager := material_group.GetDocumentById(c, 0, c.Param("id"))
-	materialGroups := assemblies.MaterialGroupAssemblyFromModelList(data)
-	response.JSON(c, gin.H{
-		"data":  materialGroups,
-		"pager": pager,
-	})
+	count := material_group.GetCountById(c.Param("id"))
+	if count == 0 {
+		response.Data(c, "0")
+	} else {
+		data, pager := material_group.GetDocumentById(c, 0, c.Param("id"))
+		materialGroups := assemblies.MaterialGroupAssemblyFromModelList(data)
+		response.JSON(c, gin.H{
+			"data":  materialGroups,
+			"pager": pager,
+		})
+	}
 }
 
 //文件导航获取
 type groupItem struct {
-	material_group.MaterialGroup
+	ID       uint64      `json:"id"`
+	Name     string      `json:"name"`
+	ParentId uint64      `json:"parent_id"`
+	Path     string      `json:"path"`
 	Chileren []groupItem `json:"children"`
 }
 
+func GroupAssemblyFromModelList(data []material_group.MaterialGroup) []groupItem {
+	group := make([]groupItem, len(data))
+	for i, v := range data {
+		group[i] = groupItem{
+			ID:       v.ID,
+			Name:     v.Name,
+			ParentId: v.ParentId,
+			Path:     v.Path}
+	}
+	return group
+}
 func (ctrl *MaterialGroupsController) GetTree(c *gin.Context) {
-	var groupTrees []groupItem
-	database.DB.Model(material_group.MaterialGroup{}).Find(&groupTrees)
+	data1 := material_group.All()
+	groupTrees := GroupAssemblyFromModelList(data1)
 	id := c.Param("id")
 	intNum, _ := strconv.Atoi(id)
 	data := treeDate(groupTrees, uint64(intNum))
@@ -182,19 +193,19 @@ func treeDate(groupItem1 []groupItem, id uint64) []groupItem {
 //获取PATH
 func GetPath(id uint64) string {
 	materialGroupModel := material_group.All()
-	data := getPath(materialGroupModel, id)
+	data := PathDate(materialGroupModel, id)
 	data = append(data, int(id))
 	b, _ := json.Marshal(data)
 	result := string(b)
 	result = strings.Trim(result, "[]")
 	return result
 }
-func getPath(materialGroup []material_group.MaterialGroup, id uint64) []int {
+func PathDate(materialGroup []material_group.MaterialGroup, id uint64) []int {
 	var path []int
 	for _, v := range materialGroup {
 		if v.ID == id {
 			if v.ParentId != 0 {
-				path = append(path, getPath(materialGroup, v.ParentId)...)
+				path = append(path, PathDate(materialGroup, v.ParentId)...)
 			}
 			path = append(path, int(v.ParentId))
 

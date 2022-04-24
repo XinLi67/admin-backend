@@ -240,14 +240,13 @@ func RegisterAPIRoutes(r *gin.Engine) {
 		mg := new(controllers.MaterialGroupsController)
 		mgGroup := v1.Group("/material-group")
 		{
-			mgGroup.GET("", mg.Index)
+			mgGroup.GET("/:id/document", mg.GetDocumentById)
+			mgGroup.GET("/:id/menu", mg.GetTree)
 			mgGroup.POST("", middlewares.AuthJWT(), mg.Store)
 			mgGroup.POST("/:id/update", middlewares.AuthJWT(), mg.Update)
 			mgGroup.POST("/:id/delete", middlewares.AuthJWT(), mg.Delete)
 			mgGroup.POST("/batch-delete", middlewares.AuthJWT(), mg.BatchDelete)
 			mgGroup.GET("/:id", mg.Show)
-			mgGroup.GET("/:id/document", mg.GetDocumentById)
-			mgGroup.GET("/:id/menu", mg.GetTree)
 		}
 
 		// 点击记录管理
