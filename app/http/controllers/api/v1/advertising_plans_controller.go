@@ -285,18 +285,18 @@ func (ctrl *AdvertisingPlansController) Export(c *gin.Context) {
 		fmt.Println(err)
 	}
 
-	var w http.ResponseWriter
-	var r *http.Request
-
-	w.Header().Add("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, fileName))
-	w.Header().Add("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-
-	var buffer bytes.Buffer
-	_ = f.Write(&buffer)
-	content := bytes.NewReader(buffer.Bytes())
-	http.ServeContent(w, r, fileName, time.Now(), content)
+	//var buffer bytes.Buffer
+	//_ = f.Write(&buffer)
+	//content := bytes.NewReader(buffer.Bytes())
+	//http.ServeContent(w, r, fileName, time.Now(), content)
 
 	//response.Data(c, "文件保存为:"+fullPath)
+
+	c.Writer.Header().Add("Content-Disposition",fmt.Sprintf("attachment;fileName=%s",fileName))
+	//c.Writer.Header().Add("Content-Type", "application/octet-stream")
+	c.Writer.Header().Add("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+
+	c.File(fullPath)
 }
 
 
