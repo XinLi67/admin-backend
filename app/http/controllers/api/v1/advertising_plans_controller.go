@@ -294,7 +294,7 @@ func (ctrl *AdvertisingPlansController) Export(c *gin.Context) {
 
 	c.Writer.Header().Add("Content-Disposition",fmt.Sprintf("attachment;fileName=%s",fileName))
 	//c.Writer.Header().Add("Content-Type", "application/octet-stream")
-	c.Writer.Header().Add("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+	c.Writer.Header().Add("Content-Type", "application/octet-stream;charset=utf-8")
 
 	c.File(fullPath)
 }
