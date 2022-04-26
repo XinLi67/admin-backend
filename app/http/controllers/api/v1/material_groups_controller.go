@@ -206,3 +206,22 @@ func PathDate(materialGroup []material_group.MaterialGroup, id uint64) []int {
 	}
 	return path
 }
+
+func  bottomDate(materialGroup []material_group.MaterialGroup) []material_group.MaterialGroup {
+	var materialGroup1 []material_group.MaterialGroup
+	for _, v := range materialGroup {
+		b := strconv.Itoa(int(v.ID))
+		c := string(b)
+		count := material_group.GetCountById(c)
+		if count == 0 {
+			materialGroup1 = append(materialGroup1, v)
+		}
+	}
+	return materialGroup1
+}
+
+func (ctrl *MaterialGroupsController) GetBottom(c *gin.Context) {
+	materialGroupModel := material_group.All()
+	data := bottomDate(materialGroupModel)
+	response.Data(c, data)
+}

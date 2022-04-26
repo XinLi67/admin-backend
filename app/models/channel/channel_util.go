@@ -4,8 +4,9 @@ import (
 	"gohub/pkg/app"
 	"gohub/pkg/database"
 	"gohub/pkg/paginator"
-
+	"gohub/pkg/helpers"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 func Get(idstr string) (channel Channel) {
@@ -30,9 +31,15 @@ func IsExist(field, value string) bool {
 }
 
 func Paginate(c *gin.Context, perPage int) (channels []Channel, paging paginator.Paging) {
+	var db *gorm.DB
+	name := c.Query("name")
+	db = database.DB.Model(Channel{})
+	if !helpers.Empty(name) {
+		db.Where("name like ? ", "%"+name+"%")
+	}
 	paging = paginator.Paginate(
 		c,
-		database.DB.Model(Channel{}),
+		db,
 		&channels,
 		app.V1URL(database.TableName(&Channel{})),
 		perPage,

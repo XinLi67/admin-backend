@@ -2,7 +2,7 @@ package assemblies
 
 import (
 	"gohub/app/models/material"
-
+	"gohub/pkg/config"
 	"github.com/golang-module/carbon/v2"
 )
 
@@ -28,7 +28,7 @@ func MaterialAssemblyFromModel(data material.Material) *MaterialAssembly {
 		MaterialGroupId: data.MaterialGroupId,
 		DepartmentId:    data.DepartmentId,
 		Type:            data.Type,
-		Url:             data.Url,
+		Url:             config.GetString("app.url") + data.Url,
 		Title:           data.Title,
 		Content:         data.Content,
 		CreatedAt:       carbon.Time2Carbon(data.CreatedAt).ToDateTimeString(),
@@ -52,7 +52,7 @@ func MaterialAssemblyFromModelList(data []material.Material) interface{} {
 			MaterialGroupId: v.MaterialGroupId,
 			DepartmentId:    v.DepartmentId,
 			Type:            v.Type,
-			Url:             v.Url,
+			Url:            config.GetString("app.url") + v.Url,
 			Title:           v.Title,
 			Content:         v.Content,
 			CreatedAt:       carbon.Time2Carbon(v.CreatedAt).ToDateTimeString(),
