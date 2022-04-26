@@ -66,8 +66,11 @@ func (ctrl *MaterialGroupsController) Update(c *gin.Context) {
 	if !bindOk {
 		return
 	}
+	//根据ParentId获取Path
+	Path := GetPath(request.ParentId)
 	materialGroupModel.Name = request.Name
 	materialGroupModel.Description = request.Description
+	materialGroupModel.Path = Path
 	rowsAffected := materialGroupModel.Save()
 	if rowsAffected > 0 {
 		response.Data(c, materialGroupModel)
@@ -207,7 +210,7 @@ func PathDate(materialGroup []material_group.MaterialGroup, id uint64) []int {
 	return path
 }
 
-func  bottomDate(materialGroup []material_group.MaterialGroup) []material_group.MaterialGroup {
+func bottomDate(materialGroup []material_group.MaterialGroup) []material_group.MaterialGroup {
 	var materialGroup1 []material_group.MaterialGroup
 	for _, v := range materialGroup {
 		b := strconv.Itoa(int(v.ID))

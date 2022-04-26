@@ -2,8 +2,10 @@ package v1
 
 import (
 	"gohub/app/requests"
+	"gohub/pkg/config"
 	"gohub/pkg/file"
 	"gohub/pkg/response"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -23,7 +25,7 @@ func (ctrl *UploadController) Upload(c *gin.Context) {
 		return
 	}
 
-	// url := config.GetString("app.url") + avatar
-	url := avatar
+	url := config.GetString("app.url") + avatar
+	// url := avatar
 	response.Data(c, url)
 }
