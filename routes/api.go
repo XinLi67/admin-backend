@@ -242,6 +242,7 @@ func RegisterAPIRoutes(r *gin.Engine) {
 		{
 			mgGroup.GET("/:id/document", mg.GetDocumentById)
 			mgGroup.GET("/:id/menu", mg.GetTree)
+			mgGroup.GET("/bottom", mg.GetBottom)
 			mgGroup.POST("", middlewares.AuthJWT(), mg.Store)
 			mgGroup.POST("/:id/update", middlewares.AuthJWT(), mg.Update)
 			mgGroup.POST("/:id/delete", middlewares.AuthJWT(), mg.Delete)
