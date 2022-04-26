@@ -6,6 +6,7 @@ import (
 	"gohub/pkg/paginator"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
+	"gohub/pkg/helpers"
 )
 func Get(idstr string) (materialGroup MaterialGroup) {
 	database.DB.Where("id", idstr).First(&materialGroup)
@@ -49,10 +50,10 @@ func GetDocumentById(c *gin.Context, perPage int, id string) (materialGroups []M
 	start_time := c.Query("start_time")
 	end_time := c.Query("end_time")
 	db = database.DB.Model(MaterialGroup{}).Where(" parent_id = ?", id)
-	if start_time != "" && end_time != "" {
+	if !helpers.Empty(start_time) && helpers.Empty(end_time) {
 		db.Where("created_at BETWEEN ? AND ? ", start_time, end_time)
 	}
-	if name != "" {
+	if !helpers.Empty(name) {
 		db.Where("name like ? ", "%"+name+"%")
 	}
 	paging = paginator.Paginate(

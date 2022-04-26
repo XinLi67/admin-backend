@@ -3,6 +3,7 @@ package material
 import (
 	"gohub/pkg/app"
 	"gohub/pkg/database"
+	"gohub/pkg/helpers"
 	"gohub/pkg/paginator"
 
 	"github.com/gin-gonic/gin"
@@ -10,7 +11,7 @@ import (
 )
 
 func Get(idstr string) (material Material) {
-	database.DB.Preload("MaterialGroup").Where("id", idstr).First(&material)
+	database.DB.Where("id", idstr).First(&material)
 	return
 }
 
@@ -20,7 +21,7 @@ func GetBy(field, value string) (material Material) {
 }
 
 func All() (materials []Material) {
-	database.DB.Preload("MaterialGroup").Find(&materials)
+	database.DB.Find(&materials)
 	return
 }
 
@@ -50,19 +51,16 @@ func Search(c *gin.Context, perPage int) (materials []Material, paging paginator
 	creator_id := c.Query("creator_id")
 	material_group_id := c.Query("material_group_id")
 	db = database.DB.Model(Material{})
-	if start_time != "" && end_time != "" {
+	if !helpers.Empty(start_time) && helpers.Empty(end_time) {
 		db.Where("created_at BETWEEN ? AND ? ", start_time, end_time)
 	}
-	if title != "" {
+	if !helpers.Empty(title) {
 		db.Where("title like ? ", "%"+title+"%")
 	}
-	if start_time != "" && end_time != "" && title != "" {
-		db.Where(" created_at BETWEEN ? AND ? AND creator_id = ?", start_time, end_time)
-	}
-	if material_group_id != "" {
+	if !helpers.Empty(material_group_id) {
 		db.Where("material_group_id = ?", material_group_id)
 	}
-	if creator_id != "" {
+	if !helpers.Empty(creator_id) {
 		db.Where("creator_id = ?", creator_id)
 	}
 	paging = paginator.Paginate(
