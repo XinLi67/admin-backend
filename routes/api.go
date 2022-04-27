@@ -153,8 +153,8 @@ func RegisterAPIRoutes(r *gin.Engine) {
 			advertisingGroup.POST("/:id/delete", middlewares.AuthJWT(), advertising.Delete)
 			advertisingGroup.POST("/batch-delete", middlewares.AuthJWT(), advertising.BatchDelete)
 			advertisingGroup.GET("/:id", advertising.Show)
-			advertisingGroup.GET("/advertising-position-id/:id", advertising.IndexByAdvertisingPosId)
 			advertisingGroup.GET("/export", advertising.Export)
+			advertisingGroup.POST("/upload", advertising.Upload)
 		}
 
 		// 公告管理

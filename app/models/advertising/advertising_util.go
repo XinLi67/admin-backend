@@ -5,10 +5,11 @@ import (
 	"gohub/pkg/app"
 	"gohub/pkg/database"
 	"gohub/pkg/paginator"
+	"gorm.io/gorm"
 )
 
 func Get(idstr string) (advertising Advertising) {
-	database.DB.Preload("AdvertisingPosition").Preload("User").Where("id", idstr).First(&advertising)
+	database.DB.Preload("AdvertisingPosition").Preload("User").Preload("Channel").Where("id", idstr).First(&advertising)
 	return
 }
 
@@ -26,7 +27,7 @@ func GetBy(field, value string) (advertising Advertising) {
 
 func All() (advertisings []Advertising) {
 	// database.DB.Find(&advertisings)
-	database.DB.Preload("advertising_position").Preload("User").Find(&advertisings)
+	database.DB.Preload("advertising_position").Preload("User").Preload("channel").Find(&advertisings)
 	return
 }
 
@@ -47,111 +48,64 @@ func Paginate(c *gin.Context, perPage int) (advertisings []Advertising, paging p
 		c,
 		database.DB.Model(Advertising{}),
 		&advertisings,
-		app.V1URL(database.TableName(&Advertising{})),
+		app.V1URL("advertising"),
 		perPage,
 	)
 	return
 }
 
-func PaginateByTitle(c *gin.Context, perPage int, params string) (advertisings []Advertising, paging paginator.Paging) {
+func Paginate2(c *gin.Context, perPage int) (advertisings []Advertising, paging paginator.Paging) {
+
+	var db *gorm.DB
+	title := c.Query("title")
+	adtype := c.Query("type")
+	posId := c.Query("advertising_position_id")
+	status := c.Query("status")
+	start_date := c.Query("start_date")
+	end_date := c.Query("end_date")
+	creator_name := c.Query("creator_name")
+
+	//db = database.DB.Model(Advertising{}).
+	//	Joins(" left JOIN advertising_plans on advertisings.advertising_plan_id=advertising_plans.id UNION SELECT  * FROM advertisings RIGHT JOIN advertising_plans ON advertisings.advertising_plan_id = advertising_plans.id").
+	//	Where(" advertisings.id like ?", "%"+"%")
+
+	if len(start_date) >0 && len(end_date)>0{
+		db = database.DB.Model(Advertising{}).
+			Joins(" left JOIN advertising_plans on advertisings.advertising_plan_id=advertising_plans.id UNION SELECT  * FROM advertisings RIGHT JOIN advertising_plans ON advertisings.advertising_plan_id = advertising_plans.id").
+			Where(" advertisings.id like ?", "%"+"%")
+		db.Where("DATE_FORMAT(advertising_plans.start_date,'%Y-%m-%d') >=  ? ",start_date)
+		db.Where("DATE_FORMAT(advertising_plans.end_date,'%Y-%m-%d') <=  ? ",end_date)
+	}else{
+		db = database.DB.Model(Advertising{}).Where(" id like ?", "%"+"%")
+	}
+
+	if len(title) >0{
+		db.Where("title like ? ","%"+title+"%")
+	}
+
+	if len(adtype) >0{
+		db.Where("type = ? ",adtype)
+	}
+
+	if len(posId) >0{
+		db.Where("advertising_position_id = ? ",adtype)
+	}
+
+	if len(status) >0{
+		db.Where("status = ? ",status)
+	}
+
+	if len(creator_name) >0{
+		db.Where("creator_id in(SELECT id from users WHERE `name` like ?) ","%"+creator_name+"%")
+	}
+
 	paging = paginator.Paginate(
 		c,
-		//database.DB.Model(Material{}),
-		database.DB.Model(Advertising{}).Where("id like ?", "%"+params+"%").
-			//Or("creator_id like ?", "%"+params+"%").
-			//Or("advertising_no like ?", "%"+params+"%").
-			//Or("department_id like ?", "%"+params+"%").
-			Or("title like ?", "%"+params+"%"),
-		//Or("type like ?", "%"+params+"%").
-		//Or("material_id like ?", "%"+params+"%").
-		//Or("material_type like ?", "%"+params+"%").
-		//Or("size like ?", "%"+params+"%").
-		//Or("redirect_to like ?", "%"+params+"%").
-		//Or("redirect_params like ?", "%"+params+"%").
-		//Or("description like ?", "%"+params+"%"),
-
+		db,
 		&advertisings,
-		app.V1URL(database.TableName(&Advertising{})+"/list?params="+params),
+		app.V1URL("advertising"),
 		perPage,
 	)
-	return advertisings, paging
-}
+	return
 
-func PaginateByType(c *gin.Context, perPage int, adtype string) (advertisings []Advertising, paging paginator.Paging) {
-	paging = paginator.Paginate(
-		c,
-		database.DB.Model(Advertising{}).Where("type = ?", adtype),
-		&advertisings,
-		app.V1URL(database.TableName(&Advertising{})+"/list?type="+adtype),
-		perPage,
-	)
-	return advertisings, paging
-}
-
-func PaginateByPosId(c *gin.Context, perPage int, posId string) (advertisings []Advertising, paging paginator.Paging) {
-	paging = paginator.Paginate(
-		c,
-		database.DB.Model(Advertising{}).Where("advertising_position_id = ?", posId),
-		&advertisings,
-		app.V1URL(database.TableName(&Advertising{})+"/list?advertising_position_id="+posId),
-		perPage,
-	)
-	return advertisings, paging
-}
-
-func PaginateByAdtypeAndAdvertisingPositionId(c *gin.Context, perPage int, adtype string,posId string) (advertisings []Advertising, paging paginator.Paging) {
-	paging = paginator.Paginate(
-		c,
-		database.DB.Model(Advertising{}).Where("type = ? and advertising_position_id=?", adtype,posId),
-		&advertisings,
-		app.V1URL(database.TableName(&Advertising{})+"/list?type="+adtype+"?advertising_position_id="+posId),
-		perPage,
-	)
-	return advertisings, paging
-}
-
-func PaginateByAdtypeAndParams(c *gin.Context, perPage int, adtype string,params string) (advertisings []Advertising, paging paginator.Paging) {
-	paging = paginator.Paginate(
-		c,
-		database.DB.Model(Advertising{}).Where("type = ? and title like ?", adtype,"%"+params+"%"),
-		&advertisings,
-		app.V1URL(database.TableName(&Advertising{})+"/list?type="+adtype+"?params="+params),
-		perPage,
-	)
-	return advertisings, paging
-}
-
-//根据审核状态查询后分页显示
-func PaginateByStatus(c *gin.Context, perPage int, status string) (advertisings []Advertising, paging paginator.Paging) {
-	paging = paginator.Paginate(
-		c,
-		database.DB.Model(Advertising{}).Where("status = ?", status),
-		&advertisings,
-		app.V1URL(database.TableName(&Advertising{})+"/list?status="+status),
-		perPage,
-	)
-	return advertisings, paging
-}
-
-//根据审核状态和模糊查询参数名查询后分页显示
-func PaginateByStatusAndParams(c *gin.Context, perPage int, status string, params string) (advertisings []Advertising, paging paginator.Paging) {
-	paging = paginator.Paginate(
-		c,
-		database.DB.Model(Advertising{}).Where("status = ? and title like ?", status, "%"+params+"%"),
-		&advertisings,
-		app.V1URL(database.TableName(&Advertising{})+"/list?status="+status+"?params="+params),
-		perPage,
-	)
-	return advertisings, paging
-}
-
-func PaginateByParamsAndAdtypeAndAdvertisingPositionId(c *gin.Context, perPage int,  params string, adtype string,posId string) (advertisings []Advertising, paging paginator.Paging) {
-	paging = paginator.Paginate(
-		c,
-		database.DB.Model(Advertising{}).Where("title like ? and type =  ? and advertising_position_id=?", "%"+params+"%", adtype,posId),
-		&advertisings,
-		app.V1URL(database.TableName(&Advertising{})+"/list?params="+params+"?type="+adtype+"advertisingPositionId="+posId),
-		perPage,
-	)
-	return advertisings, paging
 }

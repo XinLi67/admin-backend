@@ -6,6 +6,7 @@ import (
 	"gohub/pkg/database"
 	"gohub/pkg/helpers"
 	"gohub/pkg/paginator"
+	"gorm.io/gorm"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -59,39 +60,31 @@ func Paginate(c *gin.Context, perPage int) (advertisingPlans []AdvertisingPlan, 
 	return
 }
 
-func Paginate2(c *gin.Context, perPage int, params string) (advertisingPlans []AdvertisingPlan, paging paginator.Paging) {
-	paging = paginator.Paginate(
-		c,
-		database.DB.Model(AdvertisingPlan{}).Where("name like ?", "%"+params+"%"),
-		&advertisingPlans,
-		app.V1URL(database.TableName(&AdvertisingPlan{})+"/list?params="+params),
-		perPage,
-	)
-	return advertisingPlans, paging
-}
+func Paginate2(c *gin.Context, perPage int) (advertisingPlans []AdvertisingPlan, paging paginator.Paging) {
 
-//根据审核状态查询后分页显示
-func PaginateByStatus(c *gin.Context, perPage int, audit_status string) (advertisingPlans []AdvertisingPlan, paging paginator.Paging) {
-	paging = paginator.Paginate(
-		c,
-		database.DB.Model(AdvertisingPlan{}).Where("audit_status = ?", audit_status),
-		&advertisingPlans,
-		app.V1URL(database.TableName(&AdvertisingPlan{})+"/list?audit_status="+audit_status),
-		perPage,
-	)
-	return advertisingPlans, paging
-}
+	var db *gorm.DB
+	name := c.Query("name")
+	audit_status := c.Query("audit_status")
 
-//根据审核状态查询后分页显示
-func PaginateByStatusAndParams(c *gin.Context, perPage int, audit_status string, params string) (advertisingPlans []AdvertisingPlan, paging paginator.Paging) {
+	db = database.DB.Model(AdvertisingPlan{}).Where(" id like ?", "%"+"%")
+
+	if len(name) >0{
+		db.Where("name like ? ","%"+name+"%")
+	}
+
+	if len(audit_status) >0{
+		db.Where("audit_status = ? ",audit_status)
+	}
+
 	paging = paginator.Paginate(
 		c,
-		database.DB.Model(AdvertisingPlan{}).Where("audit_status = ? and name like ?", audit_status, "%"+params+"%"),
+		db,
 		&advertisingPlans,
-		app.V1URL(database.TableName(&AdvertisingPlan{})+"/list?audit_status="+audit_status+"?params="+params),
+		app.V1URL(""),
 		perPage,
 	)
-	return advertisingPlans, paging
+	return
+
 }
 
 //缓存相关

@@ -20,7 +20,7 @@ type AdvertisingPositionsController struct {
 
 func (ctrl *AdvertisingPositionsController) Index(c *gin.Context) {
 	status := c.Query("status")
-	params := c.Query("params")
+	name := c.Query("name")
 
 	request := requests.PaginationRequest{}
 	if ok := requests.Validate(c, &request, requests.Pagination); !ok {
@@ -29,12 +29,9 @@ func (ctrl *AdvertisingPositionsController) Index(c *gin.Context) {
 
 	var data []advertising_position.AdvertisingPosition
 	var pager paginator.Paging
-	if len(status) > 0 && len(params) > 0 {
-		data, pager = advertising_position.PaginateByStatusAndParams(c, 0, status, params)
-	} else if len(params) > 0 {
-		data, pager = advertising_position.PaginateByName(c, 0, params)
-	} else if len(status) > 0 {
-		data, pager = advertising_position.PaginateByStatus(c, 0, status)
+
+	if len(status) > 0 && len(name) > 0 {
+		data, pager = advertising_position.Paginate2(c, 0)
 	} else {
 		data, pager = advertising_position.Paginate(c, 0)
 	}
@@ -175,7 +172,6 @@ func (ctrl *AdvertisingPositionsController) Export(c *gin.Context) {
 
 	line := 1
 
-	//fruits := getFruits()
 	// 循环写入数据
 	for _, v := range listData {
 		line++
@@ -197,5 +193,8 @@ func (ctrl *AdvertisingPositionsController) Export(c *gin.Context) {
 		fmt.Println(err)
 	}
 
-	response.Data(c, "文件保存为:"+fullPath)
+	c.Writer.Header().Add("Content-Disposition",fmt.Sprintf("attachment;fileName=%s",fileName))
+	c.Writer.Header().Add("Content-Type", "application/octet-stream;charset=utf-8")
+
+	c.File(fullPath)
 }

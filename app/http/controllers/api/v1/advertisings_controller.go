@@ -11,6 +11,8 @@ import (
 	"gohub/pkg/paginator"
 	"gohub/pkg/response"
 	"gohub/utils"
+	"log"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -21,10 +23,14 @@ type AdvertisingsController struct {
 
 func (ctrl *AdvertisingsController) Index(c *gin.Context) {
 
-	params := c.Query("params")
+	title := c.Query("title")
 	status := c.Query("status")
 	adtype := c.Query("type")
 	advertising_position_id := c.Query("advertising_position_id")
+	start_date := c.Query("start_date")
+	end_date := c.Query("end_date")
+	creator_name := c.Query("creator_name")
+
 	request := requests.PaginationRequest{}
 	if ok := requests.Validate(c, &request, requests.Pagination); !ok {
 		return
@@ -32,22 +38,9 @@ func (ctrl *AdvertisingsController) Index(c *gin.Context) {
 
 	var data []advertising.Advertising
 	var pager paginator.Paging
-	if len(params)>0 && len(adtype)>0 && len(advertising_position_id)>0{
-		data, pager = advertising.PaginateByParamsAndAdtypeAndAdvertisingPositionId(c, 0, params,adtype,advertising_position_id)
-	}else if len(adtype)>0 && len(advertising_position_id) >0{
-		data, pager = advertising.PaginateByAdtypeAndAdvertisingPositionId(c, 0,adtype,advertising_position_id)
-	}else if len(adtype)>0 && len(params) >0{
-		data, pager = advertising.PaginateByAdtypeAndParams(c, 0,adtype,params)
-	} else if len(status) > 0 && len(params) > 0 {
-		data, pager = advertising.PaginateByStatusAndParams(c, 0, status, params)
-	} else if len(advertising_position_id)>0 {
-		data, pager = advertising.PaginateByPosId(c, 0, advertising_position_id)
-	} else if len(adtype)>0{
-		data, pager = advertising.PaginateByType(c, 0, adtype)
-	}else if len(params) > 0 {
-		data, pager = advertising.PaginateByTitle(c, 0, params)
-	} else if len(status) > 0 {
-		data, pager = advertising.PaginateByStatus(c, 0, status)
+
+	if len(title) > 0 || len(status) > 0 || len(adtype) > 0 || len(advertising_position_id) > 0 || len(start_date) > 0 || len(end_date) > 0 || len(creator_name) > 0 {
+		data, pager = advertising.Paginate2(c, 0)
 	} else {
 		data, pager = advertising.Paginate(c, 0)
 	}
@@ -59,45 +52,28 @@ func (ctrl *AdvertisingsController) Index(c *gin.Context) {
 	})
 }
 
-func (ctrl *AdvertisingsController) IndexByAdvertisingPosId(c *gin.Context) {
-	listData := advertising_plan.GetAll(c.Param("id"))
-	if len(listData) <= 0 {
-		response.Abort404(c)
-		return
-	}
-	request := requests.PaginationRequest{}
-	if ok := requests.Validate(c, &request, requests.Pagination); !ok {
-		return
-	}
-
-	//从缓存中取数据
-	response.Data(c, advertising_plan.AllCached(c.Param("id")))
-
-	//分页实现
-	//data, pager := advertising.Paginate2(c, 10,  c.Param("id"))
-	//advertisings := assemblies.AdvertisingAssemblyFromModelList(data, len(data))
-	//response.JSON(c, gin.H{
-	//	"data":  advertisings,
-	//	"pager": pager,
-	//})
-}
-
 func (ctrl *AdvertisingsController) Show(c *gin.Context) {
 	advertisingModel := advertising.Get(c.Param("id"))
 	if advertisingModel.ID == 0 {
 		response.Abort404(c)
 		return
 	}
+
 	advertisingAssembly := assemblies.AdvertisingAssemblyFromModel(advertisingModel)
 	response.Data(c, advertisingAssembly)
 }
 
 func (ctrl *AdvertisingsController) Store(c *gin.Context) {
 
+	host := utils.UploadConfig.UploadConfOss.HostRepostry
+
 	request := requests.AdvertisingRequest{}
 	if ok := requests.Validate(c, &request, requests.AdvertisingSave); !ok {
 		return
 	}
+
+	var upErr, upErr2, upErr3 error
+	var pathRelative, pathRelative2, pathRelative3 string
 
 	advertisingModel := advertising.Advertising{
 		AdvertisingPositionId: request.AdvertisingPositionId,
@@ -115,7 +91,34 @@ func (ctrl *AdvertisingsController) Store(c *gin.Context) {
 		PushContent:           request.PushContent,
 		PushTitle:             request.PushTitle,
 		AdvertisingCreativity: request.AdvertisingCreativity,
+		Url:                   "",
+		Url2:                  "",
+		Url3:                  "",
 	}
+
+	//upErr, _, pathRelative = utils.ActionUplaodFile(c, request.Url)
+	//upErr2, _, pathRelative2 = utils.ActionUplaodFile(c, request.Url2)
+	//upErr3, _, pathRelative3 = utils.ActionUplaodFile(c, request.Url3)
+
+	if len(request.Url.Filename) > 0 {
+		upErr, _, pathRelative = utils.ActionUplaodFile(c, request.Url)
+		advertisingModel.Url = host + "/" + pathRelative
+	}
+
+	if len(request.Url2.Filename) > 0 {
+		upErr, _, pathRelative = utils.ActionUplaodFile(c, request.Url2)
+		advertisingModel.Url2 = host + "/" + pathRelative2
+	}
+
+	if len(request.Url3.Filename) > 0 {
+		upErr, _, pathRelative = utils.ActionUplaodFile(c, request.Url3)
+		advertisingModel.Url3 = host + "/" + pathRelative3
+	}
+
+	if upErr != nil && upErr2 != nil && upErr3 != nil {
+		return
+	}
+
 	advertisingModel.Create()
 	if advertisingModel.ID > 0 {
 		response.Created(c, advertisingModel)
@@ -170,6 +173,14 @@ func (ctrl *AdvertisingsController) Update(c *gin.Context) {
 func (ctrl *AdvertisingsController) Delete(c *gin.Context) {
 
 	advertisingModel := advertising.Get(c.Param("id"))
+	advertisingPlanList :=make([]advertising_plan.AdvertisingPlan,10)
+	//advertisingPlanList[] := advertising_plan.Get(string(advertisingModel.ID))
+	for _,plan := range advertisingPlanList{
+		if plan.ID>0 {
+			plan.Delete()
+		}
+	}
+
 	if advertisingModel.ID == 0 {
 		response.Abort404(c)
 		return
@@ -177,6 +188,13 @@ func (ctrl *AdvertisingsController) Delete(c *gin.Context) {
 
 	if ok := policies.CanModifyAdvertising(c, advertisingModel); !ok {
 		response.Abort403(c)
+		return
+	}
+
+	if advertisingModel.AdvertisingPositionId > 0 {
+		c.AbortWithStatusJSON(http.StatusMethodNotAllowed, gin.H{
+			"message": "广告已分配对应广告位，无法删除",
+		})
 		return
 	}
 
@@ -262,5 +280,23 @@ func (ctrl *AdvertisingsController) Export(c *gin.Context) {
 		fmt.Println(err)
 	}
 
-	response.Data(c, "文件保存为:"+fullPath)
+	c.Writer.Header().Add("Content-Disposition", fmt.Sprintf("attachment;fileName=%s", fileName))
+	c.Writer.Header().Add("Content-Type", "application/octet-stream;charset=utf-8")
+
+	c.File(fullPath)
+}
+
+func (ctrl *AdvertisingsController) Upload(c *gin.Context) {
+
+	form, _ := c.MultipartForm()
+	files := form.File["upload[]"]
+
+	for _, file := range files {
+		log.Println(file.Filename)
+
+		// 上传文件至指定目录
+		// c.SaveUploadedFile(file, dst)
+	}
+	c.String(http.StatusOK, fmt.Sprintf("%d files uploaded!", len(files)))
+
 }

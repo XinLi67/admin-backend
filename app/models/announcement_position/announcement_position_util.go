@@ -4,6 +4,7 @@ import (
 	"gohub/pkg/app"
 	"gohub/pkg/database"
 	"gohub/pkg/paginator"
+	"gorm.io/gorm"
 
 	"github.com/gin-gonic/gin"
 )
@@ -48,37 +49,30 @@ func Paginate(c *gin.Context, perPage int) (announcementPositions []Announcement
 	return
 }
 
-func PaginateByName(c *gin.Context, perPage int, params string) (announcementPositions []AnnouncementPosition, paging paginator.Paging) {
+func Paginate2(c *gin.Context, perPage int) (announcementPositions []AnnouncementPosition, paging paginator.Paging) {
+
+	var db *gorm.DB
+	name := c.Query("name")
+	status := c.Query("status")
+
+	db = database.DB.Model(AnnouncementPosition{}).Where(" id like ?", "%"+"%")
+
+	if len(name) >0{
+		db.Where("name like ? ","%"+name+"%")
+	}
+
+	if len(status) >0{
+		db.Where("status = ? ",status)
+	}
+
 	paging = paginator.Paginate(
 		c,
-		database.DB.Model(AnnouncementPosition{}).Where("title like ?", "%"+params+"%"),
+		database.DB.Model(AnnouncementPosition{}),
 		&announcementPositions,
-		app.V1URL(database.TableName(&AnnouncementPosition{})+"/list?params="+params),
+		app.V1URL(database.TableName(&AnnouncementPosition{})),
 		perPage,
 	)
-	return announcementPositions, paging
+	return
+
 }
 
-//根据审核状态查询后分页显示
-func PaginateByStatus(c *gin.Context, perPage int, status string) (announcementPositions []AnnouncementPosition, paging paginator.Paging) {
-	paging = paginator.Paginate(
-		c,
-		database.DB.Model(AnnouncementPosition{}).Where("status = ?", status),
-		&announcementPositions,
-		app.V1URL(database.TableName(&AnnouncementPosition{})+"/list?status="+status),
-		perPage,
-	)
-	return announcementPositions, paging
-}
-
-//根据审核状态查询后分页显示
-func PaginateByStatusAndParams(c *gin.Context, perPage int, status string, params string) (announcementPositions []AnnouncementPosition, paging paginator.Paging) {
-	paging = paginator.Paginate(
-		c,
-		database.DB.Model(AnnouncementPosition{}).Where("status = ? and title like ?", status, "%"+params+"%"),
-		&announcementPositions,
-		app.V1URL(database.TableName(&AnnouncementPosition{})+"/list?status="+status+"?params="+params),
-		perPage,
-	)
-	return announcementPositions, paging
-}
