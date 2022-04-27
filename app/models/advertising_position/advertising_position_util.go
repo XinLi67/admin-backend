@@ -4,6 +4,7 @@ import (
 	"gohub/pkg/app"
 	"gohub/pkg/database"
 	"gohub/pkg/paginator"
+	"gorm.io/gorm"
 
 	"github.com/gin-gonic/gin"
 )
@@ -48,37 +49,29 @@ func Paginate(c *gin.Context, perPage int) (advertisingPositions []AdvertisingPo
 	return
 }
 
-func PaginateByName(c *gin.Context, perPage int, params string) (advertisingPositions []AdvertisingPosition, paging paginator.Paging) {
-	paging = paginator.Paginate(
-		c,
-		database.DB.Model(AdvertisingPosition{}).Where("name like ?", "%"+params+"%"),
-		&advertisingPositions,
-		app.V1URL(database.TableName(&AdvertisingPosition{})+"/list?params="+params),
-		perPage,
-	)
-	return advertisingPositions, paging
-}
+func Paginate2(c *gin.Context, perPage int) (advertisingPositions []AdvertisingPosition, paging paginator.Paging) {
+	status := c.Query("status")
+	name := c.Query("name")
 
-//根据审核状态查询后分页显示
-func PaginateByStatus(c *gin.Context, perPage int, status string) (advertisingPositions []AdvertisingPosition, paging paginator.Paging) {
-	paging = paginator.Paginate(
-		c,
-		database.DB.Model(AdvertisingPosition{}).Where("status = ?", status),
-		&advertisingPositions,
-		app.V1URL(database.TableName(&AdvertisingPosition{})+"/list?status="+status),
-		perPage,
-	)
-	return advertisingPositions, paging
-}
+	var db *gorm.DB
+	db = database.DB.Model(AdvertisingPosition{}).Where(" id like ?", "%"+"%")
 
-//根据审核状态查询后分页显示
-func PaginateByStatusAndParams(c *gin.Context, perPage int, status string, params string) (advertisingPlans []AdvertisingPosition, paging paginator.Paging) {
+
+	if len(status) >0{
+		db.Where("status like ? ","%"+status+"%")
+	}
+
+	if len(status) >0{
+		db.Where("name like ? ","%"+name+"%")
+	}
+
 	paging = paginator.Paginate(
 		c,
-		database.DB.Model(AdvertisingPosition{}).Where("status = ? and name like ?", status, "%"+params+"%"),
-		&advertisingPlans,
-		app.V1URL(database.TableName(&AdvertisingPosition{})+"/list?status="+status+"?params="+params),
+		db,
+		&advertisingPositions,
+		app.V1URL(database.TableName(&AdvertisingPosition{})),
 		perPage,
 	)
-	return advertisingPlans, paging
+	return
+
 }

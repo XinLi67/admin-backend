@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/thedevsaddam/govalidator"
 	"gohub/app/models"
+	"mime/multipart"
 )
 
 type AdvertisingRequest struct {
@@ -29,7 +30,9 @@ type AdvertisingRequest struct {
 	StartTime             string `json:"start_time,omitempty"`
 	EndTime               string `json:"end_time,omitempty"`
 	SchedulingTime        uint64 `json:"scheduling_time,omitempty"`
-
+	Url                   *multipart.FileHeader `json:"url  form:"url"`
+	Url2                  *multipart.FileHeader `json:"url2 form:"url2"`
+	Url3                  *multipart.FileHeader `json:"url3 form:"url3"`
 }
 
 func AdvertisingSave(data interface{}, c *gin.Context) map[string][]string {

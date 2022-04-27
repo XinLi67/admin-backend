@@ -11,7 +11,7 @@ type AdvertisingPositionAssembly struct {
 	Name        string `json:"name"`
 	ChannelId   uint64 `json:"channel_id"`
 	Code        string `json:"code"`
-	Height      uint64 `json:":height"`
+	Height      uint64 `json:"height"`
 	Weight      uint64 `json:"weight"`
 	Status      uint64 `json:"status"`
 	Description string `json:"description"`

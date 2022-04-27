@@ -4,6 +4,7 @@ import (
 	"gohub/pkg/app"
 	"gohub/pkg/database"
 	"gohub/pkg/paginator"
+	"gorm.io/gorm"
 
 	"github.com/gin-gonic/gin"
 )
@@ -49,37 +50,29 @@ func Paginate(c *gin.Context, perPage int) (announcementPlans []AnnouncementPlan
 	return
 }
 
-func PaginateByName(c *gin.Context, perPage int, params string) (announcementPlans []AnnouncementPlan, paging paginator.Paging) {
-	paging = paginator.Paginate(
-		c,
-		database.DB.Model(AnnouncementPlan{}).Where("name like ?", "%"+params+"%"),
-		&announcementPlans,
-		app.V1URL(database.TableName(&AnnouncementPlan{})+"/list?params="+params),
-		perPage,
-	)
-	return announcementPlans, paging
-}
+func Paginate2(c *gin.Context, perPage int) (announcementPlans []AnnouncementPlan, paging paginator.Paging) {
 
-//根据审核状态查询后分页显示
-func PaginateByStatus(c *gin.Context, perPage int, audit_status string) (announcementPlans []AnnouncementPlan, paging paginator.Paging) {
-	paging = paginator.Paginate(
-		c,
-		database.DB.Model(AnnouncementPlan{}).Where("audit_status = ?", audit_status),
-		&announcementPlans,
-		app.V1URL(database.TableName(&AnnouncementPlan{})+"/list?audit_status="+audit_status),
-		perPage,
-	)
-	return announcementPlans, paging
-}
+	var db *gorm.DB
+	name := c.Query("name")
+	audit_status := c.Query("audit_status")
 
-//根据审核状态查询后分页显示
-func PaginateByStatusAndParams(c *gin.Context, perPage int, audit_status string, params string) (announcementPlans []AnnouncementPlan, paging paginator.Paging) {
+	db = database.DB.Model(AnnouncementPlan{}).Where(" id like ?", "%"+"%")
+
+	if len(name) >0{
+		db.Where("name like ? ","%"+name+"%")
+	}
+
+	if len(audit_status) >0{
+		db.Where("status = ? ",audit_status)
+	}
+
 	paging = paginator.Paginate(
 		c,
-		database.DB.Model(AnnouncementPlan{}).Where("audit_status = ? and name like ?", audit_status, "%"+params+"%"),
+		database.DB.Model(AnnouncementPlan{}),
 		&announcementPlans,
-		app.V1URL(database.TableName(&AnnouncementPlan{})+"/list?status="+audit_status+"?params="+params),
+		app.V1URL(database.TableName(&AnnouncementPlan{})),
 		perPage,
 	)
-	return announcementPlans, paging
+	return
+
 }

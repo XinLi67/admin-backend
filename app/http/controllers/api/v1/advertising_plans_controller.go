@@ -1,9 +1,8 @@
 package v1
 
 import (
-	"bytes"
 	"fmt"
-	"github.com/tealeg/xlsx"
+	"github.com/gin-gonic/gin"
 	"github.com/xuri/excelize/v2"
 	"gohub/app/http/assemblies"
 	"gohub/app/models/advertising"
@@ -14,10 +13,6 @@ import (
 	"gohub/pkg/paginator"
 	"gohub/pkg/response"
 	"gohub/utils"
-	"net/http"
-	"time"
-
-	"github.com/gin-gonic/gin"
 )
 
 type AdvertisingPlansController struct {
@@ -26,7 +21,7 @@ type AdvertisingPlansController struct {
 
 func (ctrl *AdvertisingPlansController) Index(c *gin.Context) {
 	audit_status := c.Query("audit_status")
-	params := c.Query("params")
+	name := c.Query("name")
 
 	request := requests.PaginationRequest{}
 	if ok := requests.Validate(c, &request, requests.Pagination); !ok {
@@ -34,13 +29,10 @@ func (ctrl *AdvertisingPlansController) Index(c *gin.Context) {
 	}
 	var data []advertising_plan.AdvertisingPlan
 	var pager paginator.Paging
-	if len(audit_status) > 0 && len(params) > 0 {
-		data, pager = advertising_plan.PaginateByStatusAndParams(c, 0, audit_status, params)
-	} else if len(params) > 0 {
-		data, pager = advertising_plan.Paginate2(c, 0, params)
-	} else if len(audit_status) > 0 {
-		data, pager = advertising_plan.PaginateByStatus(c, 0, audit_status)
-	} else {
+
+	if len(audit_status)>0 || len(name)>0 {
+		data, pager = advertising_plan.Paginate2(c, 0)
+	}else {
 		data, pager = advertising_plan.Paginate(c, 0)
 	}
 
@@ -285,47 +277,9 @@ func (ctrl *AdvertisingPlansController) Export(c *gin.Context) {
 		fmt.Println(err)
 	}
 
-	//var buffer bytes.Buffer
-	//_ = f.Write(&buffer)
-	//content := bytes.NewReader(buffer.Bytes())
-	//http.ServeContent(w, r, fileName, time.Now(), content)
-
-	//response.Data(c, "文件保存为:"+fullPath)
-
 	c.Writer.Header().Add("Content-Disposition",fmt.Sprintf("attachment;fileName=%s",fileName))
-	//c.Writer.Header().Add("Content-Type", "application/octet-stream")
 	c.Writer.Header().Add("Content-Type", "application/octet-stream;charset=utf-8")
 
 	c.File(fullPath)
-}
-
-
-// DataToExcel 数据导出excel, dataList里面的对象为指针
-func DataToExcel(w http.ResponseWriter, r *http.Request, titleList []string, dataList []interface{}, fileName string) {
-	// 生成一个新的文件
-	file := xlsx.NewFile()
-	// 添加sheet页
-	sheet, _ := file.AddSheet("Sheet1")
-	// 插入表头
-	titleRow := sheet.AddRow()
-	for _, v := range titleList {
-		cell := titleRow.AddCell()
-		cell.Value = v
-		cell.GetStyle().Font.Color = "00FF0000"
-	}
-	// 插入内容
-	for _, v := range dataList {
-		row := sheet.AddRow()
-		row.WriteStruct(v, -1)
-	}
-	fileName = fmt.Sprintf("%s.xlsx", fileName)
-	//_ = file.Save(fileName)
-	w.Header().Add("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, fileName))
-	w.Header().Add("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-
-	var buffer bytes.Buffer
-	_ = file.Write(&buffer)
-	content := bytes.NewReader(buffer.Bytes())
-	http.ServeContent(w, r, fileName, time.Now(), content)
 }
 

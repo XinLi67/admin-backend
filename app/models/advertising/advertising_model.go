@@ -4,6 +4,7 @@ package advertising
 import (
 	"gohub/app/models"
 	"gohub/app/models/advertising_position"
+	"gohub/app/models/channel"
 	"gohub/app/models/user"
 	"gohub/pkg/database"
 )
@@ -13,9 +14,9 @@ type Advertising struct {
 
 	AdvertisingNo         uint64 `gorm:"column:advertising_no"`
 	AdvertisingPositionId uint64 `gorm:"column:advertising_position_id"`
-	AdvertisingPlanId     uint64 `gorm:"column:advertising_plan_id"`
 	CreatorId             uint64 `gorm:"column:creator_id"`
 	DepartmentId          uint64 `gorm:"column:department_id"`
+	ChannelId             uint64 `gorm:"column:channel_id"`
 	Title                 string `gorm:"column:title"`
 	Type                  uint64 `gorm:"column:type"`
 	RedirectTo            uint64 `gorm:"column:redirect_to"`
@@ -32,9 +33,13 @@ type Advertising struct {
 	StartTime             string `gorm:"type:varchar(20);column:start_time"`
 	EndTime               string `gorm:"type:varchar(20);column:end_time"`
 	SchedulingTime        uint64 `gorm:"column:scheduling_time"`
+	Url                   string `gorm:"type:varchar(255);column:url"`
+	Url2                  string `gorm:"type:varchar(255);column:url2"`
+	Url3                  string `gorm:"type:varchar(255);column:url3"`
 
-	User                user.User                                `json:"user" gorm:"foreignkey:id"`
+	User                user.User                                `json:"user" gorm:"foreignkey:id;references:CreatorId"`
 	AdvertisingPosition advertising_position.AdvertisingPosition `json:"advertising_position"`
+	Channel             channel.Channel                          `json:"channel"`
 
 	models.CommonTimestampsField
 }

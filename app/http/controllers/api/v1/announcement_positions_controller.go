@@ -19,7 +19,7 @@ type AnnouncementPositionsController struct {
 
 func (ctrl *AnnouncementPositionsController) Index(c *gin.Context) {
 	status := c.Query("status")
-	params := c.Query("params")
+	name := c.Query("name")
 
 	request := requests.PaginationRequest{}
 	if ok := requests.Validate(c, &request, requests.Pagination); !ok {
@@ -28,13 +28,9 @@ func (ctrl *AnnouncementPositionsController) Index(c *gin.Context) {
 
 	var data []announcement_position.AnnouncementPosition
 	var pager paginator.Paging
-	if len(status) > 0 && len(params) > 0 {
-		data, pager = announcement_position.PaginateByStatusAndParams(c, 0, status, params)
-	} else if len(params) > 0 {
-		data, pager = announcement_position.PaginateByName(c, 0, params)
-	} else if len(status) > 0 {
-		data, pager = announcement_position.PaginateByStatus(c, 0, status)
-	} else {
+	if len(status) > 0 || len(name) > 0 {
+		data, pager = announcement_position.Paginate2(c, 0)
+	} else{
 		data, pager = announcement_position.Paginate(c, 0)
 	}
 
@@ -197,5 +193,8 @@ func (ctrl *AnnouncementPositionsController) Export(c *gin.Context) {
 		fmt.Println(err)
 	}
 
-	response.Data(c, "文件保存为:"+fullPath)
+	c.Writer.Header().Add("Content-Disposition",fmt.Sprintf("attachment;fileName=%s",fileName))
+	c.Writer.Header().Add("Content-Type", "application/octet-stream;charset=utf-8")
+
+	c.File(fullPath)
 }

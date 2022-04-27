@@ -12,6 +12,7 @@ type AdvertisingAssembly struct {
 	AdvertisingPositionId uint64 `json:"advertising_position_id"`
 	CreatorId             uint64 `json:"creator_id"`
 	DepartmentId          uint64 `json:"department_id"`
+	ChannelId             uint64 `json:"channel_id"`
 	Title                 string `json:"title"`
 	Type                  uint64 `json:"type"`
 	RedirectTo            uint64 `json:"redirect_to"`
@@ -25,11 +26,15 @@ type AdvertisingAssembly struct {
 	PushContent           string `json:"push_content"`
 	PushTitle             string `json:"push_title"`
 	AdvertisingCreativity string `json:"advertising_creativity"`
+	Url                   string `json:"url,omitempty"`
+	Url2                  string `json:"url2,omitempty"`
+	Url3                  string `json:"url3,omitempty"`
 	CreatedAt             string `json:"created_at"`
 	UpdatedAt             string `json:"updated_at"`
 
 	User                UserAssembly                `json:"user"`
 	AdvertisingPosition AdvertisingPositionAssembly `json:"advertising_position"`
+	Channel             ChannelAssembly             `json:"channel"`
 }
 
 func AdvertisingAssemblyFromModel(data advertising.Advertising) *AdvertisingAssembly {
@@ -39,6 +44,7 @@ func AdvertisingAssemblyFromModel(data advertising.Advertising) *AdvertisingAsse
 		AdvertisingPositionId: data.AdvertisingPositionId,
 		CreatorId:             data.CreatorId,
 		DepartmentId:          data.DepartmentId,
+		ChannelId:			   data.ChannelId,
 		Title:                 data.Title,
 		Type:                  data.Type,
 		RedirectTo:            data.RedirectTo,
@@ -48,7 +54,7 @@ func AdvertisingAssemblyFromModel(data advertising.Advertising) *AdvertisingAsse
 		RedirectParams:        data.RedirectParams,
 		Description:           data.Description,
 		Status:                data.Status,
-		AuditReason:		   data.AuditReason,
+		AuditReason:           data.AuditReason,
 		PushContent:           data.PushContent,
 		PushTitle:             data.PushTitle,
 		AdvertisingCreativity: data.AdvertisingCreativity,
@@ -67,6 +73,12 @@ func AdvertisingAssemblyFromModel(data advertising.Advertising) *AdvertisingAsse
 			CreatedAt: carbon.Time2Carbon(data.User.CreatedAt).ToDateTimeString(),
 			UpdatedAt: carbon.Time2Carbon(data.User.UpdatedAt).ToDateTimeString(),
 		},
+		Channel: ChannelAssembly{
+			ID:        data.Channel.ID,
+			Name:      data.Channel.Name,
+			CreatedAt: carbon.Time2Carbon(data.Channel.CreatedAt).ToDateTimeString(),
+			UpdatedAt: carbon.Time2Carbon(data.Channel.UpdatedAt).ToDateTimeString(),
+		},
 	}
 }
 
@@ -79,6 +91,7 @@ func AdvertisingAssemblyFromModelList(data []advertising.Advertising, total int)
 			AdvertisingPositionId: v.AdvertisingPositionId,
 			CreatorId:             v.CreatorId,
 			DepartmentId:          v.DepartmentId,
+			ChannelId:             v.ChannelId,
 			Title:                 v.Title,
 			Type:                  v.Type,
 			RedirectTo:            v.RedirectTo,
@@ -88,10 +101,11 @@ func AdvertisingAssemblyFromModelList(data []advertising.Advertising, total int)
 			RedirectParams:        v.RedirectParams,
 			Description:           v.Description,
 			Status:                v.Status,
-			AuditReason:		   v.AuditReason,
+			AuditReason:           v.AuditReason,
 			PushContent:           v.PushContent,
 			PushTitle:             v.PushTitle,
 			AdvertisingCreativity: v.AdvertisingCreativity,
+
 			CreatedAt:             carbon.Time2Carbon(v.CreatedAt).ToDateTimeString(),
 			UpdatedAt:             carbon.Time2Carbon(v.UpdatedAt).ToDateTimeString(),
 
@@ -106,6 +120,12 @@ func AdvertisingAssemblyFromModelList(data []advertising.Advertising, total int)
 				UserName:  v.User.Username,
 				CreatedAt: carbon.Time2Carbon(v.User.CreatedAt).ToDateTimeString(),
 				UpdatedAt: carbon.Time2Carbon(v.User.UpdatedAt).ToDateTimeString(),
+			},
+			Channel: ChannelAssembly{
+				ID:        v.Channel.ID,
+				Name:      v.Channel.Name,
+				CreatedAt: carbon.Time2Carbon(v.Channel.CreatedAt).ToDateTimeString(),
+				UpdatedAt: carbon.Time2Carbon(v.Channel.UpdatedAt).ToDateTimeString(),
 			},
 		}
 	}

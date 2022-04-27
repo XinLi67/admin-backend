@@ -25,6 +25,7 @@ func MakeAdvertisings(count int) []advertising.Advertising {
 			Size:                  "800x600",
 			RedirectTo:            1,
 			DepartmentId:          1,
+			ChannelId:             1,
 			RedirectParams:        helpers.RandomString(5),
 			Description:           helpers.RandomString(5),
 			StartTime:             carbon.Now().ToTimeString(),
