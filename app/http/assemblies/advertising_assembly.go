@@ -26,6 +26,7 @@ type AdvertisingAssembly struct {
 	PushContent           string `json:"push_content"`
 	PushTitle             string `json:"push_title"`
 	AdvertisingCreativity string `json:"advertising_creativity"`
+	PauseReason           string `json:"pause_reason"`
 	Url                   string `json:"url,omitempty"`
 	Url2                  string `json:"url2,omitempty"`
 	Url3                  string `json:"url3,omitempty"`
@@ -44,7 +45,7 @@ func AdvertisingAssemblyFromModel(data advertising.Advertising) *AdvertisingAsse
 		AdvertisingPositionId: data.AdvertisingPositionId,
 		CreatorId:             data.CreatorId,
 		DepartmentId:          data.DepartmentId,
-		ChannelId:			   data.ChannelId,
+		ChannelId:             data.ChannelId,
 		Title:                 data.Title,
 		Type:                  data.Type,
 		RedirectTo:            data.RedirectTo,
@@ -58,6 +59,7 @@ func AdvertisingAssemblyFromModel(data advertising.Advertising) *AdvertisingAsse
 		PushContent:           data.PushContent,
 		PushTitle:             data.PushTitle,
 		AdvertisingCreativity: data.AdvertisingCreativity,
+		PauseReason:           data.PauseReason,
 		CreatedAt:             carbon.Time2Carbon(data.CreatedAt).ToDateTimeString(),
 		UpdatedAt:             carbon.Time2Carbon(data.UpdatedAt).ToDateTimeString(),
 
@@ -105,9 +107,10 @@ func AdvertisingAssemblyFromModelList(data []advertising.Advertising, total int)
 			PushContent:           v.PushContent,
 			PushTitle:             v.PushTitle,
 			AdvertisingCreativity: v.AdvertisingCreativity,
+			PauseReason:           v.PauseReason,
 
-			CreatedAt:             carbon.Time2Carbon(v.CreatedAt).ToDateTimeString(),
-			UpdatedAt:             carbon.Time2Carbon(v.UpdatedAt).ToDateTimeString(),
+			CreatedAt: carbon.Time2Carbon(v.CreatedAt).ToDateTimeString(),
+			UpdatedAt: carbon.Time2Carbon(v.UpdatedAt).ToDateTimeString(),
 
 			AdvertisingPosition: AdvertisingPositionAssembly{
 				ID:        v.AdvertisingPosition.ID,
