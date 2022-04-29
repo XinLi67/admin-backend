@@ -17,8 +17,6 @@ type AnnouncementPositionAssembly struct {
 	Description string `json:"description"`
 	CreatedAt   string `json:"created_at"`
 	UpdatedAt   string `json:"updated_at"`
-
-	Channel ChannelAssembly `json:"channel"`
 }
 
 func AnnouncementPositionAssemblyFromModel(data announcement_position.AnnouncementPosition) *AnnouncementPositionAssembly {
@@ -33,13 +31,6 @@ func AnnouncementPositionAssemblyFromModel(data announcement_position.Announceme
 		Description: data.Description,
 		CreatedAt:   carbon.Time2Carbon(data.CreatedAt).ToDateTimeString(),
 		UpdatedAt:   carbon.Time2Carbon(data.UpdatedAt).ToDateTimeString(),
-
-		Channel: ChannelAssembly{
-			ID:        data.Channel.ID,
-			Name:      data.Channel.Name,
-			CreatedAt: carbon.Time2Carbon(data.Channel.CreatedAt).ToDateTimeString(),
-			UpdatedAt: carbon.Time2Carbon(data.Channel.UpdatedAt).ToDateTimeString(),
-		},
 	}
 }
 
@@ -57,13 +48,6 @@ func AnnouncementPositionAssemblyFromModelList(data []announcement_position.Anno
 			Description: v.Description,
 			CreatedAt:   carbon.Time2Carbon(v.CreatedAt).ToDateTimeString(),
 			UpdatedAt:   carbon.Time2Carbon(v.UpdatedAt).ToDateTimeString(),
-
-			Channel: ChannelAssembly{
-				ID:        v.Channel.ID,
-				Name:      v.Channel.Name,
-				CreatedAt: carbon.Time2Carbon(v.Channel.CreatedAt).ToDateTimeString(),
-				UpdatedAt: carbon.Time2Carbon(v.Channel.UpdatedAt).ToDateTimeString(),
-			},
 		}
 	}
 

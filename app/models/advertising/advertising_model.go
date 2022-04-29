@@ -37,9 +37,9 @@ type Advertising struct {
 	Url2                  string `gorm:"type:varchar(255);column:url2"`
 	Url3                  string `gorm:"type:varchar(255);column:url3"`
 
-	User                user.User                                `json:"user" gorm:"foreignkey:id;references:CreatorId"`
-	AdvertisingPosition advertising_position.AdvertisingPosition `json:"advertising_position"`
-	Channel             channel.Channel                          `json:"channel"`
+	User                *user.User                                `json:"user" gorm:"foreignkey:id;references:CreatorId"`
+	AdvertisingPosition *advertising_position.AdvertisingPosition `json:"advertising_position"`
+	Channel             *channel.Channel                          `json:"channel"`
 
 	models.CommonTimestampsField
 }

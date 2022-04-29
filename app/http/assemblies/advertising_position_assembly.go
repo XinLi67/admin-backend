@@ -18,11 +18,20 @@ type AdvertisingPositionAssembly struct {
 	CreatedAt   string `json:"created_at"`
 	UpdatedAt   string `json:"updated_at"`
 
-	Channel ChannelAssembly `json:"channel"`
+	Channel *ChannelAssembly `json:"channel"`
 }
 
 func AdvertisingPositionAssemblyFromModel(data advertising_position.AdvertisingPosition) *AdvertisingPositionAssembly {
-	return &AdvertisingPositionAssembly{
+	var channelAssembly *ChannelAssembly
+	if data.Channel != nil {
+		channelAssembly = &ChannelAssembly{
+			ID:        data.Channel.ID,
+			Name:      data.Channel.Name,
+			CreatedAt: carbon.Time2Carbon(data.Channel.CreatedAt).ToDateTimeString(),
+			UpdatedAt: carbon.Time2Carbon(data.Channel.UpdatedAt).ToDateTimeString(),
+		}
+	}
+	advertising := &AdvertisingPositionAssembly{
 		ID:          data.ID,
 		Name:        data.Name,
 		ChannelId:   data.ChannelId,
@@ -34,18 +43,23 @@ func AdvertisingPositionAssemblyFromModel(data advertising_position.AdvertisingP
 		CreatedAt:   carbon.Time2Carbon(data.CreatedAt).ToDateTimeString(),
 		UpdatedAt:   carbon.Time2Carbon(data.UpdatedAt).ToDateTimeString(),
 
-		Channel: ChannelAssembly{
-			ID:        data.Channel.ID,
-			Name:      data.Channel.Name,
-			CreatedAt: carbon.Time2Carbon(data.Channel.CreatedAt).ToDateTimeString(),
-			UpdatedAt: carbon.Time2Carbon(data.Channel.UpdatedAt).ToDateTimeString(),
-		},
+		Channel: channelAssembly,
 	}
+	return advertising
 }
 
 func AdvertisingPositionAssemblyFromModelList(data []advertising_position.AdvertisingPosition, total int) interface{} {
 	AdvertisingPositions := make([]AdvertisingPositionAssembly, total)
+	var channelAssembly *ChannelAssembly
 	for i, v := range data {
+		if v.Channel != nil {
+			channelAssembly = &ChannelAssembly{
+				ID:        v.Channel.ID,
+				Name:      v.Channel.Name,
+				CreatedAt: carbon.Time2Carbon(v.Channel.CreatedAt).ToDateTimeString(),
+				UpdatedAt: carbon.Time2Carbon(v.Channel.UpdatedAt).ToDateTimeString(),
+			}
+		}
 		AdvertisingPositions[i] = AdvertisingPositionAssembly{
 			ID:          v.ID,
 			Name:        v.Name,
@@ -58,12 +72,7 @@ func AdvertisingPositionAssemblyFromModelList(data []advertising_position.Advert
 			CreatedAt:   carbon.Time2Carbon(v.CreatedAt).ToDateTimeString(),
 			UpdatedAt:   carbon.Time2Carbon(v.UpdatedAt).ToDateTimeString(),
 
-			Channel: ChannelAssembly{
-				ID:        v.Channel.ID,
-				Name:      v.Channel.Name,
-				CreatedAt: carbon.Time2Carbon(v.Channel.CreatedAt).ToDateTimeString(),
-				UpdatedAt: carbon.Time2Carbon(v.Channel.UpdatedAt).ToDateTimeString(),
-			},
+			Channel: channelAssembly,
 		}
 	}
 

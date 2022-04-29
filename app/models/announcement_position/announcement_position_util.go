@@ -4,6 +4,7 @@ import (
 	"gohub/pkg/app"
 	"gohub/pkg/database"
 	"gohub/pkg/paginator"
+
 	"gorm.io/gorm"
 
 	"github.com/gin-gonic/gin"
@@ -22,7 +23,7 @@ func GetBy(field, value string) (announcementPosition AnnouncementPosition) {
 
 func All() (announcementPositions []AnnouncementPosition) {
 	// database.DB.Find(&announcementPositions)
-	database.DB.Preload("Channel").Find(&announcementPositions)
+	database.DB.Find(&announcementPositions)
 	return
 }
 
@@ -57,12 +58,12 @@ func Paginate2(c *gin.Context, perPage int) (announcementPositions []Announcemen
 
 	db = database.DB.Model(AnnouncementPosition{}).Where(" id like ?", "%"+"%")
 
-	if len(name) >0{
-		db.Where("name like ? ","%"+name+"%")
+	if len(name) > 0 {
+		db.Where("name like ? ", "%"+name+"%")
 	}
 
-	if len(status) >0{
-		db.Where("status = ? ",status)
+	if len(status) > 0 {
+		db.Where("status = ? ", status)
 	}
 
 	paging = paginator.Paginate(
@@ -75,4 +76,3 @@ func Paginate2(c *gin.Context, perPage int) (announcementPositions []Announcemen
 	return
 
 }
-

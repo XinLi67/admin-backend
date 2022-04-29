@@ -26,8 +26,8 @@ type AdvertisingPlan struct {
 	AuditStatus           uint64 `gorm:"column:audit_status"`
 	PresentStatus         uint64 `gorm:"column:present_status"`
 
-	User                user.User                                `json:"user" gorm:"foreignkey:id"`
-	AdvertisingPosition advertising_position.AdvertisingPosition `json:"advertising_position"`
+	User                *user.User                                `json:"user" gorm:"foreignkey:id;references:CreatorId"`
+	AdvertisingPosition *advertising_position.AdvertisingPosition `json:"advertising_position"`
 	//Advertising         advertising.Advertising                `json:"advertising"`
 
 	models.CommonTimestampsField

@@ -18,7 +18,7 @@ type Permission struct {
 	Description       string `gorm:"column:description"`
 	Sequence          uint64 `gorm:"column:sequence"`
 
-	PermissionGroup permission_group.PermissionGroup `json:"group"`
+	PermissionGroup *permission_group.PermissionGroup `json:"group"`
 
 	models.CommonTimestampsField
 }
