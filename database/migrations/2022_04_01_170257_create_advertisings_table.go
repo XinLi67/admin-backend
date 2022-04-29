@@ -34,6 +34,7 @@ func init() {
 		StartTime             string `gorm:"type:varchar(20);column:start_time"`
 		EndTime               string `gorm:"type:varchar(20);column:end_time"`
 		SchedulingTime        uint64 `gorm:"column:scheduling_time"`
+		PauseReason           string `gorm:"column:pause_reason"`
 		Url                   string `gorm:"type:varchar(255);column:url"`
 		Url2                  string `gorm:"type:varchar(255);column:url2"`
 		Url3                  string `gorm:"type:varchar(255);column:url3"`

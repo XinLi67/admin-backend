@@ -146,6 +146,7 @@ func (ctrl *AdvertisingsController) Update(c *gin.Context) {
 		return
 	}
 
+	advertisingModel.AdvertisingNo=request.AdvertisingNo
 	advertisingModel.AdvertisingPositionId = request.AdvertisingPositionId
 	advertisingModel.CreatorId = request.CreatorId
 	advertisingModel.DepartmentId = request.DepartmentId
@@ -173,10 +174,10 @@ func (ctrl *AdvertisingsController) Update(c *gin.Context) {
 func (ctrl *AdvertisingsController) Delete(c *gin.Context) {
 
 	advertisingModel := advertising.Get(c.Param("id"))
-	advertisingPlanList :=make([]advertising_plan.AdvertisingPlan,10)
+	advertisingPlanList := make([]advertising_plan.AdvertisingPlan, 10)
 	//advertisingPlanList[] := advertising_plan.Get(string(advertisingModel.ID))
-	for _,plan := range advertisingPlanList{
-		if plan.ID>0 {
+	for _, plan := range advertisingPlanList {
+		if plan.ID > 0 {
 			plan.Delete()
 		}
 	}
@@ -233,7 +234,7 @@ func (ctrl *AdvertisingsController) Export(c *gin.Context) {
 
 	listData := advertising.All2()
 	f := excelize.NewFile() // 设置单元格的值
-	//// 这里设置表头
+	// 这里设置表头
 	f.SetCellValue("Sheet1", "A1", "ID")
 	f.SetCellValue("Sheet1", "B1", "广告编号")
 	f.SetCellValue("Sheet1", "C1", "广告位编号")
@@ -251,7 +252,6 @@ func (ctrl *AdvertisingsController) Export(c *gin.Context) {
 
 	line := 1
 
-	//fruits := getFruits()
 	// 循环写入数据
 	for _, v := range listData {
 		line++
@@ -273,7 +273,7 @@ func (ctrl *AdvertisingsController) Export(c *gin.Context) {
 	}
 
 	var fileName = utils.RandFileName()
-	var fullPath = "G:/studyFile/" + fileName + ".xlsx"
+	var fullPath = "G:/" + fileName + ".xlsx"
 
 	// 保存文件
 	if err := f.SaveAs(fullPath); err != nil {

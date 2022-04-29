@@ -10,7 +10,7 @@ type AdvertisingPlanAssembly struct {
 	ID                    uint64 `json:"id"`
 	Name                  string `json:"name"`
 	CreatorId             uint64 `json:"creator_id"`
-	AdvertisingId         uint64 `json:"ajdvertising_id"`
+	AdvertisingId         uint64 `json:"advertising_id"`
 	AdvertisingType       uint64 `json:"advertising_type"`
 	AdvertisingPositionId uint64 `json:"advertising_position_id"`
 	Order                 uint64 `json:"order"`
