@@ -30,9 +30,9 @@ func (ctrl *AdvertisingPlansController) Index(c *gin.Context) {
 	var data []advertising_plan.AdvertisingPlan
 	var pager paginator.Paging
 
-	if len(audit_status)>0 || len(name)>0 {
+	if len(audit_status) > 0 || len(name) > 0 {
 		data, pager = advertising_plan.Paginate2(c, 0)
-	}else {
+	} else {
 		data, pager = advertising_plan.Paginate(c, 0)
 	}
 
@@ -118,22 +118,21 @@ func (ctrl *AdvertisingPlansController) BatchStore(c *gin.Context) {
 		fmt.Println("新增广告计划记录ID:", advertisingPlanModel.ID)
 	}
 
-	var len1 =len(advertisings)
-	var advertisingModels []advertising.Advertising=make([]advertising.Advertising,len1)
+	var len1 = len(advertisings)
+	var advertisingModels []advertising.Advertising = make([]advertising.Advertising, len1)
 
 	fmt.Println(len(advertisingModels))
 
 	for i, item := range advertisings {
-		advertisingModels[i].AdvertisingNo=item.AdvertisingNo
-		advertisingModels[i].AdvertisingPositionId=item.AdvertisingPositionId
-		advertisingModels[i].StartTime=item.StartTime
-		advertisingModels[i].EndTime=item.EndTime
+		advertisingModels[i].AdvertisingNo = item.AdvertisingNo
+		advertisingModels[i].AdvertisingPositionId = item.AdvertisingPositionId
+		advertisingModels[i].StartTime = item.StartTime
+		advertisingModels[i].EndTime = item.EndTime
 	}
 
-	for _,item := range advertisingModels{
-		database.DB.Model(&advertising.Advertising{}).Where("advertising_no=?",item.AdvertisingNo).Updates(advertising.Advertising{StartTime:item.StartTime,EndTime:item.EndTime,SchedulingTime:item.SchedulingTime,AdvertisingPositionId:item.AdvertisingPositionId})
+	for _, item := range advertisingModels {
+		database.DB.Model(&advertising.Advertising{}).Where("advertising_no=?", item.AdvertisingNo).Updates(advertising.Advertising{StartTime: item.StartTime, EndTime: item.EndTime, SchedulingTime: item.SchedulingTime, AdvertisingPositionId: item.AdvertisingPositionId})
 	}
-
 
 	response.Created(c, advertisingPlanModel)
 
@@ -277,9 +276,8 @@ func (ctrl *AdvertisingPlansController) Export(c *gin.Context) {
 		fmt.Println(err)
 	}
 
-	c.Writer.Header().Add("Content-Disposition",fmt.Sprintf("attachment;fileName=%s",fileName))
+	c.Writer.Header().Add("Content-Disposition", fmt.Sprintf("attachment;fileName=%s", fileName))
 	c.Writer.Header().Add("Content-Type", "application/octet-stream;charset=utf-8")
 
 	c.File(fullPath)
 }
-
