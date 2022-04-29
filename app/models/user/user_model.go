@@ -22,7 +22,7 @@ type User struct {
 	Password     string `gorm:"column:password"`
 	Status       uint64 `gorm:"column:status"`
 
-	Department department.Department `json:"department"`
+	Department *department.Department `json:"department"`
 
 	models.CommonTimestampsField
 }

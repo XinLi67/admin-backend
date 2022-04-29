@@ -3,7 +3,7 @@ package announcement_position
 
 import (
 	"gohub/app/models"
-	"gohub/app/models/channel"
+
 	"gohub/pkg/database"
 )
 
@@ -18,7 +18,7 @@ type AnnouncementPosition struct {
 	Status      uint64 `gorm:"column:status"`
 	Description string `gorm:"column:description"`
 
-	Channel channel.Channel `json:"channel"`
+
 
 	models.CommonTimestampsField
 }

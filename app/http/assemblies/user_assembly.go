@@ -7,23 +7,32 @@ import (
 )
 
 type UserAssembly struct {
-	ID           uint64 `json:"id"`
-	DepartmentId uint64 `json:"department_id"`
-	UserName     string `json:"username"`
-	Name         string `json:"name"`
-	Gender       uint64 `json:"gender"`
-	Email        string `json:"email,omitempty"`
-	Phone        string `json:"phone,omitempty"`
-	Avatar       string `json:"avatar"`
-	Status       uint64 `json:"status,omitempty"`
-	CreatedAt    string `json:"created_at"`
-	UpdatedAt    string `json:"updated_at"`
-
-	Department DepartmentAssembly `json:"department"`
+	ID           uint64              `json:"id"`
+	DepartmentId uint64              `json:"department_id"`
+	UserName     string              `json:"username"`
+	Name         string              `json:"name"`
+	Gender       uint64              `json:"gender"`
+	Email        string              `json:"email,omitempty"`
+	Phone        string              `json:"phone,omitempty"`
+	Avatar       string              `json:"avatar"`
+	Status       uint64              `json:"status,omitempty"`
+	CreatedAt    string              `json:"created_at"`
+	UpdatedAt    string              `json:"updated_at"`
+	Department   *DepartmentAssembly `json:"department"`
 }
 
 func UserAssemblyFromModel(data user.User) *UserAssembly {
-	return &UserAssembly{
+	var department *DepartmentAssembly
+
+	if data.Department != nil {
+		department = &DepartmentAssembly{
+			ID:        data.Department.ID,
+			Name:      data.Department.Name,
+			CreatedAt: carbon.Time2Carbon(data.Department.CreatedAt).ToDateTimeString(),
+			UpdatedAt: carbon.Time2Carbon(data.Department.UpdatedAt).ToDateTimeString(),
+		}
+	}
+	userAssembly := &UserAssembly{
 		ID:           data.ID,
 		DepartmentId: data.DepartmentId,
 		UserName:     data.Username,
@@ -35,19 +44,24 @@ func UserAssemblyFromModel(data user.User) *UserAssembly {
 		Status:       data.Status,
 		CreatedAt:    carbon.Time2Carbon(data.CreatedAt).ToDateTimeString(),
 		UpdatedAt:    carbon.Time2Carbon(data.UpdatedAt).ToDateTimeString(),
-
-		Department: DepartmentAssembly{
-			ID:        data.Department.ID,
-			Name:      data.Department.Name,
-			CreatedAt: carbon.Time2Carbon(data.Department.CreatedAt).ToDateTimeString(),
-			UpdatedAt: carbon.Time2Carbon(data.Department.UpdatedAt).ToDateTimeString(),
-		},
+		Department:   department,
 	}
-}
 
+	return userAssembly
+}
 func UserAssemblyFromModelList(data []user.User) interface{} {
 	users := make([]UserAssembly, len(data))
+	var department *DepartmentAssembly
 	for i, v := range data {
+		if v.Department != nil {
+			department = &DepartmentAssembly{
+				ID:        v.Department.ID,
+				Name:      v.Department.Name,
+				CreatedAt: carbon.Time2Carbon(v.Department.CreatedAt).ToDateTimeString(),
+				UpdatedAt: carbon.Time2Carbon(v.Department.UpdatedAt).ToDateTimeString(),
+			}
+
+		}
 		users[i] = UserAssembly{
 			ID:           v.ID,
 			DepartmentId: v.DepartmentId,
@@ -60,14 +74,9 @@ func UserAssemblyFromModelList(data []user.User) interface{} {
 			Status:       v.Status,
 			CreatedAt:    carbon.Time2Carbon(v.CreatedAt).ToDateTimeString(),
 			UpdatedAt:    carbon.Time2Carbon(v.UpdatedAt).ToDateTimeString(),
-
-			Department: DepartmentAssembly{
-				ID:        v.Department.ID,
-				Name:      v.Department.Name,
-				CreatedAt: carbon.Time2Carbon(v.Department.CreatedAt).ToDateTimeString(),
-				UpdatedAt: carbon.Time2Carbon(v.Department.UpdatedAt).ToDateTimeString(),
-			},
+			Department:   department,
 		}
+
 	}
 
 	return users

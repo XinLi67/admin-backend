@@ -162,8 +162,9 @@ func RegisterAPIRoutes(r *gin.Engine) {
 		announcementGroup := v1.Group("/announcement")
 		{
 			announcementGroup.GET("", announcement.Index)
-			announcementGroup.POST("", middlewares.AuthJWT(), announcement.Store)
+			announcementGroup.POST("", announcement.Store)
 			announcementGroup.POST("/:id/update", middlewares.AuthJWT(), announcement.Update)
+			announcementGroup.POST("/:id/update-status", announcement.UpdateStatus)
 			announcementGroup.POST("/:id/delete", middlewares.AuthJWT(), announcement.Delete)
 			announcementGroup.POST("/batch-delete", middlewares.AuthJWT(), announcement.BatchDelete)
 			announcementGroup.GET("/:id", announcement.Show)

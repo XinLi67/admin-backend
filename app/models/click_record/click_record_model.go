@@ -17,7 +17,7 @@ type ClickRecord struct {
 	StartTime     string `gorm:"column:start_time"`
 	EndTime       string `gorm:"column:end_time"`
 
-	Advertising advertising.Advertising `json:"advertising"`
+	Advertising *advertising.Advertising `json:"advertising"`
 
 	models.CommonTimestampsField
 }

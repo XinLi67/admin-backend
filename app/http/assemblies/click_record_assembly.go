@@ -16,11 +16,21 @@ type ClickRecordAssembly struct {
 	CreatedAt     string `json:"created_at"`
 	UpdatedAt     string `json:"updated_at"`
 
-	Advertising AdvertisingAssembly `json:"advertising"`
+	Advertising *AdvertisingAssembly `json:"advertising"`
 }
 
 func ClickRecordAssemblyFromModel(data click_record.ClickRecord) *ClickRecordAssembly {
-	return &ClickRecordAssembly{
+	var advertisingAssembly *AdvertisingAssembly
+	if data.Advertising != nil {
+		advertisingAssembly = &AdvertisingAssembly{
+			ID:            data.Advertising.ID,
+			AdvertisingNo: data.Advertising.AdvertisingNo,
+			Title:         data.Advertising.Title,
+			CreatedAt:     carbon.Time2Carbon(data.Advertising.CreatedAt).ToDateTimeString(),
+			UpdatedAt:     carbon.Time2Carbon(data.Advertising.UpdatedAt).ToDateTimeString(),
+		}
+	}
+	ClickRecord := &ClickRecordAssembly{
 		ID:            data.ID,
 		AdvertisingId: data.AdvertisingId,
 		CustomerId:    data.CustomerId,
@@ -30,19 +40,25 @@ func ClickRecordAssemblyFromModel(data click_record.ClickRecord) *ClickRecordAss
 		CreatedAt:     carbon.Time2Carbon(data.CreatedAt).ToDateTimeString(),
 		UpdatedAt:     carbon.Time2Carbon(data.UpdatedAt).ToDateTimeString(),
 
-		Advertising: AdvertisingAssembly{
-			ID:            data.Advertising.ID,
-			AdvertisingNo: data.Advertising.AdvertisingNo,
-			Title:         data.Advertising.Title,
-			CreatedAt:     carbon.Time2Carbon(data.Advertising.CreatedAt).ToDateTimeString(),
-			UpdatedAt:     carbon.Time2Carbon(data.Advertising.UpdatedAt).ToDateTimeString(),
-		},
+		Advertising: advertisingAssembly,
 	}
+	return ClickRecord
 }
 
 func ClickRecordAssemblyFromModelList(data []click_record.ClickRecord) interface{} {
 	ClickRecords := make([]ClickRecordAssembly, len(data))
+	var advertisingAssembly *AdvertisingAssembly
+
 	for i, v := range data {
+		if v.Advertising != nil {
+			advertisingAssembly = &AdvertisingAssembly{
+				ID:            v.Advertising.ID,
+				AdvertisingNo: v.Advertising.AdvertisingNo,
+				Title:         v.Advertising.Title,
+				CreatedAt:     carbon.Time2Carbon(v.Advertising.CreatedAt).ToDateTimeString(),
+				UpdatedAt:     carbon.Time2Carbon(v.Advertising.UpdatedAt).ToDateTimeString(),
+			}
+		}
 		ClickRecords[i] = ClickRecordAssembly{
 			ID:            v.ID,
 			AdvertisingId: v.AdvertisingId,
@@ -53,13 +69,7 @@ func ClickRecordAssemblyFromModelList(data []click_record.ClickRecord) interface
 			CreatedAt:     carbon.Time2Carbon(v.CreatedAt).ToDateTimeString(),
 			UpdatedAt:     carbon.Time2Carbon(v.UpdatedAt).ToDateTimeString(),
 
-			Advertising: AdvertisingAssembly{
-				ID:            v.Advertising.ID,
-				AdvertisingNo: v.Advertising.AdvertisingNo,
-				Title:         v.Advertising.Title,
-				CreatedAt:     carbon.Time2Carbon(v.Advertising.CreatedAt).ToDateTimeString(),
-				UpdatedAt:     carbon.Time2Carbon(v.Advertising.UpdatedAt).ToDateTimeString(),
-			},
+			Advertising: advertisingAssembly,
 		}
 	}
 

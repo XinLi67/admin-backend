@@ -2,14 +2,14 @@ package v1
 
 import (
 	"fmt"
-	"github.com/xuri/excelize/v2"
 	"gohub/app/http/assemblies"
 	"gohub/app/models/announcement"
 	"gohub/app/policies"
 	"gohub/app/requests"
-	"gohub/pkg/paginator"
 	"gohub/pkg/response"
 	"gohub/utils"
+
+	"github.com/xuri/excelize/v2"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,27 +19,25 @@ type AnnouncementsController struct {
 }
 
 func (ctrl *AnnouncementsController) Index(c *gin.Context) {
-	title := c.Query("title")
-	status := c.Query("status")
+
 	request := requests.PaginationRequest{}
 	if ok := requests.Validate(c, &request, requests.Pagination); !ok {
 		return
 	}
-
-	var data []announcement.Announcement
-	var pager paginator.Paging
-
-	if len(status) > 0 || len(title)>0 {
-		data, pager = announcement.Paginate2(c, 0, status)
-	} else {
-		data, pager = announcement.Paginate(c, 0)
-	}
+	//根据姓名获取userId
+	UserId := announcement.GetCreatorIdByname(c.Query("name"))
+	data, pager := announcement.Search(c, 0, UserId)
 
 	announcements := assemblies.AnnouncementAssemblyFromModelList(data, len(data))
 	response.JSON(c, gin.H{
 		"data":  announcements,
 		"pager": pager,
 	})
+}
+func (ctrl *AnnouncementsController) Show22(c *gin.Context) {
+	CreatorId := announcement.GetCreatorIdByname(c.Param("id"))
+
+	response.Data(c, CreatorId)
 }
 
 func (ctrl *AnnouncementsController) Show(c *gin.Context) {
@@ -61,17 +59,17 @@ func (ctrl *AnnouncementsController) Store(c *gin.Context) {
 
 	announcementModel := announcement.Announcement{
 		AnnouncementPositionId: request.AnnouncementPositionId,
-		CreatorId:              request.CreatorId,
-		DepartmentId:           request.DepartmentId,
-		Title:                  request.Title,
-		LongTitle:              request.LongTitle,
-		Type:                   request.Type,
-		Banner:                 request.Banner,
-		RedirectTo:             request.RedirectTo,
-		RedirectParams:         request.RedirectParams,
-		Content:                request.Content,
-		Status:                 request.Status,
-		AuditReason:            request.AuditReason,
+		UserId:                 request.UserId,
+		Title: request.Title,
+		Type: request.Type,
+		RedirectTo:     request.RedirectTo,
+		RedirectParams: request.RedirectParams,
+		Content:        request.Content,
+		Status:         request.Status,
+		AuditReason:    request.AuditReason,
+		SchedulingType: request.SchedulingType,
+		StartDate:  request.StartDate,
+		EndDate:  request.EndDate,
 	}
 	announcementModel.Create()
 	if announcementModel.ID > 0 {
@@ -81,6 +79,7 @@ func (ctrl *AnnouncementsController) Store(c *gin.Context) {
 	}
 }
 
+//编辑公告
 func (ctrl *AnnouncementsController) Update(c *gin.Context) {
 
 	announcementModel := announcement.Get(c.Param("id"))
@@ -88,25 +87,22 @@ func (ctrl *AnnouncementsController) Update(c *gin.Context) {
 		response.Abort404(c)
 		return
 	}
-
 	if ok := policies.CanModifyAnnouncement(c, announcementModel); !ok {
 		response.Abort403(c)
 		return
 	}
-
 	request := requests.AnnouncementRequest{}
 	bindOk := requests.Validate(c, &request, requests.AnnouncementSave)
 	if !bindOk {
 		return
 	}
-
 	announcementModel.AnnouncementPositionId = request.AnnouncementPositionId
-	announcementModel.CreatorId = request.CreatorId
-	announcementModel.DepartmentId = request.DepartmentId
+	announcementModel.UserId = request.UserId
+	// announcementModel.DepartmentId = request.DepartmentId
 	announcementModel.Title = request.Title
-	announcementModel.LongTitle = request.LongTitle
+	// announcementModel.LongTitle = request.LongTitle
 	announcementModel.Type = request.Type
-	announcementModel.Banner = request.Banner
+	// announcementModel.Banner = request.Banner
 	announcementModel.RedirectTo = request.RedirectTo
 	announcementModel.RedirectParams = request.RedirectParams
 	announcementModel.Content = request.Content
@@ -117,6 +113,23 @@ func (ctrl *AnnouncementsController) Update(c *gin.Context) {
 		response.Data(c, announcementModel)
 	} else {
 		response.Abort500(c, "更新失败，请稍后尝试~")
+	}
+}
+
+//审核公告
+func (ctrl *AnnouncementsController) UpdateStatus(c *gin.Context) {
+	auditReason := c.Query("audit_reason")
+	status := c.Query("status")
+	announcementModel := announcement.Get(c.Param("id"))
+	if announcementModel.ID == 0 {
+		response.Abort404(c)
+		return
+	}
+	rowsAffected := announcementModel.UpdateStatus(status, auditReason)
+	if rowsAffected > 0 {
+		response.Data(c, announcementModel)
+	} else {
+		response.Abort500(c, "审核操作失败，请稍后尝试~")
 	}
 }
 
@@ -192,12 +205,12 @@ func (ctrl *AnnouncementsController) Export(c *gin.Context) {
 		f.SetCellValue("Sheet1", fmt.Sprintf("A%d", line), v.ID)
 		f.SetCellValue("Sheet1", fmt.Sprintf("B%d", line), v.AnnouncementNo)
 		f.SetCellValue("Sheet1", fmt.Sprintf("C%d", line), v.AnnouncementPositionId)
-		f.SetCellValue("Sheet1", fmt.Sprintf("D%d", line), v.CreatorId)
-		f.SetCellValue("Sheet1", fmt.Sprintf("E%d", line), v.DepartmentId)
+		f.SetCellValue("Sheet1", fmt.Sprintf("D%d", line), v.UserId)
+		// f.SetCellValue("Sheet1", fmt.Sprintf("E%d", line), v.DepartmentId)
 		f.SetCellValue("Sheet1", fmt.Sprintf("F%d", line), v.Title)
-		f.SetCellValue("Sheet1", fmt.Sprintf("G%d", line), v.LongTitle)
+		// f.SetCellValue("Sheet1", fmt.Sprintf("G%d", line), v.LongTitle)
 		f.SetCellValue("Sheet1", fmt.Sprintf("H%d", line), v.Type)
-		f.SetCellValue("Sheet1", fmt.Sprintf("I%d", line), v.Banner)
+		// f.SetCellValue("Sheet1", fmt.Sprintf("I%d", line), v.Banner)
 		f.SetCellValue("Sheet1", fmt.Sprintf("J%d", line), v.RedirectTo)
 		f.SetCellValue("Sheet1", fmt.Sprintf("K%d", line), v.RedirectParams)
 		f.SetCellValue("Sheet1", fmt.Sprintf("L%d", line), v.Content)
@@ -213,8 +226,5 @@ func (ctrl *AnnouncementsController) Export(c *gin.Context) {
 		fmt.Println(err)
 	}
 
-	c.Writer.Header().Add("Content-Disposition",fmt.Sprintf("attachment;fileName=%s",fileName))
-	c.Writer.Header().Add("Content-Type", "application/octet-stream;charset=utf-8")
-
-	c.File(fullPath)
+	response.Data(c, "文件保存为:"+fullPath)
 }

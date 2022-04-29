@@ -18,7 +18,7 @@ type AdvertisingPosition struct {
 	Status      uint64 `gorm:"column:status"`
 	Description string `gorm:"column:description"`
 
-	Channel channel.Channel `json:"channel" gorm:"PRELOAD:false"`
+	Channel *channel.Channel `json:"channel"`
 
 	models.CommonTimestampsField
 }

@@ -18,11 +18,20 @@ type PermissionAssembly struct {
 	CreatedAt         string `json:"created_at"`
 	UpdatedAt         string `json:"updated_at"`
 
-	PermissionGroup PermissionGroupAssembly `json:"group"`
+	PermissionGroup *PermissionGroupAssembly `json:"group"`
 }
 
 func PermissionAssemblyFromModel(data permission.Permission) *PermissionAssembly {
-	return &PermissionAssembly{
+	var permissionGroupAssembly *PermissionGroupAssembly
+	if data.PermissionGroup != nil {
+		permissionGroupAssembly = &PermissionGroupAssembly{
+			ID:        data.PermissionGroup.ID,
+			Name:      data.PermissionGroup.Name,
+			CreatedAt: carbon.Time2Carbon(data.PermissionGroup.CreatedAt).ToDateTimeString(),
+			UpdatedAt: carbon.Time2Carbon(data.PermissionGroup.UpdatedAt).ToDateTimeString(),
+		}
+	}
+	permission := &PermissionAssembly{
 		ID:                data.ID,
 		PermissionGroupId: data.PermissionGroupId,
 		Name:              data.Name,
@@ -34,19 +43,23 @@ func PermissionAssemblyFromModel(data permission.Permission) *PermissionAssembly
 
 		CreatedAt: carbon.Time2Carbon(data.CreatedAt).ToDateTimeString(),
 		UpdatedAt: carbon.Time2Carbon(data.UpdatedAt).ToDateTimeString(),
-
-		PermissionGroup: PermissionGroupAssembly{
-			ID:        data.PermissionGroup.ID,
-			Name:      data.PermissionGroup.Name,
-			CreatedAt: carbon.Time2Carbon(data.PermissionGroup.CreatedAt).ToDateTimeString(),
-			UpdatedAt: carbon.Time2Carbon(data.PermissionGroup.UpdatedAt).ToDateTimeString(),
-		},
+		PermissionGroup: permissionGroupAssembly,
 	}
+	return permission
 }
 
 func PermissionAssemblyFromModelList(data []permission.Permission) interface{} {
 	permissions := make([]PermissionAssembly, len(data))
+	var permissionGroupAssembly *PermissionGroupAssembly
 	for i, v := range data {
+		if v.PermissionGroup != nil {
+			permissionGroupAssembly = &PermissionGroupAssembly{
+				ID:        v.PermissionGroup.ID,
+				Name:      v.PermissionGroup.Name,
+				CreatedAt: carbon.Time2Carbon(v.PermissionGroup.CreatedAt).ToDateTimeString(),
+				UpdatedAt: carbon.Time2Carbon(v.PermissionGroup.UpdatedAt).ToDateTimeString(),
+			}
+		}
 		permissions[i] = PermissionAssembly{
 			ID:                v.ID,
 			PermissionGroupId: v.PermissionGroupId,
@@ -57,13 +70,7 @@ func PermissionAssemblyFromModelList(data []permission.Permission) interface{} {
 			Description:       v.Description,
 			CreatedAt:         carbon.Time2Carbon(v.CreatedAt).ToDateTimeString(),
 			UpdatedAt:         carbon.Time2Carbon(v.UpdatedAt).ToDateTimeString(),
-
-			PermissionGroup: PermissionGroupAssembly{
-				ID:        v.PermissionGroup.ID,
-				Name:      v.PermissionGroup.Name,
-				CreatedAt: carbon.Time2Carbon(v.PermissionGroup.CreatedAt).ToDateTimeString(),
-				UpdatedAt: carbon.Time2Carbon(v.PermissionGroup.UpdatedAt).ToDateTimeString(),
-			},
+			PermissionGroup:   permissionGroupAssembly,
 		}
 	}
 

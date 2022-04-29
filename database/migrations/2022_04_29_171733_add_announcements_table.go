@@ -15,17 +15,18 @@ func init() {
 
 		AnnouncementNo         uint64 `gorm:"type:bigint unsigned;column:announcement_no"`
 		AnnouncementPositionId uint64 `gorm:"type:bigint unsigned;column:announcement_position_id"`
-		CreatorId              uint64 `gorm:"type:bigint unsigned;column:creator_id"`
-		DepartmentId           uint64 `gorm:"type:bigint unsigned;column:department_id"`
+		UserId                 uint64 `gorm:"type:bigint unsigned;column:user_id"`
 		Title                  string `gorm:"type:varchar(255);column:title"`
-		LongTitle              string `gorm:"type:varchar(255);column:long_title"`
 		Type                   uint64 `gorm:"type:tinyint unsigned;column:type"`
-		Banner                 string `gorm:"type:varchar(255);column:banner"`
+		ChannelId              uint64 `gorm:"type:bigint unsigned;column:channel_id"`
 		RedirectTo             uint64 `gorm:"type:tinyint unsigned;column:redirect_to"`
 		RedirectParams         string `gorm:"type:varchar(60);column:redirect_params"`
 		Content                string `gorm:"type:text;column:content"`
 		Status                 uint64 `gorm:"type:tinyint unsigned;column:status"`
 		AuditReason            string `gorm:"type:text;column:audit_reason"`
+		SchedulingType         uint64 `gorm:"type:tinyint unsigned;column:scheduling_type"`
+		StartDate              string `gorm:"column:start_date;index;" json:"start_date,omitempty"`
+		EndDate                string `gorm:"column:end_date;index;" json:"end_date,omitempty"`
 
 		models.CommonTimestampsField
 	}
@@ -38,5 +39,5 @@ func init() {
 		migrator.DropTable(&Announcement{})
 	}
 
-	migrate.Add("2022_04_01_170306_create_announcements_table", up, down)
+	migrate.Add("2022_04_29_171733_add_announcements_table", up, down)
 }
