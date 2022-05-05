@@ -8,4 +8,4 @@ ADD alumni /app/alumni
 ADD .env /app/.env
 
 CMD ["/app/alumni"]
-EXPOSE 8999
+EXPOSE 9001
