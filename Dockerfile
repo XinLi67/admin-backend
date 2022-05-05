@@ -4,8 +4,8 @@ RUN apk update --no-cache && apk add --no-cache ca-certificates tzdata
 ENV TZ Asia/Shanghai
 
 WORKDIR /app
-ADD adcenter /app/adcenter
+ADD alumni /app/alumni
 ADD .env /app/.env
 
-CMD ["/app/adcenter"]
-EXPOSE 9000
+CMD ["/app/alumni"]
+EXPOSE 8999
